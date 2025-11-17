@@ -2870,49 +2870,56 @@
         addLog('info', `이미지 추가: ${file.name}`);
       });
       
-      // 비디오 파일들을 2개씩 묶어서 처리
-      for (let i = 0; i < videoFiles.length; i += 2) {
-        const video1 = videoFiles[i];
-        const video2 = videoFiles[i + 1] || videoFiles[i];
-        
-        const url1 = URL.createObjectURL(video1);
-        const url2 = URL.createObjectURL(video2);
-        
-        const name = videoFiles.length === 1 ? 
-          video1.name : 
-          `${video1.name.split('.')[0]} + ${video2.name.split('.')[0]}`;
-        
+      // 🔧 수정: 비디오 파일 처리 - 각 파일을 개별적으로 추가
+      videoFiles.forEach(video => {
+        const url = URL.createObjectURL(video);
+
         loadedBackgroundMedia.push({
-          name: name,
+          name: video.name,
           type: 'video',
-          loop1: url1,
-          loop2: url2
+          loop1: url,
+          loop2: url  // 같은 영상을 loop1, loop2로 사용
         });
-        addLog('info', `비디오 세트 추가: ${name}`);
-      }
+        addLog('info', `비디오 추가: ${video.name}`);
+      });
       
       updateBackgroundSelector();
     }
 
     // 오버레이 파일 처리
     function handleOverlayFiles(files) {
-      const videoFiles = files.filter(file => 
-        file.type.startsWith('video/') || 
+      const videoFiles = files.filter(file =>
+        file.type.startsWith('video/') ||
         file.name.toLowerCase().endsWith('.mov') ||
         file.name.toLowerCase().endsWith('.mp4')
       );
-      
+
       if (videoFiles.length > 0) {
         const file = videoFiles[0]; // 첫 번째 파일만 사용
         const url = URL.createObjectURL(file);
-        
-        // 오버레이 비디오 교체
-        const overlayVideo = document.getElementById('overlayVideo');
-        if (overlayVideo) {
-          overlayVideo.src = url;
-          overlayVideo.load();
-          addLog('info', `오버레이 비디오 교체: ${file.name}`);
+
+        // 🔧 수정: window.pendingOverlayFile에 저장
+        window.pendingOverlayFile = {
+          url: url,
+          name: file.name
+        };
+
+        // 상태 표시 업데이트
+        const statusElement = document.getElementById('overlayFileStatus');
+        const applyBtn = document.getElementById('applyOverlayBtn');
+
+        if (statusElement) {
+          statusElement.textContent = `선택됨: ${file.name}`;
+          statusElement.style.color = '#4FC3F7';
         }
+
+        if (applyBtn) {
+          applyBtn.disabled = false;
+          applyBtn.style.background = 'linear-gradient(135deg, #4CAF50, #66BB6A)';
+          applyBtn.textContent = '오버레이 적용';
+        }
+
+        addLog('info', `오버레이 파일 선택: ${file.name}`);
       } else {
         addLog('error', '지원되지 않는 오버레이 파일 형식입니다');
       }
@@ -3580,25 +3587,29 @@ function playIntroVideo() {
     function changeLoopVideos(loop1Path, loop2Path) {
       const loop1Video = document.getElementById('loop1');
       const loop2Video = document.getElementById('loop2');
-      
+
       addLog('info', `루프 영상 교체 시작: ${loop1Path.split('/').pop()}, ${loop2Path.split('/').pop()}`);
-      
+
       // 현재 비디오 완전 정지 및 숨기기
       loop1Video.pause();
       loop2Video.pause();
       loop1Video.currentTime = 0;
       loop2Video.currentTime = 0;
-      
+
       // 서서히 페이드 아웃
       fadeOut(loop1Video);
       fadeOut(loop2Video);
-      
+
+      // 🔧 수정: muted 속성 추가 (autoplay 정책 준수)
+      loop1Video.muted = true;
+      loop2Video.muted = true;
+
       // 새 소스 설정
       const source1 = loop1Video.querySelector('source');
       const source2 = loop2Video.querySelector('source');
       source1.src = loop1Path;
       source2.src = loop2Path;
-      
+
       // 비디오 다시 로드
       loop1Video.load();
       loop2Video.load();
@@ -5071,37 +5082,38 @@ function applyOverlay() {
     
     // 로드 완료 후 처리
     overlayVideo.addEventListener('loadeddata', function onLoaded() {
-      
+
       // 이벤트 리스너 제거 (한 번만 실행)
       overlayVideo.removeEventListener('loadeddata', onLoaded);
-      
-      // 활성화 상태 확인 후 재생
-      if (overlayEnabled && overlayEnabled.checked) {
-        
-        // 페이드인 효과와 함께 재생
-        overlayVideo.currentTime = 0;
-        
-        overlayVideo.play().then(() => {
-          // 페이드인 효과
+
+      // 🔧 수정: 항상 재생 시도 (활성화 여부는 opacity로만 제어)
+      overlayVideo.currentTime = 0;
+
+      overlayVideo.play().then(() => {
+        console.log('✅ 오버레이 비디오 재생 성공');
+
+        // 활성화 상태에 따라 opacity 설정
+        if (overlayEnabled && overlayEnabled.checked) {
           overlayVideo.style.transition = `opacity ${CONFIG.TIMING.FADE_SLOW}ms ease`;
-          overlayVideo.style.opacity = '0.2';
-
+          overlayVideo.style.opacity = CONFIG.OPACITY.DEFAULT_OVERLAY;
           addLog('info', `오버레이 재생 시작: ${window.pendingOverlayFile.name}`);
-        }).catch(error => {
-          console.error('❌ 오버레이 재생 실패:', error);
-          addLog('error', `오버레이 재생 실패: ${error.message}`);
+        } else {
+          overlayVideo.style.opacity = '0';
+          addLog('info', '오버레이 파일 적용됨 (비활성화 상태 - 체크박스를 켜면 보입니다)');
+        }
+      }).catch(error => {
+        console.error('❌ 오버레이 재생 실패:', error);
+        addLog('error', `오버레이 재생 실패: ${error.message}`);
 
-          // 재생 실패해도 일단 적용된 것으로 처리
-          overlayVideo.style.opacity = '0.2';
-        });
-      } else {
-        overlayVideo.style.opacity = '0';
-        addLog('info', '오버레이 파일은 적용되었지만 비활성화 상태입니다');
-      }
-      
+        // 재생 실패 시에도 opacity 설정
+        if (overlayEnabled && overlayEnabled.checked) {
+          overlayVideo.style.opacity = CONFIG.OPACITY.DEFAULT_OVERLAY;
+        }
+      });
+
       // 상태 업데이트
       updateOverlayStatus(true);
-      
+
     }, { once: true }); // once: true로 한 번만 실행
     
     // 로드 에러 처리
