@@ -2503,6 +2503,233 @@
       if (DEBUG) console.log(...args);
     }
 
+
+    // ===== DOM 요소 캐싱 시스템 =====
+    const DOM = {
+      overlay: {},
+      intro: {},
+      loops: {},
+      audio: {},
+      ui: {},
+
+      init() {
+        // Overlay 요소들
+        this.overlay.video = document.getElementById('overlayVideo');
+        this.overlay.enabled = document.getElementById('overlayEnabled');
+        this.overlay.opacitySlider = document.getElementById('overlay-opacity-slider');
+        this.overlay.opacityValue = document.getElementById('overlay-opacity-value');
+        this.overlay.blendMode = document.getElementById('overlayBlendMode');
+        this.overlay.fileStatus = document.getElementById('overlayFileStatus');
+        this.overlay.applyBtn = document.getElementById('applyOverlayBtn');
+
+        // Intro 요소들
+        this.intro.video = document.getElementById('introVideo');
+        this.intro.enabled = document.getElementById('introEnabled');
+        this.intro.opacitySlider = document.getElementById('intro-opacity-slider');
+        this.intro.opacityValue = document.getElementById('intro-opacity-value');
+        this.intro.blendMode = document.getElementById('introBlendMode');
+        this.intro.fileStatus = document.getElementById('introFileStatus');
+        this.intro.applyBtn = document.getElementById('applyIntroBtn');
+
+        // 루프 비디오들
+        this.loops.loop1 = document.getElementById('loop1');
+        this.loops.loop2 = document.getElementById('loop2');
+
+        // 오디오 요소들
+        this.audio.musicPlayer = document.getElementById('musicPlayer');
+
+        // UI 요소들
+        this.ui.controlCenter = document.getElementById('controlCenter');
+        this.ui.playlistDisplay = document.getElementById('playlistDisplay');
+        this.ui.logDisplay = document.getElementById('logDisplay');
+
+      }
+    };
+
+    // ===== 통합 미디어 제어 함수들 (Overlay/Intro 통합) =====
+
+    // 1. adjustMediaOpacity - 투명도 조절 통합 함수
+    function adjustMediaOpacity(mediaType, opacity) {
+
+      const video = DOM[mediaType].video;
+      const enabled = DOM[mediaType].enabled;
+
+      if (!video) { console.error(`❌ ${mediaType} 비디오 요소를 찾을 수 없습니다`); return; }
+
+      const normalizedOpacity = opacity / 100;
+
+      // overlay는 활성화 상태 체크, intro는 항상 적용
+      if (mediaType === 'overlay' && enabled && !enabled.checked) {
+        video.style.opacity = '0';
+      } else {
+        video.style.transition = `opacity ${CONFIG.TIMING.FADE_FAST}ms ease`; video.style.opacity = normalizedOpacity;
+      }
+    }
+
+    // 2. toggleMedia - 미디어 활성화/비활성화 통합 함수
+    function toggleMedia(mediaType) {
+      const video = DOM[mediaType].video;
+      const enabled = DOM[mediaType].enabled;
+      const opacitySlider = DOM[mediaType].opacitySlider;
+
+      if (!video || !enabled) return;
+
+      const emoji = mediaType === 'overlay' ? '🎭' : '🎬';
+
+      if (enabled.checked) {
+        // 활성화
+        const opacityValue = opacitySlider ? parseInt(opacitySlider.value) : 20;
+
+        video.style.transition = 'opacity 1s ease';
+        adjustMediaOpacity(mediaType, opacityValue);
+
+        if (video.paused && video.src) {
+          video.currentTime = 0;
+          video.play().catch(error => {
+            console.error(`${mediaType} 재생 실패:`, error);
+          });
+        }
+
+        if (isControlCenterMode) {
+          addLog('info', `${emoji} ${mediaType} 활성화 (투명도: ${opacityValue}%)`);
+        }
+      } else {
+        // 비활성화
+        video.style.transition = `opacity ${CONFIG.TIMING.FADE_SLOW}ms ease`;
+        video.style.opacity = '0';
+
+        // intro는 재생 중이면 페이드아웃 후 정지
+        if (mediaType === 'intro' && !video.paused) {
+          setTimeout(() => {
+            video.pause();
+            video.currentTime = 0;
+          }, 1000);
+        }
+
+        if (isControlCenterMode) {
+          addLog('info', `${emoji} ${mediaType} 비활성화`);
+        }
+      }
+    }
+
+    // 3. previewMediaOpacity - 투명도 미리보기 통합 함수
+    function previewMediaOpacity(mediaType, opacity) {
+
+      const valueElement = DOM[mediaType].opacityValue;
+      const emoji = mediaType === 'overlay' ? '🎭' : '🎬';
+
+      // 값 표시 업데이트
+      if (valueElement) {
+        valueElement.textContent = `${opacity}%`;
+        valueElement.style.color = CONFIG.COLORS.PRIMARY;
+      } else {
+        console.error(`❌ ${mediaType}-opacity-value 요소를 찾을 수 없습니다`);
+      }
+
+      // 실시간 투명도 적용
+      adjustMediaOpacity(mediaType, opacity);
+
+      // 로그 기록
+      if (isControlCenterMode) {
+        addLog('info', `${emoji} ${mediaType} 투명도: ${opacity}%`);
+      }
+
+    }
+
+    // 4. changeMediaBlendMode - 블렌드 모드 변경 통합 함수
+    function changeMediaBlendMode(mediaType, blendMode) {
+      const video = DOM[mediaType].video;
+      const emoji = mediaType === 'overlay' ? '🎭' : '🎬';
+
+      if (!video) return;
+
+      video.style.mixBlendMode = blendMode;
+
+      if (isControlCenterMode) {
+        addLog('info', `${mediaType} 블렌드 모드: ${blendMode}`);
+      }
+    }
+
+    // 5. createOpacityHandler - 투명도 변경 핸들러 생성 함수
+    function createOpacityHandler(mediaType) {
+      return function(e) {
+        const opacity = parseInt(e.target.value);
+        previewMediaOpacity(mediaType, opacity);
+      };
+    }
+
+    // 6. createBlendModeHandler - 블렌드 모드 변경 핸들러 생성 함수
+    function createBlendModeHandler(mediaType) {
+      return function(e) {
+        changeMediaBlendMode(mediaType, e.target.value);
+      };
+    }
+
+    // 7. setupMediaControls - 미디어 컨트롤 설정 통합 함수
+    function setupMediaControls(mediaType) {
+      const emoji = mediaType === 'overlay' ? '🎭' : '🎬';
+
+      const opacitySlider = DOM[mediaType].opacitySlider;
+      const blendMode = DOM[mediaType].blendMode;
+      const enabled = DOM[mediaType].enabled;
+
+      // 투명도 슬라이더 이벤트
+      if (opacitySlider) {
+        const opacityHandler = (e) => {
+          const opacity = parseInt(e.target.value);
+            previewMediaOpacity(mediaType, opacity);
+        };
+
+        // 기존 핸들러가 있으면 제거하기 위해 데이터 속성에 저장
+        if (opacitySlider._opacityHandler) {
+          opacitySlider.removeEventListener('input', opacitySlider._opacityHandler);
+        }
+        opacitySlider._opacityHandler = opacityHandler;
+        opacitySlider.addEventListener('input', opacityHandler);
+
+
+        // 초기값 설정
+        const initialOpacity = parseInt(opacitySlider.value);
+        previewMediaOpacity(mediaType, initialOpacity);
+      } else {
+        console.error('❌ 투명도 슬라이더를 찾을 수 없습니다');
+      }
+
+      // 블렌드 모드 이벤트
+      if (blendMode) {
+        const blendModeHandler = (e) => {
+            changeMediaBlendMode(mediaType, e.target.value);
+        };
+
+        if (blendMode._blendModeHandler) {
+          blendMode.removeEventListener('change', blendMode._blendModeHandler);
+        }
+        blendMode._blendModeHandler = blendModeHandler;
+        blendMode.addEventListener('change', blendModeHandler);
+
+
+        // 초기값 설정
+        changeMediaBlendMode(mediaType, blendMode.value);
+      } else {
+        console.error('❌ 블렌드 모드 셀렉트를 찾을 수 없습니다');
+      }
+
+      // 활성화 토글 이벤트
+      if (enabled) {
+        const toggleHandler = () => toggleMedia(mediaType);
+
+        if (enabled._toggleHandler) {
+          enabled.removeEventListener('change', enabled._toggleHandler);
+        }
+        enabled._toggleHandler = toggleHandler;
+        enabled.addEventListener('change', toggleHandler);
+
+      } else {
+        console.error('❌ 활성화 체크박스를 찾을 수 없습니다');
+      }
+
+    }
+
     // 🎬 인트로 URL 최우선 설정
     window.introVideoUrl = CONFIG.PATHS.DEFAULT_INTRO;
 
@@ -2576,71 +2803,6 @@
         setupUploadZone(introZone, handleIntroFiles);
       }
     }
-    // 오버레이 컨트롤 설정 함수 (별도 분리)
-function setupOverlayControls() {
-  debugLog('🎭 오버레이 컨트롤 설정 시작...');
-  
-  const overlayOpacitySlider = document.getElementById('overlay-opacity-slider');
-  const overlayBlendMode = document.getElementById('overlayBlendMode');
-  const overlayEnabled = document.getElementById('overlayEnabled');
-  
-  debugLog('슬라이더 요소:', overlayOpacitySlider);
-  debugLog('블렌드 모드:', overlayBlendMode);
-  debugLog('활성화 체크박스:', overlayEnabled);
-  
-  // 오버레이 투명도 슬라이더 이벤트
-  if (overlayOpacitySlider) {
-    // 기존 이벤트 리스너 제거 (중복 방지)
-    overlayOpacitySlider.removeEventListener('input', handleOpacityChange);
-    
-    // 새 이벤트 리스너 추가
-    overlayOpacitySlider.addEventListener('input', handleOpacityChange);
-    
-    debugLog('✅ 투명도 슬라이더 이벤트 연결됨');
-    
-    // 초기값 설정
-    const initialOpacity = parseInt(overlayOpacitySlider.value);
-    debugLog('초기 투명도:', initialOpacity);
-    previewOverlayOpacity(initialOpacity);
-  } else {
-    console.error('❌ 투명도 슬라이더를 찾을 수 없습니다');
-  }
-
-  // 오버레이 블렌드 모드 이벤트
-  if (overlayBlendMode) {
-    overlayBlendMode.removeEventListener('change', handleBlendModeChange);
-    overlayBlendMode.addEventListener('change', handleBlendModeChange);
-    
-    debugLog('✅ 블렌드 모드 이벤트 연결됨');
-    
-    // 초기값 설정
-    changeOverlayBlendMode(overlayBlendMode.value);
-  } else {
-    console.error('❌ 블렌드 모드 셀렉트를 찾을 수 없습니다');
-  }
-
-  // 오버레이 활성화 토글 이벤트
-  if (overlayEnabled) {
-    overlayEnabled.removeEventListener('change', toggleOverlay);
-    overlayEnabled.addEventListener('change', toggleOverlay);
-    
-    debugLog('✅ 활성화 체크박스 이벤트 연결됨');
-  } else {
-    console.error('❌ 활성화 체크박스를 찾을 수 없습니다');
-  }
-}
-
-// 이벤트 핸들러 함수들 (분리해서 제거/추가가 쉽도록)
-function handleOpacityChange(e) {
-  const opacity = parseInt(e.target.value);
-  debugLog('🎚️ 슬라이더 값 변경:', opacity);
-  previewOverlayOpacity(opacity);
-}
-
-function handleBlendModeChange(e) {
-  debugLog('🎨 블렌드 모드 변경:', e.target.value);
-  changeOverlayBlendMode(e.target.value);
-}
 
     // 업로드 존 설정 함수
     function setupUploadZone(zone, handler) {
@@ -2810,7 +2972,6 @@ function handleBlendModeChange(e) {
       }
       
       addLog('info', `인트로 적용 완료: ${window.pendingIntroFile.name}`);
-      debugLog('인트로 URL 저장됨:', window.introVideoUrl);
       
       // 임시 파일 정보 제거
       window.pendingIntroFile = null;
@@ -2841,17 +3002,14 @@ function playIntroVideo() {
         if (backgroundType === 'video' && loop1 && loop2) {
             // 비디오 모드일 때만 메인 루프 재생
             playLoop(loop1, loop2);
-            debugLog('✅ 비디오 모드 - 메인 루프 재생 시작됨');
         } else {
             // 이미지 모드일 때는 메인 루프 재생 안함
-            debugLog('🖼️ 이미지 모드 - 메인 루프 재생 생략');
         }
     } catch (error) {
         // 에러 발생 시 기본적으로 루프 재생
         console.error('배경 타입 확인 중 오류:', error);
         if (loop1 && loop2) {
             playLoop(loop1, loop2);
-            debugLog('✅ 기본값으로 메인 루프 재생');
         }
     }
 
@@ -2866,7 +3024,7 @@ function playIntroVideo() {
         introVideo.play().then(() => {
             introVideo.style.opacity = '1';
             addLog('info', '🎬 인트로 재생 시작 (메인 영상과 오버레이)');
-            
+
             // 인트로 영상이 끝나면 페이드 아웃
             introVideo.onended = () => {
                 introVideo.style.opacity = '0';
@@ -3054,42 +3212,25 @@ function playIntroVideo() {
     function fadeInAudio(audioElement, duration = CONFIG.TIMING.AUDIO_FADE) {
       return new Promise((resolve) => {
         audioElement.volume = 0;
-        const targetVolume = audioManager.baseVolume;
-        const steps = 20;
-        const stepDuration = duration / steps;
-        const volumeStep = targetVolume / steps;
-        
+        const target = audioManager.baseVolume;
+        const steps = 20, stepDuration = duration / steps, volumeStep = target / steps;
         let currentStep = 0;
         const fadeInterval = setInterval(() => {
           currentStep++;
-          audioElement.volume = Math.min(volumeStep * currentStep, targetVolume);
-          
-          if (currentStep >= steps) {
-            clearInterval(fadeInterval);
-            audioElement.volume = targetVolume;
-            resolve();
-          }
+          audioElement.volume = Math.max(0, Math.min(1, Math.min(volumeStep * currentStep, target)));
+          if (currentStep >= steps) { clearInterval(fadeInterval); audioElement.volume = target; resolve(); }
         }, stepDuration);
       });
     }
-    
+
     function fadeOutAudio(audioElement, duration = CONFIG.TIMING.AUDIO_FADE) {
       return new Promise((resolve) => {
-        const startVolume = audioElement.volume;
-        const steps = 20;
-        const stepDuration = duration / steps;
-        const volumeStep = startVolume / steps;
-        
+        const startVolume = audioElement.volume, steps = 20, stepDuration = duration / steps, volumeStep = startVolume / steps;
         let currentStep = 0;
         const fadeInterval = setInterval(() => {
           currentStep++;
-          audioElement.volume = Math.max(startVolume - (volumeStep * currentStep), 0);
-          
-          if (currentStep >= steps || audioElement.volume <= 0) {
-            clearInterval(fadeInterval);
-            audioElement.volume = 0;
-            resolve();
-          }
+          audioElement.volume = Math.max(0, startVolume - (volumeStep * currentStep));
+          if (currentStep >= steps || audioElement.volume <= 0) { clearInterval(fadeInterval); audioElement.volume = 0; resolve(); }
         }, stepDuration);
       });
     }
@@ -3212,7 +3353,6 @@ function playIntroVideo() {
       
       const mode = panelOpacity < 0.1 ? '닌자' : panelOpacity < 0.3 ? '고스트' : '커스텀';
       addLog('info', `👻 스텔스 모드 적용: ${mode} (패널: ${Math.round(panelOpacity*100)}%, 버튼: ${Math.round(buttonOpacity*100)}%, 블러: ${blurAmount}px)`);
-      debugLog(`🥷 스텔스 모드 활성화: 패널 ${Math.round(panelOpacity*100)}%, 버튼 ${Math.round(buttonOpacity*100)}%, 블러 ${blurAmount}px`);
     }
     
     // 스텔스 모드 프리셋 적용 함수
@@ -3288,7 +3428,6 @@ function playIntroVideo() {
       
       stealthSettings.isActive = false;
       addLog('info', '🔄 스텔스 모드 해제');
-      debugLog('🔄 스텔스 모드 해제됨');
     }
     
     // 스텔스 슬라이더 표시값 업데이트
@@ -3315,25 +3454,19 @@ function playIntroVideo() {
     
     // 컨트롤 센터 모드 토글
     function toggleControlCenter() {
-      debugLog('🎛️ toggleControlCenter 함수 호출됨');
       
       const controlCenter = document.getElementById('controlCenter');
       const logo1 = document.getElementById('logo1');
       const logo2 = document.getElementById('logo2');
-      
-      if (!controlCenter) {
-        console.error('❌ controlCenter 요소를 찾을 수 없습니다');
-        return;
-      }
+
+      if (!controlCenter) { console.error('❌ controlCenter 요소를 찾을 수 없습니다'); return; }
       
       isControlCenterMode = !isControlCenterMode;
-      debugLog('🔄 컨트롤 센터 모드:', isControlCenterMode ? 'ON' : 'OFF');
       
       if (isControlCenterMode) {
         if (logo1) logo1.classList.add('test-mode');
         if (logo2) logo2.classList.add('test-mode');
         controlCenter.classList.add('show');
-        debugLog('✅ 컨트롤 센터 활성화');
         addLog('info', '🎛️ 컨트롤 센터 활성화');
         
         // 드래그앤드롭 설정
@@ -3355,7 +3488,6 @@ function playIntroVideo() {
           setTimeout(() => {
             updatePlaylistSelector();
             updateControlCenterPlaylist();
-            debugLog('🔄 강제 플레이리스트 UI 업데이트 완료');
           }, 100);
         }, 50);
         
@@ -3372,7 +3504,6 @@ function playIntroVideo() {
         if (logo1) logo1.classList.remove('test-mode');
         if (logo2) logo2.classList.remove('test-mode');
         controlCenter.classList.remove('show');
-        debugLog('✅ 방송 모드 활성화');
         addLog('info', '📺 방송 모드 활성화');
         
         // 주기적 업데이트 중지
@@ -3551,7 +3682,6 @@ function playIntroVideo() {
       fadeOut(loop2Video);
       
       if (imageUrl) {
-        debugLog('🖼️ 배경 이미지 변경:', imageUrl);
         
         // 이미지 로딩 확인을 위한 프리로드
         const img = new Image();
@@ -3560,7 +3690,6 @@ function playIntroVideo() {
           document.body.style.backgroundSize = 'cover';
           document.body.style.backgroundPosition = 'center';
           document.body.style.backgroundRepeat = 'no-repeat';
-          debugLog('✅ 배경 이미지 로드 완료');
         };
         img.onerror = () => {
           console.error('❌ 배경 이미지 로드 실패');
@@ -3585,19 +3714,16 @@ function playIntroVideo() {
       input.accept = '.js,.json';
       
       addLog('info', '플레이리스트 파일 선택 대화상자 열기...');
-      debugLog('📂 플레이리스트 파일 선택 시작');
       
       input.addEventListener('change', (e) => {
         const files = Array.from(e.target.files);
         
         if (files.length === 0) {
           addLog('warning', '파일이 선택되지 않았습니다');
-          debugLog('❌ 파일 선택 취소됨');
           return;
         }
         
         addLog('info', `${files.length}개 파일 로드 시작`);
-        debugLog('📁 선택된 파일들:', files.map(f => `${f.name} (${f.size} bytes)`));
         
         let loadedCount = 0;
         let totalFiles = files.length;
@@ -3605,14 +3731,12 @@ function playIntroVideo() {
         
         files.forEach((file, index) => {
           addLog('info', `파일 처리 중: ${file.name}`);
-          debugLog(`📄 파일 처리 시작: ${file.name} (${file.size} bytes, ${file.type})`);
           
           const reader = new FileReader();
           
           reader.onload = (event) => {
             try {
               const content = event.target.result;
-              debugLog(`📖 파일 내용 읽기 완료: ${file.name}`);
               
               let playlist;
               let extractedTracks = null;
@@ -3646,11 +3770,9 @@ function playIntroVideo() {
                   
                   if (result && Array.isArray(result)) {
                     extractedTracks = result;
-                    debugLog('✅ Function 방식 성공:', extractedTracks.length + '곡');
                   }
                   
                 } catch (funcError) {
-                  debugLog('❌ Function 방식 실패:', funcError.message);
                 }
                 
                 if (extractedTracks && Array.isArray(extractedTracks)) {
@@ -3726,7 +3848,6 @@ function playIntroVideo() {
 
     // 플레이리스트 초기화 함수
     function resetPlaylists() {
-      debugLog('🔄 플레이리스트 초기화 시작');
       
       broadcastPlaylist = [];
       musicTracks = [];
@@ -3863,7 +3984,6 @@ function playIntroVideo() {
           
           const checkbox = playlistItem.querySelector('input[type="checkbox"]');
           checkbox.addEventListener('change', (e) => {
-            debugLog(`📋 체크박스 변경: ${playlist.name} = ${e.target.checked}`);
           });
         });
       } else {
@@ -4009,13 +4129,13 @@ function playIntroVideo() {
       setBaseVolume(volume) {
         this.baseVolume = Math.max(0.1, Math.min(0.8, volume));
         if (musicPlayer) {
-          musicPlayer.volume = this.baseVolume;
+          musicPlayer.volume = Math.max(0, Math.min(1, this.baseVolume));
         }
       },
-      
+
       onNewTrack() {
         if (musicPlayer) {
-          musicPlayer.volume = this.baseVolume;
+          musicPlayer.volume = Math.max(0, Math.min(1, this.baseVolume));
         }
       }
     };
@@ -4025,7 +4145,6 @@ function playIntroVideo() {
       try {
         if (typeof pop2Playlist !== 'undefined' && Array.isArray(pop2Playlist)) {
           musicTracks = [...pop2Playlist];
-          debugLog('✅ a-pop-1-playlist.js 플레이리스트 로드됨:', pop2Playlist.length + '곡');
           
           loadedPlaylists[0] = {
             id: 'default',
@@ -4045,7 +4164,6 @@ function playIntroVideo() {
           // 🆕 자동으로 적용
           setTimeout(() => {
             applySelectedPlaylists();
-            debugLog('🎵 기본 플레이리스트 자동 적용 완료');
           }, 100);
         }
       }, 50);
@@ -4102,7 +4220,6 @@ function playIntroVideo() {
         const bufferLength = analyser.frequencyBinCount;
         dataArray = new Uint8Array(bufferLength);
         
-        debugLog('🎛️ Audio Context + EQ + Compressor 초기화 완료');
       } catch (error) {
         console.error('Audio Context 초기화 실패:', error);
       }
@@ -4287,7 +4404,7 @@ function playIntroVideo() {
       }
 
       const volume = effectVolumes[effectName] || (effectName === 'rain' ? 0.95 : 0.5);
-      effectAudio.volume = volume;
+      effectAudio.volume = Math.max(0, Math.min(1, volume));
       
       effectAudio.play().then(() => {
         currentEffect = effectName;
@@ -4310,7 +4427,6 @@ function playIntroVideo() {
       
       if (!currentPlaylist || currentPlaylist.length === 0) {
         if (musicTracks && musicTracks.length > 0) {
-          debugLog('✅ musicTracks 사용 가능:', musicTracks.length + '곡');
         } else if (broadcastPlaylist && broadcastPlaylist.length > 0) {
           musicTracks = [...broadcastPlaylist];
           if (isShuffleMode) {
@@ -4409,7 +4525,7 @@ function playIntroVideo() {
       
       setTimeout(() => {
         musicPlayer.src = track.src;
-        musicPlayer.volume = audioManager.baseVolume;
+        musicPlayer.volume = Math.max(0, Math.min(1, audioManager.baseVolume));
         currentTrackIndex = index;
         
         if (audioManager) {
@@ -4675,7 +4791,7 @@ function playIntroVideo() {
           if (currentEffect === effect) {
             const effectAudio = document.getElementById(`effect-${effect}`);
             if (effectAudio) {
-              effectAudio.volume = newVolume;
+              effectAudio.volume = Math.max(0, Math.min(1, newVolume));
             }
           }
           
@@ -4767,7 +4883,7 @@ function playIntroVideo() {
       const nextTrack = playlist[newIndex];
       if (nextTrack) {
         musicPlayer.src = nextTrack.src;
-        musicPlayer.volume = audioManager.baseVolume;
+        musicPlayer.volume = Math.max(0, Math.min(1, audioManager.baseVolume));
         
         if (isControlCenterMode) {
           updateControlCenterPlaylist();
@@ -4789,7 +4905,6 @@ function playIntroVideo() {
       
       if (backgroundType === 'video') {
         // 비디오 모드일 때만 루프 영상 재생
-        debugLog('🎬 비디오 모드 - 루프 영상 재생');
         playLoop(loop1, loop2);
       } 
             if (overlayVideo) {
@@ -4799,7 +4914,6 @@ function playIntroVideo() {
       }
       else {
         // 이미지 모드일 때는 루프 영상 숨김
-        debugLog('🖼️ 이미지 모드 - 루프 영상 숨김');
         fadeOut(loop1);
         fadeOut(loop2);
         loop1.pause();
@@ -4810,22 +4924,14 @@ function playIntroVideo() {
       titleDisplay.classList.add('show');
 
         // 🆕 인트로 재생 로직 추가 - 개선된 버전
-      debugLog('🎬 인트로 재생 체크 시작...');
-      debugLog('introVideoUrl:', window.introVideoUrl);
-      debugLog('introEnabled 체크박스:', document.getElementById('introEnabled')?.checked);
 
            // 🆕 인트로 재생 로직 추가
     const introEnabledCheckbox = document.getElementById('introEnabled');
       if (window.introVideoUrl && (!introEnabledCheckbox || introEnabledCheckbox.checked)) {
-        debugLog('🎬 인트로 재생 조건 만족! 1초 후 재생 시작...');
         setTimeout(() => {
           playIntroVideo();
         }, 1000);
       } else {
-        debugLog('🎬 인트로 재생 조건 불만족');
-        debugLog('- introVideoUrl:', window.introVideoUrl);
-        debugLog('- checkbox exists:', !!introEnabledCheckbox);
-        debugLog('- checkbox checked:', introEnabledCheckbox?.checked);
       }
       
       if (musicTracks && musicTracks.length > 0) {
@@ -4938,7 +5044,6 @@ function applyOverlay() {
     return;
   }
   
-  debugLog('🎭 오버레이 적용 시작:', window.pendingOverlayFile.name);
   
   try {
     // 기존 비디오 완전 정지
@@ -4966,34 +5071,30 @@ function applyOverlay() {
     
     // 로드 완료 후 처리
     overlayVideo.addEventListener('loadeddata', function onLoaded() {
-      debugLog('✅ 오버레이 비디오 로드 완료');
       
       // 이벤트 리스너 제거 (한 번만 실행)
       overlayVideo.removeEventListener('loadeddata', onLoaded);
       
       // 활성화 상태 확인 후 재생
       if (overlayEnabled && overlayEnabled.checked) {
-        debugLog('▶️ 오버레이 재생 시작...');
         
         // 페이드인 효과와 함께 재생
         overlayVideo.currentTime = 0;
         
         overlayVideo.play().then(() => {
-          debugLog('✅ 오버레이 재생 성공');
           // 페이드인 효과
-          overlayVideo.style.transition = 'opacity 1s ease';
-          overlayVideo.style.opacity = '0.2'; // 기본 오버레이 투명도
-          
+          overlayVideo.style.transition = `opacity ${CONFIG.TIMING.FADE_SLOW}ms ease`;
+          overlayVideo.style.opacity = '0.2';
+
           addLog('info', `오버레이 재생 시작: ${window.pendingOverlayFile.name}`);
         }).catch(error => {
           console.error('❌ 오버레이 재생 실패:', error);
           addLog('error', `오버레이 재생 실패: ${error.message}`);
-          
+
           // 재생 실패해도 일단 적용된 것으로 처리
           overlayVideo.style.opacity = '0.2';
         });
       } else {
-        debugLog('⏸️ 오버레이 비활성화됨');
         overlayVideo.style.opacity = '0';
         addLog('info', '오버레이 파일은 적용되었지만 비활성화 상태입니다');
       }
@@ -5059,259 +5160,6 @@ function updateOverlayStatus(applied = false) {
   }
 }
 
-// 오버레이 투명도 조절 함수 - 개선된 버전
-function adjustOverlayOpacity(opacity) {
-  debugLog(`🔧 adjustOverlayOpacity 시작: ${opacity}%`);
-  
-  const overlayVideo = document.getElementById('overlayVideo');
-  const overlayEnabled = document.getElementById('overlayEnabled');
-  
-  debugLog('오버레이 비디오:', overlayVideo);
-  debugLog('활성화 상태:', overlayEnabled?.checked);
-  
-  if (!overlayVideo) {
-    console.error('❌ 오버레이 비디오 요소를 찾을 수 없습니다');
-    return;
-  }
-  
-  // 0-100 범위를 0-1 범위로 변환
-  const normalizedOpacity = opacity / 100;
-  debugLog(`📊 정규화된 투명도: ${normalizedOpacity}`);
-  
-  // 활성화 상태일 때만 투명도 적용
-  if (overlayEnabled && overlayEnabled.checked) {
-    debugLog('✅ 오버레이 활성화됨 - 투명도 적용');
-    overlayVideo.style.transition = 'opacity 0.3s ease';
-    overlayVideo.style.opacity = normalizedOpacity;
-    
-    debugLog(`🎭 오버레이 투명도 적용됨: ${opacity}% (${normalizedOpacity})`);
-    debugLog('현재 스타일 opacity:', overlayVideo.style.opacity);
-  } else {
-    debugLog('❌ 오버레이 비활성화됨 - 완전 투명');
-    overlayVideo.style.opacity = '0';
-  }
-}
-
-// 오버레이 블렌드 모드 변경 함수
-function changeOverlayBlendMode(blendMode) {
-  const overlayVideo = document.getElementById('overlayVideo');
-  
-  if (!overlayVideo) return;
-  
-  overlayVideo.style.mixBlendMode = blendMode;
-  debugLog(`🎭 오버레이 블렌드 모드: ${blendMode}`);
-  
-  if (isControlCenterMode) {
-    addLog('info', `오버레이 블렌드 모드: ${blendMode}`);
-  }
-}
-
-// 실시간 투명도 미리보기 함수 - 개선된 버전
-function previewOverlayOpacity(opacity) {
-  debugLog(`🎚️ previewOverlayOpacity 호출됨: ${opacity}%`);
-  
-  const overlayVideo = document.getElementById('overlayVideo');
-  const valueElement = document.getElementById('overlay-opacity-value');
-  
-  debugLog('오버레이 비디오 요소:', overlayVideo);
-  debugLog('값 표시 요소:', valueElement);
-  
-  // 값 표시 업데이트
-  if (valueElement) {
-    valueElement.textContent = `${opacity}%`;
-    valueElement.style.color = '#4FC3F7'; // 값이 변경되었음을 시각적으로 표시
-    debugLog(`✅ 값 표시 업데이트: ${opacity}%`);
-  } else {
-    console.error('❌ overlay-opacity-value 요소를 찾을 수 없습니다');
-  }
-  
-  // 실시간 투명도 적용
-  adjustOverlayOpacity(opacity);
-  
-  // 모든 변경사항을 로그에 기록
-  if (isControlCenterMode) {
-    addLog('info', `🎭 오버레이 투명도: ${opacity}%`);
-  }
-  
-  debugLog(`🎭 투명도 적용 완료: ${opacity}%`);
-}
-
-// 오버레이 활성화/비활성화 토글 함수 - 투명도 슬라이더 반영
-function toggleOverlay() {
-  const overlayVideo = document.getElementById('overlayVideo');
-  const overlayEnabled = document.getElementById('overlayEnabled');
-  const opacitySlider = document.getElementById('overlay-opacity-slider');
-  
-  if (!overlayVideo) return;
-  
-  if (overlayEnabled && overlayEnabled.checked) {
-    // 활성화 - 슬라이더 값에 따른 투명도 적용
-    debugLog('🎭 오버레이 활성화');
-    const opacityValue = opacitySlider ? parseInt(opacitySlider.value) : 20;
-    
-    overlayVideo.style.transition = 'opacity 1s ease';
-    adjustOverlayOpacity(opacityValue);
-    
-    if (overlayVideo.paused && overlayVideo.src) {
-      overlayVideo.currentTime = 0;
-      overlayVideo.play().catch(error => {
-        console.error('오버레이 재생 실패:', error);
-      });
-    }
-    
-    if (isControlCenterMode) {
-      addLog('info', `🎭 오버레이 활성화 (투명도: ${opacityValue}%)`);
-    }
-  } else {
-    // 비활성화
-    debugLog('🎭 오버레이 비활성화');
-    overlayVideo.style.transition = 'opacity 1s ease';
-    overlayVideo.style.opacity = '0';
-    
-    if (isControlCenterMode) {
-      addLog('info', '🎭 오버레이 비활성화');
-    }
-  }
-}
-
-// 인트로 컨트롤 설정 함수 - 오버레이와 완전히 동일한 방식
-function setupIntroControls() {
-  const opacitySlider = document.getElementById('intro-opacity-slider');
-  const opacityValue = document.getElementById('intro-opacity-value');
-  const blendModeSelect = document.getElementById('introBlendMode');
-  const enabledCheckbox = document.getElementById('introEnabled');
-  
-  debugLog('🎬 인트로 컨트롤 설정 시작...');
-  
-  // 투명도 슬라이더 (오버레이와 동일한 방식)
-  if (opacitySlider && opacityValue) {
-    // 기존 이벤트 리스너 제거
-    opacitySlider.removeEventListener('input', handleIntroOpacityChange);
-    
-    // 새 이벤트 리스너 추가
-    opacitySlider.addEventListener('input', handleIntroOpacityChange);
-    
-    // 초기값 설정
-    const initialOpacity = parseInt(opacitySlider.value);
-    opacityValue.textContent = `${initialOpacity}%`;
-    
-    debugLog('✅ 인트로 투명도 슬라이더 연결됨:', initialOpacity + '%');
-  }
-  
-  // 블렌드 모드 선택 (오버레이와 동일한 방식)
-  if (blendModeSelect) {
-    blendModeSelect.removeEventListener('change', handleIntroBlendModeChange);
-    blendModeSelect.addEventListener('change', handleIntroBlendModeChange);
-    
-    // 초기값 설정
-    changeIntroBlendMode(blendModeSelect.value);
-    
-    debugLog('✅ 인트로 블렌드 모드 연결됨:', blendModeSelect.value);
-  }
-  
-  // 활성화 체크박스
-  if (enabledCheckbox) {
-    enabledCheckbox.removeEventListener('change', toggleIntro);
-    enabledCheckbox.addEventListener('change', toggleIntro);
-    
-    debugLog('✅ 인트로 활성화 체크박스 연결됨');
-  }
-  
-  debugLog('🎬 인트로 컨트롤 설정 완료');
-}
-
-// 인트로 투명도 변경 핸들러 (오버레이와 동일)
-function handleIntroOpacityChange(e) {
-  const opacity = parseInt(e.target.value);
-  debugLog('🎚️ 인트로 투명도 변경:', opacity);
-  previewIntroOpacity(opacity);
-}
-
-// 인트로 블렌드 모드 변경 핸들러 (오버레이와 동일)
-function handleIntroBlendModeChange(e) {
-  debugLog('🎨 인트로 블렌드 모드 변경:', e.target.value);
-  changeIntroBlendMode(e.target.value);
-}
-
-// 인트로 투명도 실시간 미리보기 (오버레이와 동일한 방식)
-function previewIntroOpacity(opacity) {
-  debugLog(`🎬 인트로 투명도 미리보기: ${opacity}%`);
-  
-  const introVideo = document.getElementById('introVideo');
-  const valueElement = document.getElementById('intro-opacity-value');
-  
-  // 값 표시 업데이트
-  if (valueElement) {
-    valueElement.textContent = `${opacity}%`;
-    valueElement.style.color = '#4FC3F7';
-  }
-  
-  // 실시간 투명도 적용 (재생 중일 때만)
-  adjustIntroOpacity(opacity);
-  
-  if (isControlCenterMode) {
-    addLog('info', `🎬 인트로 투명도: ${opacity}%`);
-  }
-}
-
-// 인트로 투명도 조절 (오버레이와 동일한 방식)
-function adjustIntroOpacity(opacity) {
-  const introVideo = document.getElementById('introVideo');
-  const introEnabled = document.getElementById('introEnabled');
-  
-  if (!introVideo) return;
-  
-  const normalizedOpacity = opacity / 100;
-  
-  // 항상 투명도 적용 (테스트용)
-  introVideo.style.transition = 'opacity 0.3s ease';
-  introVideo.style.opacity = normalizedOpacity;
-  debugLog(`🎬 인트로 투명도 적용: ${opacity}% (${normalizedOpacity})`);
-}
-
-// 인트로 블렌드 모드 변경 (오버레이와 동일한 방식)
-function changeIntroBlendMode(blendMode) {
-  const introVideo = document.getElementById('introVideo');
-  
-  if (!introVideo) return;
-  
-  introVideo.style.mixBlendMode = blendMode;
-  debugLog(`🎬 인트로 블렌드 모드: ${blendMode}`);
-  
-  if (isControlCenterMode) {
-    addLog('info', `인트로 블렌드 모드: ${blendMode}`);
-  }
-}
-
-// 인트로 활성화/비활성화 토글 (오버레이와 동일한 방식)
-function toggleIntro() {
-  const introVideo = document.getElementById('introVideo');
-  const introEnabled = document.getElementById('introEnabled');
-  
-  if (!introVideo || !introEnabled) return;
-  
-  if (introEnabled.checked) {
-    debugLog('🎬 인트로 활성화');
-    if (isControlCenterMode) {
-      addLog('info', '🎬 인트로 활성화');
-    }
-  } else {
-    debugLog('🎬 인트로 비활성화');
-    // 재생 중이면 페이드아웃
-    if (!introVideo.paused) {
-      introVideo.style.transition = 'opacity 1s ease';
-      introVideo.style.opacity = '0';
-      setTimeout(() => {
-        introVideo.pause();
-        introVideo.currentTime = 0;
-      }, 1000);
-    }
-    
-    if (isControlCenterMode) {
-      addLog('info', '🎬 인트로 비활성화');
-    }
-  }
-}
 
    // 🔊 클릭 소리 재생 함수
     function playClickSound() {
@@ -5319,7 +5167,7 @@ function toggleIntro() {
         const clickSound = document.getElementById('clickSound');
         if (clickSound) {
           clickSound.currentTime = 0;
-          clickSound.volume = 0.3; // 적당한 볼륨
+          clickSound.volume = 0.3;
           clickSound.play().catch(e => debugLog('클릭 소리 재생 실패:', e));
         }
       } catch (error) {
@@ -5342,220 +5190,37 @@ function toggleIntro() {
     window.exportPreset = exportPreset;
     window.applyOverlay = applyOverlay;
     window.applyIntro = applyIntro;
-    window.toggleOverlay = toggleOverlay;
     window.updateOverlayStatus = updateOverlayStatus;
-    window.adjustOverlayOpacity = adjustOverlayOpacity;
-    window.changeOverlayBlendMode = changeOverlayBlendMode;
-    window.previewOverlayOpacity = previewOverlayOpacity;
-    window.setupOverlayControls = setupOverlayControls;
-    window.handleOpacityChange = handleOpacityChange;
-    window.handleBlendModeChange = handleBlendModeChange;
     
 
 
-    // 디버깅 함수 - HTML에 추가
-    // 콘솔에서 debugOverlay() testOverlay() hideOverlay() document.getElementById('overlayVideo').play() document.getElementById('overlayVideo').style.opacity = '0.3' 사용가능
+    // 간단한 디버깅 함수들
 window.debugOverlay = function() {
-  const overlayVideo = document.getElementById('overlayVideo');
-  debugLog('🔍 오버레이 디버깅 정보:');
-  debugLog('  비디오 요소:', overlayVideo);
-  debugLog('  비디오 src:', overlayVideo?.src);
-  debugLog('  비디오 readyState:', overlayVideo?.readyState);
-  debugLog('  비디오 paused:', overlayVideo?.paused);
-  debugLog('  비디오 opacity:', overlayVideo?.style.opacity);
-  debugLog('  pendingOverlayFile:', window.pendingOverlayFile);
-  debugLog('  currentOverlayFile:', window.currentOverlayFile);
-  
-  if (overlayVideo && overlayVideo.src) {
-    debugLog('🔄 강제 재생 시도...');
-    overlayVideo.play().then(() => {
-      debugLog('✅ 강제 재생 성공');
-    }).catch(error => {
-      console.error('❌ 강제 재생 실패:', error);
-    });
-  }
+  const v = document.getElementById('overlayVideo');
+  console.log('Overlay:', v?.src, 'ready:', v?.readyState, 'paused:', v?.paused);
+  if (v?.src) v.play().catch(e => console.error(e));
 };
-
-// 추가 디버깅 함수들
-
-window.testOverlay = function() {
-  const overlayVideo = document.getElementById('overlayVideo');
-  overlayVideo.style.opacity = '0.5';
-  overlayVideo.play();
-  debugLog('🧪 오버레이 테스트 재생');
-};
-
-// 투명도 테스트 함수들
-window.testOpacity = function(opacity = 50) {
-  const overlayVideo = document.getElementById('overlayVideo');
-  const slider = document.getElementById('overlay-opacity-slider');
-  
-  if (slider) slider.value = opacity;
-  adjustOverlayOpacity(opacity);
-  debugLog(`🎭 투명도 테스트: ${opacity}%`);
-};
-// 간단한 슬라이더 테스트
-window.testSlider = function() {
-  const slider = document.getElementById('overlay-opacity-slider');
-  if (slider) {
-    debugLog('🧪 슬라이더 테스트 시작...');
-    
-    // 값들을 순차적으로 변경
-    const values = [10, 30, 50, 70, 90];
-    let index = 0;
-    
-    const interval = setInterval(() => {
-      if (index < values.length) {
-        slider.value = values[index];
-        slider.dispatchEvent(new Event('input'));
-        debugLog(`📊 테스트 값: ${values[index]}%`);
-        index++;
-      } else {
-        clearInterval(interval);
-        debugLog('✅ 슬라이더 테스트 완료');
-      }
-    }, 1000);
-  } else {
-    console.error('❌ 슬라이더를 찾을 수 없습니다');
-  }
-};
-
-// 수동 투명도 설정
-window.setOverlayOpacity = function(opacity) {
-  const video = document.getElementById('overlayVideo');
-  const slider = document.getElementById('overlay-opacity-slider');
-  const valueDisplay = document.getElementById('overlay-opacity-value');
-  
-  if (video) {
-    video.style.opacity = opacity / 100;
-    debugLog(`🎭 수동 투명도 설정: ${opacity}%`);
-  }
-  
-  if (slider) {
-    slider.value = opacity;
-  }
-  
-  if (valueDisplay) {
-    valueDisplay.textContent = opacity + '%';
-  }
-  
-  if (typeof addLog === 'function') {
-    addLog('info', `수동 투명도 설정: ${opacity}%`);
-  }
-};
-
-
-window.fadeOverlay = function() {
-  let opacity = 0;
-  const interval = setInterval(() => {
-    adjustOverlayOpacity(opacity);
-    opacity += 5;
-    if (opacity > 100) {
-      clearInterval(interval);
-      debugLog('🎭 페이드 애니메이션 완료');
-    }
-  }, 100);
-  debugLog('🎭 페이드 애니메이션 시작');
-};
-
-
-window.hideOverlay = function() {
-  const overlayVideo = document.getElementById('overlayVideo');
-  overlayVideo.style.opacity = '0';
-  debugLog('👻 오버레이 숨김');
-};
-
-// HTML 요소 존재 확인 디버깅 함수
-window.checkOverlayElements = function() {
-  debugLog('🔍 오버레이 관련 HTML 요소 확인:');
-  
-  const slider = document.getElementById('overlay-opacity-slider');
-  const valueDisplay = document.getElementById('overlay-opacity-value');
-  const video = document.getElementById('overlayVideo');
-  const checkbox = document.getElementById('overlayEnabled');
-  const blend = document.getElementById('overlayBlendMode');
-  
-  debugLog('slider:', slider);
-  debugLog('valueDisplay:', valueDisplay);
-  debugLog('video:', video);
-  debugLog('checkbox:', checkbox);
-  debugLog('blend:', blend);
-  
-  if (slider) {
-    debugLog('slider value:', slider.value);
-    debugLog('slider min:', slider.min);
-    debugLog('slider max:', slider.max);
-    
-    // 수동으로 이벤트 테스트
-    debugLog('🧪 수동 이벤트 테스트 시작...');
-    slider.addEventListener('input', function(e) {
-      debugLog('✅ 슬라이더 이벤트 발생:', e.target.value);
-    });
-    
-    // 강제로 값 변경 테스트
-    slider.value = 50;
-    slider.dispatchEvent(new Event('input'));
-  }
-  
-  return {slider, valueDisplay, video, checkbox, blend};
-};
-
-// 강제로 오버레이 이벤트 연결
-window.forceConnectOverlayEvents = function() {
-  debugLog('🔧 강제 오버레이 이벤트 연결 시작...');
-
-  const slider = document.getElementById('overlay-opacity-slider');
-  const valueDisplay = document.getElementById('overlay-opacity-value');
-
-  if (slider) {
-    // 기존 이벤트 리스너 제거
-    slider.removeEventListener('input', handleSliderInput);
-    
-    // 새로운 이벤트 리스너 연결
-    slider.addEventListener('input', handleSliderInput);
-    
-    // 초기값 설정
-    slider.dispatchEvent(new Event('input'));
-    
-    debugLog('✅ 강제 이벤트 연결 완료');
-    return true;
-  } else {
-    console.error('❌ 슬라이더를 찾을 수 없습니다');
-    return false;
-  }
-};
-
-// 슬라이더 이벤트 핸들러를 별도의 함수로 분리
-function handleSliderInput(e) {
-  const opacity = parseInt(e.target.value);
-  const valueDisplay = document.getElementById('overlay-opacity-value');
-  const video = document.getElementById('overlayVideo');
-  const checkbox = document.getElementById('overlayEnabled');
-
-  if (valueDisplay) {
-    valueDisplay.textContent = opacity + '%';
-  }
-
-  if (video && checkbox && checkbox.checked) {
-    video.style.opacity = opacity / 100;
-  }
-}
+window.testOverlay = function() { const v = document.getElementById('overlayVideo'); v.style.opacity='0.5'; v.play(); };
+window.hideOverlay = function() { document.getElementById('overlayVideo').style.opacity='0'; };
 
   // DOM 로드 완료 후 초기화
 document.addEventListener('DOMContentLoaded', () => {
   // ✅ 한 번만 호출되도록 수정
   if (!window._initialSetupComplete) {
+    // DOM 캐싱 시스템 초기화 (최우선)
+    DOM.init();
+
     // 모든 초기화 함수를 여기에 모아서 호출합니다.
     loadExternalPlaylists();
     setupDragAndDrop();
     setupControlCenterEQControls();
     setupStealthControls();
     setupMasterVolumeControl();
-    forceConnectOverlayEvents();
-    setupIntroControls();
+
+    setupMediaControls('overlay');
+    setupMediaControls('intro');
 
     window._initialSetupComplete = true;
-    debugLog('초기 설정 완료');
   }
 
   if (isControlCenterMode) {
@@ -5563,7 +5228,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-    debugLog('Melony.j 좌우 분할 컨트롤 센터 준비 완료');
   </script>
 </body>
 </html>
