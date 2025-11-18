@@ -1,0 +1,106 @@
+/* ===== BASE STYLES ===== */
+/* 기본 리셋 및 변수 정의 */
+
+body {
+  margin: 0;
+  background-color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+  transition: background-image 0.5s ease-in-out;
+  scroll-behavior: auto;
+}
+
+/* 비디오 기본 스타일 */
+video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+}
+
+#overlayVideo {
+  z-index: 2;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.2;
+}
+
+#loop1, #loop2 {
+  z-index: 1;
+}
+
+#logo1, #logo2 {
+  z-index: 4;
+  pointer-events: none;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: none;
+  transition: opacity 0.5s ease;
+  mix-blend-mode: screen;
+  opacity: 0;
+  visibility: hidden;
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.3));
+}
+
+#logo1.test-mode, #logo2.test-mode {
+  animation: pulse-logo 2s infinite;
+  filter: hue-rotate(120deg) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.3));
+}
+
+/* 스크롤바 스타일링 */
+.test-panel::-webkit-scrollbar,
+.log-display::-webkit-scrollbar,
+.control-section::-webkit-scrollbar {
+  width: 6px;
+}
+
+.test-panel::-webkit-scrollbar-track,
+.log-display::-webkit-scrollbar-track,
+.control-section::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.test-panel::-webkit-scrollbar-thumb,
+.log-display::-webkit-scrollbar-thumb,
+.control-section::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.test-panel::-webkit-scrollbar-thumb:hover,
+.log-display::-webkit-scrollbar-thumb:hover,
+.control-section::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+#playlistDisplay::-webkit-scrollbar {
+  width: 8px;
+}
+
+#playlistDisplay::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+#playlistDisplay::-webkit-scrollbar-thumb {
+  background: rgba(76, 175, 80, 0.6);
+  border-radius: 4px;
+  min-height: 20px;
+}
+
+#playlistDisplay::-webkit-scrollbar-thumb:hover {
+  background: rgba(76, 175, 80, 0.8);
+}

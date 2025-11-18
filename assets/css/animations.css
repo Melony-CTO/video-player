@@ -1,0 +1,38 @@
+/* ===== ANIMATION STYLES ===== */
+/* 애니메이션, 트랜지션 정의 */
+
+/* 로고 펄스 애니메이션 */
+@keyframes pulse-logo {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+/* 시작 버튼 펄스 애니메이션 */
+@keyframes pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 107, 129, 0.7);
+  }
+  70% {
+    transform: translate(-50%, -50%) scale(1.05);
+    box-shadow: 0 0 0 20px rgba(255, 107, 129, 0);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 107, 129, 0);
+  }
+}
+
+/* 현재 트랙 펄스 애니메이션 */
+@keyframes currentTrackPulse {
+  0% { box-shadow: 0 0 10px rgba(76, 175, 80, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.6); }
+  100% { box-shadow: 0 0 10px rgba(76, 175, 80, 0.3); }
+}
+
+/* 회전 애니메이션 (행성 궤도) */
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
