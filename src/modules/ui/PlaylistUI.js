@@ -38,16 +38,35 @@ export class PlaylistUI {
       this.highlightCurrentTrack(track);
     });
 
-    // 플레이리스트 UI 클릭 이벤트
+    // 플레이리스트 UI 클릭 이벤트 (단일 클릭 - 선택만)
     if (this.container) {
       this.container.addEventListener('click', (e) => {
         const item = e.target.closest('.playlist-item');
-        if (item) {
+        if (item && !this.doubleClickPending) {
           const index = parseInt(item.dataset.index);
-          this.handleTrackClick(index);
+          // 더블클릭이 아닌 경우에만 선택 처리
+          this.singleClickTimeout = setTimeout(() => {
+            this.handleTrackSelect(index);
+            this.doubleClickPending = false;
+          }, 250);
+        }
+      });
+
+      // 플레이리스트 UI 더블클릭 이벤트 (재생)
+      this.container.addEventListener('dblclick', (e) => {
+        const item = e.target.closest('.playlist-item');
+        if (item) {
+          this.doubleClickPending = true;
+          clearTimeout(this.singleClickTimeout);
+
+          const index = parseInt(item.dataset.index);
+          this.handleTrackDoubleClick(index);
         }
       });
     }
+
+    this.doubleClickPending = false;
+    this.singleClickTimeout = null;
   }
 
   setPlaylist(playlist) {
@@ -140,11 +159,20 @@ export class PlaylistUI {
     }
   }
 
-  handleTrackClick(index) {
+  handleTrackSelect(index) {
     if (index >= 0 && index < this.playlist.length) {
       const track = this.playlist[index];
 
       logger.info(`트랙 선택: ${track.title || track.url}`);
+      this.setCurrentTrack(index);
+    }
+  }
+
+  handleTrackDoubleClick(index) {
+    if (index >= 0 && index < this.playlist.length) {
+      const track = this.playlist[index];
+
+      logger.info(`트랙 더블클릭 재생: ${track.title || track.url}`);
       eventBus.emit('ui:track:selected', { track, index });
     }
   }

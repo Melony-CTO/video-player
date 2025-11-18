@@ -14,6 +14,7 @@ export class MusicPlayer {
     this.volume = 0.5;
     this.playlist = [];
     this.currentIndex = 0;
+    this.shuffleEngine = null; // ShuffleEngine 참조
   }
 
   init() {
@@ -41,7 +42,10 @@ export class MusicPlayer {
     // 재생 중 이벤트
     this.player.addEventListener('playing', () => {
       this.isPlaying = true;
-      eventBus.emit('music:playing', this.currentTrack);
+      eventBus.emit('music:playing', {
+        track: this.currentTrack,
+        index: this.currentIndex
+      });
     });
 
     // 일시정지 이벤트
@@ -116,8 +120,29 @@ export class MusicPlayer {
       return;
     }
 
-    this.currentIndex = (this.currentIndex + 1) % this.playlist.length;
-    this.loadTrack(this.playlist[this.currentIndex]);
+    let nextTrack = null;
+    let nextIndex = this.currentIndex;
+
+    // ShuffleEngine이 있으면 사용
+    if (this.shuffleEngine) {
+      nextTrack = this.shuffleEngine.getNext(this.currentIndex);
+
+      if (nextTrack) {
+        nextIndex = this.shuffleEngine.findTrackIndex(nextTrack);
+      } else {
+        // 플레이리스트 끝 (repeat off)
+        logger.info('플레이리스트 끝');
+        eventBus.emit('playlist:ended');
+        return;
+      }
+    } else {
+      // ShuffleEngine이 없으면 기본 순차 재생
+      nextIndex = (this.currentIndex + 1) % this.playlist.length;
+      nextTrack = this.playlist[nextIndex];
+    }
+
+    this.currentIndex = nextIndex;
+    this.loadTrack(nextTrack);
     this.play();
 
     logger.info('⏭ 다음 트랙');
@@ -126,8 +151,27 @@ export class MusicPlayer {
   previous() {
     if (this.playlist.length === 0) return;
 
-    this.currentIndex = (this.currentIndex - 1 + this.playlist.length) % this.playlist.length;
-    this.loadTrack(this.playlist[this.currentIndex]);
+    let prevTrack = null;
+    let prevIndex = this.currentIndex;
+
+    // ShuffleEngine이 있으면 사용
+    if (this.shuffleEngine) {
+      prevTrack = this.shuffleEngine.getPrevious(this.currentIndex);
+
+      if (prevTrack) {
+        prevIndex = this.shuffleEngine.findTrackIndex(prevTrack);
+      } else {
+        // 플레이리스트 시작
+        return;
+      }
+    } else {
+      // ShuffleEngine이 없으면 기본 순차 재생
+      prevIndex = (this.currentIndex - 1 + this.playlist.length) % this.playlist.length;
+      prevTrack = this.playlist[prevIndex];
+    }
+
+    this.currentIndex = prevIndex;
+    this.loadTrack(prevTrack);
     this.play();
 
     logger.info('⏮ 이전 트랙');
@@ -142,7 +186,24 @@ export class MusicPlayer {
   setPlaylist(playlist) {
     this.playlist = playlist;
     this.currentIndex = 0;
+
+    // ShuffleEngine에도 플레이리스트 설정
+    if (this.shuffleEngine) {
+      this.shuffleEngine.setPlaylist(playlist);
+    }
+
     logger.info(`플레이리스트 설정: ${playlist.length}개 트랙`);
+  }
+
+  setShuffleEngine(shuffleEngine) {
+    this.shuffleEngine = shuffleEngine;
+
+    // 현재 플레이리스트가 있으면 ShuffleEngine에 설정
+    if (this.playlist.length > 0) {
+      this.shuffleEngine.setPlaylist(this.playlist);
+    }
+
+    logger.debug('ShuffleEngine 연결됨');
   }
 
   getCurrentTrack() {
