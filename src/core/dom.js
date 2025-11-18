@@ -4,7 +4,7 @@
 
 export class DOMCache {
   constructor() {
-    this.overlay = {};
+    this.overlays = {}; // 3개의 오버레이로 변경
     this.intro = {};
     this.loops = {};
     this.audio = {};
@@ -13,14 +13,33 @@ export class DOMCache {
   }
 
   init() {
-    // Overlay 요소들
-    this.overlay.video = document.getElementById('overlayVideo');
-    this.overlay.enabled = document.getElementById('overlayEnabled');
-    this.overlay.opacitySlider = document.getElementById('overlay-opacity-slider');
-    this.overlay.opacityValue = document.getElementById('overlay-opacity-value');
-    this.overlay.blendMode = document.getElementById('overlayBlendMode');
-    this.overlay.fileStatus = document.getElementById('overlayFileStatus');
-    this.overlay.applyBtn = document.getElementById('applyOverlayBtn');
+    // 오버레이 요소들 (3개 독립적)
+    this.overlays = {
+      overlay1: {
+        video: document.getElementById('overlay1'),
+        enabled: document.getElementById('overlay1Enabled'),
+        opacitySlider: document.getElementById('overlay1-opacity-slider'),
+        opacityValue: document.getElementById('overlay1-opacity-value'),
+        blendMode: document.getElementById('overlay1BlendMode'),
+        resetBtn: document.getElementById('overlay1Reset')
+      },
+      overlay2: {
+        video: document.getElementById('overlay2'),
+        enabled: document.getElementById('overlay2Enabled'),
+        opacitySlider: document.getElementById('overlay2-opacity-slider'),
+        opacityValue: document.getElementById('overlay2-opacity-value'),
+        blendMode: document.getElementById('overlay2BlendMode'),
+        resetBtn: document.getElementById('overlay2Reset')
+      },
+      overlay3: {
+        video: document.getElementById('overlay3'),
+        enabled: document.getElementById('overlay3Enabled'),
+        opacitySlider: document.getElementById('overlay3-opacity-slider'),
+        opacityValue: document.getElementById('overlay3-opacity-value'),
+        blendMode: document.getElementById('overlay3BlendMode'),
+        resetBtn: document.getElementById('overlay3Reset')
+      }
+    };
 
     // Intro 요소들
     this.intro.video = document.getElementById('introVideo');

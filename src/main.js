@@ -379,6 +379,122 @@ function setupEventHandlers() {
     });
   }
 
+  // === 오버레이 이벤트 핸들러 ===
+  const overlayManager = app.getModule('overlayManager');
+
+  if (overlayManager) {
+    // 오버레이 1
+    const overlay1Enabled = document.getElementById('overlay1Enabled');
+    const overlay1OpacitySlider = document.getElementById('overlay1-opacity-slider');
+    const overlay1OpacityValue = document.getElementById('overlay1-opacity-value');
+    const overlay1BlendMode = document.getElementById('overlay1BlendMode');
+    const overlay1Reset = document.getElementById('overlay1Reset');
+
+    if (overlay1Enabled) {
+      overlay1Enabled.addEventListener('change', (e) => {
+        overlayManager.setEnabled(1, e.target.checked);
+      });
+    }
+
+    if (overlay1OpacitySlider && overlay1OpacityValue) {
+      overlay1OpacitySlider.addEventListener('input', (e) => {
+        const value = e.target.value;
+        overlay1OpacityValue.textContent = `${value}%`;
+        overlayManager.setOpacity(1, value / 100);
+      });
+    }
+
+    if (overlay1BlendMode) {
+      overlay1BlendMode.addEventListener('change', (e) => {
+        overlayManager.setBlendMode(1, e.target.value);
+      });
+    }
+
+    if (overlay1Reset) {
+      overlay1Reset.addEventListener('click', () => {
+        overlayManager.reset(1);
+        if (overlay1Enabled) overlay1Enabled.checked = false;
+        if (overlay1OpacitySlider) overlay1OpacitySlider.value = 30;
+        if (overlay1OpacityValue) overlay1OpacityValue.textContent = '30%';
+        if (overlay1BlendMode) overlay1BlendMode.value = 'screen';
+      });
+    }
+
+    // 오버레이 2
+    const overlay2Enabled = document.getElementById('overlay2Enabled');
+    const overlay2OpacitySlider = document.getElementById('overlay2-opacity-slider');
+    const overlay2OpacityValue = document.getElementById('overlay2-opacity-value');
+    const overlay2BlendMode = document.getElementById('overlay2BlendMode');
+    const overlay2Reset = document.getElementById('overlay2Reset');
+
+    if (overlay2Enabled) {
+      overlay2Enabled.addEventListener('change', (e) => {
+        overlayManager.setEnabled(2, e.target.checked);
+      });
+    }
+
+    if (overlay2OpacitySlider && overlay2OpacityValue) {
+      overlay2OpacitySlider.addEventListener('input', (e) => {
+        const value = e.target.value;
+        overlay2OpacityValue.textContent = `${value}%`;
+        overlayManager.setOpacity(2, value / 100);
+      });
+    }
+
+    if (overlay2BlendMode) {
+      overlay2BlendMode.addEventListener('change', (e) => {
+        overlayManager.setBlendMode(2, e.target.value);
+      });
+    }
+
+    if (overlay2Reset) {
+      overlay2Reset.addEventListener('click', () => {
+        overlayManager.reset(2);
+        if (overlay2Enabled) overlay2Enabled.checked = false;
+        if (overlay2OpacitySlider) overlay2OpacitySlider.value = 30;
+        if (overlay2OpacityValue) overlay2OpacityValue.textContent = '30%';
+        if (overlay2BlendMode) overlay2BlendMode.value = 'screen';
+      });
+    }
+
+    // 오버레이 3
+    const overlay3Enabled = document.getElementById('overlay3Enabled');
+    const overlay3OpacitySlider = document.getElementById('overlay3-opacity-slider');
+    const overlay3OpacityValue = document.getElementById('overlay3-opacity-value');
+    const overlay3BlendMode = document.getElementById('overlay3BlendMode');
+    const overlay3Reset = document.getElementById('overlay3Reset');
+
+    if (overlay3Enabled) {
+      overlay3Enabled.addEventListener('change', (e) => {
+        overlayManager.setEnabled(3, e.target.checked);
+      });
+    }
+
+    if (overlay3OpacitySlider && overlay3OpacityValue) {
+      overlay3OpacitySlider.addEventListener('input', (e) => {
+        const value = e.target.value;
+        overlay3OpacityValue.textContent = `${value}%`;
+        overlayManager.setOpacity(3, value / 100);
+      });
+    }
+
+    if (overlay3BlendMode) {
+      overlay3BlendMode.addEventListener('change', (e) => {
+        overlayManager.setBlendMode(3, e.target.value);
+      });
+    }
+
+    if (overlay3Reset) {
+      overlay3Reset.addEventListener('click', () => {
+        overlayManager.reset(3);
+        if (overlay3Enabled) overlay3Enabled.checked = false;
+        if (overlay3OpacitySlider) overlay3OpacitySlider.value = 30;
+        if (overlay3OpacityValue) overlay3OpacityValue.textContent = '30%';
+        if (overlay3BlendMode) overlay3BlendMode.value = 'screen';
+      });
+    }
+  }
+
   // 오디오 파일 처리 함수
   async function handleAudioFiles(files) {
     logger.info(`${files.length}개 오디오 파일 로드 중...`);

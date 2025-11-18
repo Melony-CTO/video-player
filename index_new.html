@@ -53,29 +53,124 @@
     <div class="control-section right-section">
       <div class="section-title">📁 미디어 관리</div>
 
+      <!-- 오버레이 1 설정 -->
       <div class="test-section">
-        <h4>🎭 오버레이 설정</h4>
-        <label>
-          <input type="checkbox" id="overlayEnabled" checked />
-          오버레이 활성화
+        <h4>🎭 오버레이 1</h4>
+        <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+          <input type="checkbox" id="overlay1Enabled" />
+          오버레이 1 활성화
         </label>
+
         <div class="control-slider" style="margin-top: 12px;">
           <div class="control-label">
             <span class="effect-name">투명도</span>
             <span class="channel-info">OPACITY</span>
           </div>
           <div class="slider-container">
-            <input type="range" class="control-range" id="overlay-opacity-slider"
-                   min="0" max="100" step="5" value="20">
+            <input type="range" class="control-range" id="overlay1-opacity-slider"
+                   min="0" max="100" step="5" value="30">
           </div>
-          <div class="control-value" id="overlay-opacity-value">20%</div>
+          <div class="control-value" id="overlay1-opacity-value">30%</div>
         </div>
-        <select id="overlayBlendMode" style="width: 100%; padding: 4px 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: white; font-size: 11px; margin-top: 10px;">
-          <option value="screen">Screen (기본)</option>
+
+        <select id="overlay1BlendMode" style="width: 100%; padding: 4px 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: white; font-size: 11px; margin-top: 10px;">
+          <option value="screen">Screen</option>
           <option value="normal">Normal</option>
           <option value="multiply">Multiply</option>
           <option value="overlay">Overlay</option>
+          <option value="darken">Darken</option>
+          <option value="lighten">Lighten</option>
+          <option value="color-dodge">Color Dodge</option>
+          <option value="color-burn">Color Burn</option>
+          <option value="hard-light">Hard Light</option>
+          <option value="soft-light">Soft Light</option>
+          <option value="difference">Difference</option>
+          <option value="exclusion">Exclusion</option>
         </select>
+
+        <button id="overlay1Reset" class="control-btn" style="width: 100%; margin-top: 10px; font-size: 11px; padding: 6px 12px;">
+          🔄 초기화
+        </button>
+      </div>
+
+      <!-- 오버레이 2 설정 -->
+      <div class="test-section">
+        <h4>🎭 오버레이 2</h4>
+        <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+          <input type="checkbox" id="overlay2Enabled" />
+          오버레이 2 활성화
+        </label>
+
+        <div class="control-slider" style="margin-top: 12px;">
+          <div class="control-label">
+            <span class="effect-name">투명도</span>
+            <span class="channel-info">OPACITY</span>
+          </div>
+          <div class="slider-container">
+            <input type="range" class="control-range" id="overlay2-opacity-slider"
+                   min="0" max="100" step="5" value="30">
+          </div>
+          <div class="control-value" id="overlay2-opacity-value">30%</div>
+        </div>
+
+        <select id="overlay2BlendMode" style="width: 100%; padding: 4px 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: white; font-size: 11px; margin-top: 10px;">
+          <option value="screen">Screen</option>
+          <option value="normal">Normal</option>
+          <option value="multiply">Multiply</option>
+          <option value="overlay">Overlay</option>
+          <option value="darken">Darken</option>
+          <option value="lighten">Lighten</option>
+          <option value="color-dodge">Color Dodge</option>
+          <option value="color-burn">Color Burn</option>
+          <option value="hard-light">Hard Light</option>
+          <option value="soft-light">Soft Light</option>
+          <option value="difference">Difference</option>
+          <option value="exclusion">Exclusion</option>
+        </select>
+
+        <button id="overlay2Reset" class="control-btn" style="width: 100%; margin-top: 10px; font-size: 11px; padding: 6px 12px;">
+          🔄 초기화
+        </button>
+      </div>
+
+      <!-- 오버레이 3 설정 -->
+      <div class="test-section">
+        <h4>🎭 오버레이 3</h4>
+        <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+          <input type="checkbox" id="overlay3Enabled" />
+          오버레이 3 활성화
+        </label>
+
+        <div class="control-slider" style="margin-top: 12px;">
+          <div class="control-label">
+            <span class="effect-name">투명도</span>
+            <span class="channel-info">OPACITY</span>
+          </div>
+          <div class="slider-container">
+            <input type="range" class="control-range" id="overlay3-opacity-slider"
+                   min="0" max="100" step="5" value="30">
+          </div>
+          <div class="control-value" id="overlay3-opacity-value">30%</div>
+        </div>
+
+        <select id="overlay3BlendMode" style="width: 100%; padding: 4px 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: white; font-size: 11px; margin-top: 10px;">
+          <option value="screen">Screen</option>
+          <option value="normal">Normal</option>
+          <option value="multiply">Multiply</option>
+          <option value="overlay">Overlay</option>
+          <option value="darken">Darken</option>
+          <option value="lighten">Lighten</option>
+          <option value="color-dodge">Color Dodge</option>
+          <option value="color-burn">Color Burn</option>
+          <option value="hard-light">Hard Light</option>
+          <option value="soft-light">Soft Light</option>
+          <option value="difference">Difference</option>
+          <option value="exclusion">Exclusion</option>
+        </select>
+
+        <button id="overlay3Reset" class="control-btn" style="width: 100%; margin-top: 10px; font-size: 11px; padding: 6px 12px;">
+          🔄 초기화
+        </button>
       </div>
     </div>
   </div>
@@ -124,11 +219,17 @@
     <source src="Loof_01-1.mp4" type="video/mp4" />
   </video>
 
-  <video id="overlayVideo" muted loop>
-    <source src="overlay01.mp4" type="video/mp4" />
+  <!-- 오버레이 비디오 3개 (독립적) -->
+  <video id="overlay1" muted loop style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: 3; opacity: 0.3; display: none; mix-blend-mode: screen; pointer-events: none;">
   </video>
 
-  <video id="introVideo" muted preload="auto" style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: 3; opacity: 0; transition: opacity 1s ease; mix-blend-mode: screen; pointer-events: none;">
+  <video id="overlay2" muted loop style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: 4; opacity: 0.3; display: none; mix-blend-mode: screen; pointer-events: none;">
+  </video>
+
+  <video id="overlay3" muted loop style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: 5; opacity: 0.3; display: none; mix-blend-mode: screen; pointer-events: none;">
+  </video>
+
+  <video id="introVideo" muted preload="auto" style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: 6; opacity: 0; transition: opacity 1s ease; mix-blend-mode: screen; pointer-events: none;">
   </video>
 
   <!-- 로고 -->
