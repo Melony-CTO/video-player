@@ -1,1213 +1,4 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-      <title>랜덤 플레이어 - 좌우 분할 컨트롤 센터</title>
-  <style>
-    body {
-      margin: 0;
-      background-color: #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-      font-family: 'Segoe UI', sans-serif;
-      transition: background-image 0.5s ease-in-out;
-      scroll-behavior: auto;
-    }
 
-    video {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
-      opacity: 0;
-      transition: opacity 1.5s ease;
-    }
-
-    #overlayVideo {
-      z-index: 2;
-      pointer-events: none;
-      mix-blend-mode: screen;
-      opacity: 0.2;
-    }
-
-    #loop1, #loop2 {
-      z-index: 1;
-    }
-
-    #logo1, #logo2 {
-      z-index: 4;
-      pointer-events: none;
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
-      position: fixed;
-      top: 0;
-      left: 0;
-      transform: none;
-      transition: opacity 0.5s ease;
-      mix-blend-mode: screen;
-      opacity: 0;
-      visibility: hidden;
-      filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.3));
-    }
-
-    #logo1.test-mode, #logo2.test-mode {
-      animation: pulse-logo 2s infinite;
-      filter: hue-rotate(120deg) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.3));
-    }
-
-    @keyframes pulse-logo {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.02); }
-      100% { transform: scale(1); }
-    }
-
-    /* ===== 좌우 분할 컨트롤 센터 패널 스타일 ===== */
-    .test-panel {
-      position: fixed;
-      left: 20px;
-      top: 20px;
-      width: 800px; /* 380px에서 800px로 확장 */
-      max-height: 90vh;
-      background: rgba(20, 25, 35, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
-      backdrop-filter: blur(20px);
-      color: white;
-      overflow-y: auto;
-      transform: translateX(-840px); /* 확장된 너비에 맞춰 조정 */
-      transition: all 0.3s ease;
-      z-index: 1000;
-      display: flex; /* 좌우 분할을 위한 flex 추가 */
-      gap: 20px; /* 좌우 섹션 간격 */
-    }
-    
-    .test-panel.show {
-      transform: translateX(0);
-    }
-    
-    .test-panel h3 {
-      margin: 0;
-      padding: 15px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 15px 15px 0 0;
-      text-align: center;
-      font-size: 16px;
-      position: absolute; /* 전체 상단에 배치 */
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 10;
-    }
-
-    /* ===== 좌우 분할 섹션 스타일 ===== */
-    .control-section {
-      flex: 1;
-      padding: 60px 15px 15px 15px; /* 상단 패딩을 늘려서 제목 공간 확보 */
-      max-height: calc(90vh - 60px);
-      overflow-y: auto;
-    }
-
-    .left-section {
-      border-right: 1px solid rgba(255, 255, 255, 0.1);
-      padding-right: 20px;
-    }
-
-    .right-section {
-      padding-left: 20px;
-    }
-
-    /* 섹션 제목 스타일 */
-    .section-title {
-      font-size: 18px;
-      font-weight: bold;
-      color: #4FC3F7;
-      text-align: center;
-      margin-bottom: 20px;
-      padding: 10px;
-      background: rgba(79, 195, 247, 0.1);
-      border-radius: 10px;
-      border: 1px solid rgba(79, 195, 247, 0.3);
-    }
-    
-    .test-section {
-      padding: 15px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      margin-bottom: 10px;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.02);
-    }
-    
-    .test-section:last-child {
-      border-bottom: none;
-      margin-bottom: 0;
-    }
-    
-    .test-section h4 {
-      margin: 0 0 10px 0;
-      font-size: 14px;
-      color: #4FC3F7;
-    }
-
-    /* 파일 업로드 드래그앤드롭 영역 스타일 */
-    .upload-zone {
-      border: 2px dashed rgba(79, 195, 247, 0.5);
-      border-radius: 10px;
-      padding: 20px;
-      text-align: center;
-      margin: 10px 0;
-      background: rgba(79, 195, 247, 0.05);
-      transition: all 0.3s ease;
-      cursor: pointer;
-      position: relative;
-      min-height: 80px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .upload-zone:hover {
-      border-color: rgba(79, 195, 247, 0.8);
-      background: rgba(79, 195, 247, 0.1);
-      transform: translateY(-2px);
-    }
-
-    .upload-zone.drag-over {
-      border-color: #4FC3F7;
-      background: rgba(79, 195, 247, 0.2);
-      box-shadow: 0 0 20px rgba(79, 195, 247, 0.3);
-    }
-
-    .upload-zone-text {
-      font-size: 12px;
-      color: #90A4AE;
-      margin: 5px 0;
-    }
-
-    .upload-zone-icon {
-      font-size: 24px;
-      color: #4FC3F7;
-      margin-bottom: 10px;
-    }
-
-    /* 프리셋 관리 스타일 */
-    .preset-controls {
-      display: flex;
-      gap: 8px;
-      margin: 10px 0;
-      flex-wrap: wrap;
-    }
-
-    .preset-btn {
-      padding: 6px 12px;
-      background: linear-gradient(135deg, #4FC3F7, #29B6F6);
-      color: white;
-      border: none;
-      border-radius: 15px;
-      cursor: pointer;
-      font-size: 11px;
-      transition: all 0.3s ease;
-      flex: 1;
-      min-width: 60px;
-    }
-
-    .preset-btn:hover {
-      background: linear-gradient(135deg, #29B6F6, #03A9F4);
-      transform: translateY(-1px);
-    }
-
-    .preset-btn.save {
-      background: linear-gradient(135deg, #4CAF50, #66BB6A);
-    }
-
-    .preset-btn.load {
-      background: linear-gradient(135deg, #FF9800, #FFB74D);
-    }
-
-    .preset-btn.delete {
-      background: linear-gradient(135deg, #F44336, #E57373);
-    }
-
-    /* 배경 이미지 선택 */
-    .background-item {
-      margin: 5px 0;
-      display: flex;
-      align-items: center;
-    }
-    
-    .background-item input[type="radio"] {
-      margin-right: 8px;
-    }
-    
-    .background-item label {
-      font-size: 12px;
-      cursor: pointer;
-    }
-    
-    /* 플레이리스트 선택 */
-    .playlist-item-selector {
-      margin: 5px 0;
-      display: flex;
-      align-items: center;
-    }
-    
-    .playlist-item-selector input[type="checkbox"] {
-      margin-right: 8px;
-    }
-    
-    .playlist-item-selector label {
-      font-size: 12px;
-      cursor: pointer;
-    }
-    
-    .shuffle-option {
-      margin: 10px 0;
-      padding: 8px;
-      background: rgba(76, 175, 80, 0.2);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-    }
-    
-    .shuffle-option input {
-      margin-right: 8px;
-    }
-    
-    /* EQ 컨트롤 */
-    .eq-control {
-      margin: 8px 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    
-    .eq-label {
-      font-size: 12px;
-      width: 40px;
-    }
-    
-    .eq-slider {
-      flex: 1;
-      margin: 0 10px;
-    }
-    
-    .eq-value {
-      font-size: 11px;
-      width: 40px;
-      text-align: right;
-    }
-    
-    /* 볼륨 상태 */
-    .volume-status {
-      font-size: 11px;
-      line-height: 1.4;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 8px;
-      border-radius: 8px;
-    }
-    
-    /* 효과음 볼륨 컨트롤 */
-    .control-slider {
-      margin: 8px 0;
-      padding: 8px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 8px;
-      transition: background 0.3s ease;
-    }
-    
-    .control-slider.active {
-      background: rgba(76, 175, 80, 0.2);
-      border: 1px solid rgba(76, 175, 80, 0.5);
-    }
-    
-    .control-slider.master-volume {
-      background: rgba(255, 152, 0, 0.2);
-      border: 1px solid rgba(255, 152, 0, 0.3);
-    }
-    
-    .control-label {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 5px;
-    }
-    
-    .effect-name {
-      font-size: 12px;
-      font-weight: bold;
-    }
-    
-    .channel-info {
-      font-size: 10px;
-      color: #90A4AE;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 2px 6px;
-      border-radius: 10px;
-    }
-    
-    .slider-container {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .control-range {
-      flex: 1;
-      -webkit-appearance: none;
-      height: 4px;
-      border-radius: 2px;
-      background: rgba(255, 255, 255, 0.2);
-      outline: none;
-    }
-    
-    .control-range::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: #4FC3F7;
-      cursor: pointer;
-    }
-    
-    .control-range::-moz-range-thumb {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: #4FC3F7;
-      cursor: pointer;
-      border: none;
-    }
-    
-    .test-btn {
-      background: #4FC3F7;
-      color: white;
-      border: none;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 10px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    
-    .test-btn:hover {
-      background: #29B6F6;
-    }
-    
-    .control-value {
-      font-size: 11px;
-      color: #4FC3F7;
-      text-align: center;
-      margin-top: 2px;
-    }
-    
-    /* 플레이리스트 표시 - 스크롤 추가 */
-    .playlist-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 8px;
-      margin: 2px 0;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 4px;
-      font-size: 11px;
-      min-height: 20px;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-    
-    .playlist-item:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-    
-    .playlist-item.current {
-      background: rgba(76, 175, 80, 0.4);
-      border: 2px solid rgba(76, 175, 80, 0.8);
-      box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
-      animation: currentTrackPulse 2s infinite;
-    }
-    
-    @keyframes currentTrackPulse {
-      0% { box-shadow: 0 0 10px rgba(76, 175, 80, 0.3); }
-      50% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.6); }
-      100% { box-shadow: 0 0 10px rgba(76, 175, 80, 0.3); }
-    }
-    
-    .track-info {
-      font-size: 9px;
-      color: #90A4AE;
-      margin: 0 5px;
-    }
-    
-    .track-status {
-      font-size: 10px;
-    }
-    
-    .track-status.available {
-      color: #4CAF50;
-    }
-    
-    /* 플레이리스트 디스플레이 컨테이너 */
-    #playlistDisplay {
-      max-height: 180px;
-      overflow-y: auto;
-      overflow-x: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      background: rgba(0, 0, 0, 0.2);
-      padding: 5px;
-      scroll-behavior: smooth;
-    }
-    
-    #playlistDisplay::-webkit-scrollbar {
-      width: 8px;
-    }
-    
-    #playlistDisplay::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 4px;
-    }
-    
-    #playlistDisplay::-webkit-scrollbar-thumb {
-      background: rgba(76, 175, 80, 0.6);
-      border-radius: 4px;
-      min-height: 20px;
-    }
-    
-    #playlistDisplay::-webkit-scrollbar-thumb:hover {
-      background: rgba(76, 175, 80, 0.8);
-    }
-    
-    /* 로그 디스플레이 */
-    .log-display {
-      max-height: 150px;
-      overflow-y: auto;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 8px;
-      padding: 8px;
-      font-family: 'Courier New', monospace;
-      font-size: 10px;
-      line-height: 1.3;
-    }
-    
-    .log-entry {
-      margin: 1px 0;
-      padding: 2px;
-    }
-    
-    .log-entry.info {
-      color: #81C784;
-    }
-    
-    .log-entry.error {
-      color: #E57373;
-    }
-    
-    .log-entry.warning {
-      color: #FFB74D;
-    }
-    
-    /* 스크롤바 스타일링 */
-    .test-panel::-webkit-scrollbar,
-    .log-display::-webkit-scrollbar,
-    .control-section::-webkit-scrollbar {
-      width: 6px;
-    }
-    
-    .test-panel::-webkit-scrollbar-track,
-    .log-display::-webkit-scrollbar-track,
-    .control-section::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 3px;
-    }
-    
-    .test-panel::-webkit-scrollbar-thumb,
-    .log-display::-webkit-scrollbar-thumb,
-    .control-section::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 3px;
-    }
-    
-    .test-panel::-webkit-scrollbar-thumb:hover,
-    .log-display::-webkit-scrollbar-thumb:hover,
-    .control-section::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.5);
-    }
-
-    #startButton {
-      padding: 18px 36px;
-      font-size: 20px;
-      font-weight: 600;
-      color: white;
-      background: linear-gradient(135deg, #ff6b81, #6bc1ff);
-      border: none;
-      border-radius: 40px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      animation: pulse 2s infinite;
-      z-index: 100;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    #startButton:hover {
-      transform: translate(-50%, -50%) scale(1.05);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-    }
-
-    @keyframes pulse {
-      0% {
-        transform: translate(-50%, -50%) scale(1);
-        box-shadow: 0 0 0 0 rgba(255, 107, 129, 0.7);
-      }
-      70% {
-        transform: translate(-50%, -50%) scale(1.05);
-        box-shadow: 0 0 0 20px rgba(255, 107, 129, 0);
-      }
-      100% {
-        transform: translate(-50%, -50%) scale(1);
-        box-shadow: 0 0 0 0 rgba(255, 107, 129, 0);
-      }
-    }
-
-    /* 컨트롤 패널 */
-    .control-panel {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 15;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      padding: 8px 20px;
-      background: rgba(243, 208, 147, 0.3);
-      backdrop-filter: blur(20px);
-      border-radius: 25px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
-      opacity: 0;
-      transition: all 0.5s ease;
-    }
-
-    .control-panel.show {
-      opacity: 1;
-    }
-
-    /* 제목 표시 */
-    .title-display {
-      position: fixed;
-      bottom: 75px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.005);
-      backdrop-filter: blur(1px);
-      color: #fff;
-      padding: 20px 30px;
-      border-radius: 15px;
-      font-size: 15px;
-      font-weight: 500;
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      text-align: center;
-      z-index: 16;
-      opacity: 0.5;
-      transition: all 0.5s ease;
-      border: 1px solid rgba(255, 255, 255, 0.01);
-      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.01);
-      white-space: nowrap;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .title-display.show {
-      opacity: 1;
-    }
-
-    /* 실시간 오디오 비주얼라이저 */
-    .audio-visualizer {
-      display: flex;
-      align-items: end;
-      gap: 3px;
-      height: 30px;
-      opacity: 0;
-      transition: opacity 0.5s ease;
-    }
-
-    .audio-visualizer.playing {
-      opacity: 1;
-    }
-
-    .visualizer-bar {
-      width: 3px;
-      background: rgba(255, 255, 255, 1.0);
-      border-radius: 2px;
-      transition: height 0.05s ease;
-      min-height: 2px;
-      box-shadow: 0 0 8px rgba(255, 255, 255, 1.0);
-    }
-
-    /* 컨트롤 버튼들 */
-    .control-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: white;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(10px);
-    }
-
-    .control-btn:hover {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2));
-      transform: scale(1.1);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
-    }
-
-    .play-btn {
-      width: 32px;
-      height: 32px;
-      background: linear-gradient(135deg, #f093fb, #f5576c);
-      font-size: 18px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-    }
-
-    .play-btn:hover {
-      background: linear-gradient(135deg, #f5576c, #f093fb);
-      transform: scale(1.05);
-      box-shadow: 0 6px 25px rgba(240, 147, 251, 0.4);
-    }
-
-    .player-buttons {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      justify-content: center;
-    }
-
-    .shuffle-btn.active {
-      background: linear-gradient(135deg, rgba(255, 193, 7, 0.8), rgba(255, 152, 0, 0.8));
-      box-shadow: 0 4px 15px rgba(255, 193, 7, 0.5);
-    }
-
-    .control-btn.next-btn {
-      background: linear-gradient(135deg, rgba(255, 193, 7, 0.8), rgba(255, 152, 0, 0.8)) !important;
-      box-shadow: 0 4px 15px rgba(255, 193, 7, 0.5);
-    }
-
-    .control-btn.next-btn:hover {
-      background: linear-gradient(135deg, rgba(255, 152, 0, 0.9), rgba(255, 193, 7, 0.9)) !important;
-      transform: scale(1.1);
-      box-shadow: 0 6px 20px rgba(255, 193, 7, 0.6);
-    }
-
-    /* 효과음 버튼들 */
-    .effect-group {
-      display: flex;
-      gap: 8px;
-    }
-
-    .effect-button {
-      padding: 8px 16px;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
-      color: white;
-      border: none;
-      border-radius: 18px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    }
-
-    .effect-button:hover {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.25));
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-    }
-
-    .effect-button.active {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      border-color: #667eea;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-      transform: translateY(-1px);
-    }
-
-    .player-controls {
-      background: transparent;
-      border-radius: 0;
-      backdrop-filter: none;
-      border: none;
-      box-shadow: none;
-      padding: 0;
-    }
-
-    /* ===== Melony.j 로고 스타일 ===== */
-    .logo-container {
-      position: absolute;
-      right: 40px;
-      bottom: 40px;
-      z-index: 1000;
-      transition: all 0.4s ease;
-    }
-
-    .melony-logo {
-      position: relative;
-      width: 40px;
-      height: 30px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.4);
-      -webkit-mask: url('MelonyJ_Logo.png') no-repeat center center;
-      -webkit-mask-size: 45px;
-      mask: url('MelonyJ_Logo.png') no-repeat center center;
-      mask-size: 45px;
-      background-size: 45px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      overflow: visible;
-      border: none;
-    }
-
-    .melony-logo img {
-      display: none;
-    }
-
-    .logo-text {
-      display: none;
-    }
-
-    .logo-text {
-      font-size: 6px;
-      font-weight: 300;
-      color: white;
-      text-align: center;
-      font-family: 'Georgia', serif;
-      letter-spacing: 0.2px;
-      z-index: 2;
-      position: relative;
-    }
-
-    .logo-text .dot {
-      color: #ffd89b;
-      font-weight: bold;
-    }
-
-    /* 행성 궤도 */
-    .orbit {
-      position: absolute;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-      animation: rotate 8s linear infinite;
-    }
-
-    .orbit-1 {
-      width: 56px;
-      height: 56px;
-      top: -8px;
-      left: -8px;
-    }
-
-    .orbit-2 {
-      width: 70px;
-      height: 70px;
-      top: -15px;
-      left: -15px;
-      animation-duration: 12s;
-      animation-direction: reverse;
-    }
-
-    /* 행성들 */
-    .planet {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      box-shadow: 0 0 6px currentColor;
-    }
-
-    /* 첫 번째 궤도 행성들 */
-    .planet-1 {
-      top: 0;
-      left: 50%;
-      margin-left: -2px;
-      margin-top: -2px;
-      background: #ffd89b;
-      color: #ffd89b;
-    }
-
-    .planet-2 {
-      top: 50%;
-      right: 0;
-      margin-top: -2px;
-      margin-right: -2px;
-      background: #ff9a9e;
-      color: #ff9a9e;
-    }
-
-    .planet-3 {
-      bottom: 0;
-      left: 50%;
-      margin-left: -2px;
-      margin-bottom: -2px;
-      background: #a8edea;
-      color: #a8edea;
-    }
-
-    .planet-4 {
-      top: 50%;
-      left: 0;
-      margin-top: -2px;
-      margin-left: -2px;
-      background: #fecfef;
-      color: #fecfef;
-    }
-
-    /* 두 번째 궤도 행성 */
-    .planet-5 {
-      top: 12%;
-      right: 12%;
-      background: #fed6e3;
-      color: #fed6e3;
-    }
-
-    /* 회전 애니메이션 */
-    @keyframes rotate {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-  </style>
-</head>
-<body>
-
-  <!-- ===== 좌우 분할 컨트롤 센터 패널 ===== -->
-  <div id="controlCenter" class="test-panel">
-    <h3>🎛️ 음악 컨트롤 센터 - 좌우 분할 버전</h3>
-    
-    <!-- ===== 왼쪽 섹션: 방송 컨트롤 🎵 ===== -->
-    <div class="control-section left-section">
-      <div class="section-title">🎵 방송 컨트롤</div>
-      
-      <!-- 플레이리스트 선택/관리 -->
-      <div class="test-section">
-        <div id="playlistSelector">
-          <h4>🎵 플레이리스트 관리</h4>
-        </div>
-      </div>
-      
-      <!-- 현재 플레이리스트 표시 -->
-      <div class="test-section">
-        <h4>📋 현재 플레이리스트</h4>
-        <div id="shuffleStatus">셔플 모드: OFF</div>
-        <div id="playlistDisplay" style="margin-top: 8px;"></div>
-      </div>
-      
-      <!-- 이퀄라이저 설정 -->
-      <div class="test-section">
-        <h4>🎛️ 이퀄라이저 설정</h4>
-        <div class="eq-control">
-          <span class="eq-label">Low</span>
-          <input type="range" id="eqLowSlider" class="eq-slider" min="-10" max="10" step="0.5" value="4">
-          <span class="eq-value" id="eqLowValue">4dB</span>
-        </div>
-        <div class="eq-control">
-          <span class="eq-label">Mid</span>
-          <input type="range" id="eqMidSlider" class="eq-slider" min="-10" max="10" step="0.5" value="2.5">
-          <span class="eq-value" id="eqMidValue">2.5dB</span>
-        </div>
-        <div class="eq-control">
-          <span class="eq-label">High</span>
-          <input type="range" id="eqHighSlider" class="eq-slider" min="-10" max="10" step="0.5" value="-2">
-          <span class="eq-value" id="eqHighValue">-2dB</span>
-        </div>
-      </div>
-      
-      <!-- 음량 조절 현황 -->
-      <div class="test-section">
-        <h4>🔊 음량 조절 현황</h4>
-        <div id="volumeStatus" class="volume-status">
-          현재 트랙: 없음<br>
-          재생 상태: 정지<br>
-          볼륨: 50%<br>
-          분석 상태: 대기 중
-        </div>
-      </div>
-      
-      <!-- 마스터 볼륨 -->
-      <div class="test-section">
-        <h4>🎵 마스터 볼륨</h4>
-        <div class="control-slider master-volume" id="masterVolumeControl">
-          <div class="control-label">
-            <span class="effect-name">마스터 볼륨</span>
-            <span class="channel-info">MASTER</span>
-          </div>
-          <div class="slider-container">
-            <input type="range" class="control-range" id="master-volume-slider-main" 
-                   min="0" max="100" step="5" value="50">
-          </div>
-          <div class="control-value" id="master-volume-value-main">50%</div>
-        </div>
-      </div>
-      
-      <!-- 효과음 볼륨 (8채널) -->
-      <div class="test-section">
-        <div id="effectVolumeControls">
-          <h4>🔊 효과음 볼륨 (8채널)</h4>
-        </div>
-      </div>
-      
-      <!-- 스텔스 모드 -->
-      <div class="test-section">
-        <h4>👻 스텔스 모드</h4>
-        <div style="margin-bottom: 15px;">
-          <div style="display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
-            <button onclick="applyStealthPreset('ninja')" style="padding: 6px 12px; background: #2C3E50; color: white; border: none; border-radius: 15px; cursor: pointer; font-size: 11px;">🥷 닌자</button>
-            <button onclick="applyStealthPreset('ghost')" style="padding: 6px 12px; background: #34495E; color: white; border: none; border-radius: 15px; cursor: pointer; font-size: 11px;">👻 고스트</button>
-            <button onclick="applyStealthPreset('hover')" style="padding: 6px 12px; background: #8E24AA; color: white; border: none; border-radius: 15px; cursor: pointer; font-size: 11px;">✨ 호버</button>
-            <button onclick="applyStealthPreset('reset')" style="padding: 6px 12px; background: #FF5722; color: white; border: none; border-radius: 15px; cursor: pointer; font-size: 11px;">🔄 리셋</button>
-          </div>
-        </div>
-        
-        <div class="control-slider" style="margin-bottom: 8px;">
-          <div class="control-label">
-            <span class="effect-name">패널 투명도</span>
-            <span class="channel-info">PANEL</span>
-          </div>
-          <div class="slider-container">
-            <input type="range" class="control-range" id="stealth-panel-slider" 
-                   min="0" max="100" step="5" value="30">
-          </div>
-          <div class="control-value" id="stealth-panel-value">30%</div>
-        </div>
-        
-        <div class="control-slider" style="margin-bottom: 8px;">
-          <div class="control-label">
-            <span class="effect-name">버튼 투명도</span>
-            <span class="channel-info">BUTTON</span>
-          </div>
-          <div class="slider-container">
-            <input type="range" class="control-range" id="stealth-button-slider" 
-                   min="0" max="100" step="5" value="100">
-          </div>
-          <div class="control-value" id="stealth-button-value">100%</div>
-        </div>
-        
-        <div class="control-slider">
-          <div class="control-label">
-            <span class="effect-name">블러 효과</span>
-            <span class="channel-info">BLUR</span>
-          </div>
-          <div class="slider-container">
-            <input type="range" class="control-range" id="stealth-blur-slider" 
-                   min="0" max="40" step="2" value="20">
-          </div>
-          <div class="control-value" id="stealth-blur-value">20px</div>
-        </div>
-        
-        <div style="margin-top: 10px; padding: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
-          <label style="display: flex; align-items: center; font-size: 11px;">
-            <input type="checkbox" id="stealth-hover-enable" checked style="margin-right: 8px;">
-            호버 시 복원 효과 활성화
-          </label>
-        </div>
-      </div>
-    </div>
-    
-    <!-- ===== 오른쪽 섹션: 미디어 파일 관리 📁 ===== -->
-    <div class="control-section right-section">
-      <div class="section-title">📁 미디어 파일 관리</div>
-      
-      <!-- 배경 설정 (이미지/비디오 토글 + 드래그&드롭) -->
-      <div class="test-section">
-        <h4>🖼️ 배경 설정</h4>
-        <div class="upload-zone" id="backgroundUploadZone">
-          <div class="upload-zone-icon">📁</div>
-          <div class="upload-zone-text">이미지 또는 비디오 파일을 드래그하세요</div>
-          <div class="upload-zone-text">또는 클릭하여 파일 선택</div>
-        </div>
-        <div style="display: flex; gap: 10px; margin-top: 10px;">
-          <label style="display: flex; align-items: center; font-size: 12px;">
-            <input type="radio" name="backgroundType" value="image" checked style="margin-right: 5px;">
-            이미지 모드
-          </label>
-          <label style="display: flex; align-items: center; font-size: 12px;">
-            <input type="radio" name="backgroundType" value="video" style="margin-right: 5px;">
-            비디오 모드
-          </label>
-        </div>
-      </div>
-      
-      <!-- 자동 배경 이미지 검색 (기존 기능 이동) -->
-      <div class="test-section">
-        <div id="backgroundSelector">
-          <h4>🎲 자동 배경 이미지 검색</h4>
-        </div>
-      </div>
-      
-<!-- 오버레이 설정 (드래그&드롭 업로드) -->
-<div class="test-section">
-  <h4>🎭 오버레이 설정</h4>
-  <div class="upload-zone" id="overlayUploadZone">
-    <div class="upload-zone-icon">🎭</div>
-    <div class="upload-zone-text">오버레이 비디오 파일을 드래그하세요</div>
-    <div class="upload-zone-text">PNG/MOV/MP4 파일 지원</div>
-  </div>
-  
-  <!-- 오버레이 활성화 및 적용 버튼 -->
-  <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
-    <label style="display: flex; align-items: center; font-size: 12px;">
-      <input type="checkbox" id="overlayEnabled" checked style="margin-right: 8px;">
-      오버레이 활성화
-    </label>
-    <button id="applyOverlayBtn" class="preset-btn" style="padding: 4px 12px; font-size: 11px; background: #4CAF50;" disabled>✅ 적용</button>
-  </div>
-  
-  <!-- 오버레이 투명도 조절 -->
-  <div class="control-slider" style="margin-top: 12px;">
-    <div class="control-label">
-      <span class="effect-name">오버레이 투명도</span>
-      <span class="channel-info">OPACITY</span>
-    </div>
-    <div class="slider-container">
-      <input type="range" class="control-range" id="overlay-opacity-slider" 
-             min="0" max="100" step="5" value="20">
-    </div>
-    <div class="control-value" id="overlay-opacity-value">20%</div>
-  </div>
-  
-  <!-- 믹스 블렌드 모드 선택 -->
-  <div style="margin-top: 10px;">
-    <label style="font-size: 11px; color: #90A4AE; margin-bottom: 5px; display: block;">블렌드 모드:</label>
-    <select id="overlayBlendMode" style="width: 100%; padding: 4px 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: white; font-size: 11px;">
-      <option value="screen">Screen (기본)</option>
-      <option value="normal">Normal</option>
-      <option value="multiply">Multiply</option>
-      <option value="overlay">Overlay</option>
-      <option value="soft-light">Soft Light</option>
-      <option value="hard-light">Hard Light</option>
-      <option value="color-dodge">Color Dodge</option>
-      <option value="color-burn">Color Burn</option>
-    </select>
-  </div>
-  
-<!-- 상태 표시 -->
-<div id="overlayFileStatus" style="margin-top: 8px; font-size: 11px; color: #90A4AE;">
-  현재: 기본 오버레이 (overlay01.mp4)
-</div>
-
-<!-- 🆕 임시 디버깅 버튼 추가 -->
-<div style="margin-top: 8px; display: flex; gap: 5px;">
-  <button onclick="forceConnectOverlayEvents()" style="padding: 2px 6px; background: #FF9800; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 10px;">🔧 이벤트 연결</button>
-  <button onclick="checkOverlayElements()" style="padding: 2px 6px; background: #2196F3; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 10px;">🔍 요소 확인</button>
-</div>
-</div>
-      
-<!-- 인트로 설정 (오버레이 스타일) -->
-<div class="test-section">
-  <h4>🎬 인트로 설정 (오버레이 스타일)</h4>
-  <div class="upload-zone" id="introUploadZone">
-    <div class="upload-zone-icon">🎬</div>
-    <div class="upload-zone-text">인트로 비디오 파일을 드래그하세요</div>
-    <div class="upload-zone-text">메인 영상과 함께 오버레이로 재생됩니다</div>
-  </div>
-  
-  <!-- 인트로 활성화 및 적용 버튼 -->
-  <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
-    <label style="display: flex; align-items: center; font-size: 12px;">
-      <input type="checkbox" id="introEnabled" checked style="margin-right: 8px;">
-
-      인트로 활성화
-    </label>
-    <button id="applyIntroBtn" class="preset-btn" style="padding: 4px 12px; font-size: 11px; background: #4CAF50;" disabled>✅ 적용</button>
-  </div>
-  
-  <!-- 인트로 투명도 조절 (오버레이와 동일) -->
-  <div class="control-slider" style="margin-top: 12px;">
-    <div class="control-label">
-      <span class="effect-name">인트로 투명도</span>
-      <span class="channel-info">OPACITY</span>
-    </div>
-    <div class="slider-container">
-      <input type="range" class="control-range" id="intro-opacity-slider" 
-             min="0" max="100" step="5" value="80">
-    </div>
-    <div class="control-value" id="intro-opacity-value">80%</div>
-  </div>
-  
-  <!-- 인트로 블렌드 모드 선택 (오버레이와 동일) -->
-  <div style="margin-top: 10px;">
-    <label style="font-size: 11px; color: #90A4AE; margin-bottom: 5px; display: block;">인트로 블렌드 모드:</label>
-    <select id="introBlendMode" style="width: 100%; padding: 4px 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: white; font-size: 11px;">
-      <option value="screen">Screen (기본)</option>
-      <option value="normal">Normal</option>
-      <option value="multiply">Multiply</option>
-      <option value="overlay">Overlay</option>
-      <option value="soft-light">Soft Light</option>
-      <option value="hard-light">Hard Light</option>
-      <option value="color-dodge">Color Dodge</option>
-      <option value="color-burn">Color Burn</option>
-    </select>
-  </div>
-  
-  <!-- 상태 표시 -->
-  <div id="introFileStatus" style="margin-top: 8px; font-size: 11px; color: #90A4AE;">
-    현재: 인트로 없음
-  </div>
-  
-  <div style="margin-top: 8px; font-size: 10px; color: #FFB74D; background: rgba(255, 183, 77, 0.1); padding: 5px; border-radius: 4px;">
-    💡 인트로는 <strong>한 번만</strong> 재생되며, 메인 영상과 함께 오버레이로 표시됩니다!
-  </div>
-</div>
-      
-      <!-- 프리셋 관리 (저장/로드/삭제) -->
-      <div class="test-section">
-        <h4>💾 프리셋 관리</h4>
-        <div class="preset-controls">
-          <button class="preset-btn save" onclick="savePreset()">💾 저장</button>
-          <button class="preset-btn load" onclick="loadPreset()">📂 불러오기</button>
-          <button class="preset-btn delete" onclick="deletePreset()">🗑️ 삭제</button>
-          <button class="preset-btn" onclick="exportPreset()">📤 내보내기</button>
-        </div>
-        <div style="margin-top: 10px;">
-          <input type="text" id="presetName" placeholder="프리셋 이름 입력..." 
-                 style="width: 100%; padding: 8px; border: 1px solid rgba(255,255,255,0.2); border-radius: 5px; background: rgba(255,255,255,0.1); color: white; font-size: 12px;">
-        </div>
-        <div id="presetList" style="margin-top: 10px; max-height: 100px; overflow-y: auto; font-size: 11px;">
-          <!-- 저장된 프리셋 목록이 여기에 표시됩니다 -->
-        </div>
-      </div>
-      
-      <!-- 시스템 로그 -->
-      <div class="test-section">
-        <h4>📜 시스템 로그</h4>
-        <div id="logDisplay" class="log-display">
-          <div class="log-entry info">[시스템] 좌우 분할 컨트롤 센터 준비 완료</div>
-        </div>
-      </div>
-    </div>
-  </div>
 
     <!DOCTYPE html>
 <html lang="ko">
@@ -1226,9 +17,7 @@
       font-family: 'Segoe UI', sans-serif;
       transition: background-image 0.5s ease-in-out;
       scroll-behavior: auto;
-    }
-
-    video {
+    }    video {
       position: absolute;
       top: 0;
       left: 0;
@@ -2246,7 +1035,9 @@
       </div>
     </div>
     
-    <!-- ===== 오른쪽 섹션: 미디어 파일 관리 📁 ===== -->
+    
+    
+        <!-- ===== 오른쪽 섹션: 미디어 파일 관리 📁 =7892==== -->
     <div class="control-section right-section">
       <div class="section-title">📁 미디어 파일 관리</div>
       
@@ -2258,6 +1049,7 @@
           <div class="upload-zone-text">이미지 또는 비디오 파일을 드래그하세요</div>
           <div class="upload-zone-text">또는 클릭하여 파일 선택</div>
         </div>
+        
         <div style="display: flex; gap: 10px; margin-top: 10px;">
           <label style="display: flex; align-items: center; font-size: 12px;">
             <input type="radio" name="backgroundType" value="image" checked style="margin-right: 5px;">
@@ -2269,13 +1061,14 @@
           </label>
         </div>
       </div>
-      
-      <!-- 자동 배경 이미지 검색 (기존 기능 이동) -->
+    
+            <!-- 자동 배경 이미지 검색 (기존 기능 이동) -->
       <div class="test-section">
         <div id="backgroundSelector">
           <h4>🎲 자동 배경 이미지 검색</h4>
         </div>
       </div>
+
       
       <!-- 오버레이 설정 (드래그&드롭 업로드) -->
       <div class="test-section">
@@ -2293,7 +1086,51 @@
         </div>
       </div>
       
-    
+       <!-- 오버레이 활성화 및 적용 버튼 -->
+  <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
+    <label style="display: flex; align-items: center; font-size: 12px;">
+      <input type="checkbox" id="overlayEnabled" checked style="margin-right: 8px;">
+      오버레이 활성화
+    </label>
+    <button id="applyOverlayBtn" class="preset-btn" style="padding: 4px 12px; font-size: 11px; background: #4CAF50;" disabled onclick="applyOverlay()">✅ 적용</button>
+  </div>
+  
+  <!-- 오버레이 투명도 조절 -->
+  <div class="control-slider" style="margin-top: 12px;">
+    <div class="control-label">
+      <span class="effect-name">오버레이 투명도</span>
+      <span class="channel-info">OPACITY</span>
+    </div>
+    <div class="slider-container">
+      <input type="range" class="control-range" id="overlay-opacity-slider" 
+             min="0" max="100" step="5" value="20">
+    </div>
+    <div class="control-value" id="overlay-opacity-value">20%</div>
+  </div>
+
+    <!-- 믹스 블렌드 모드 선택 -->
+  <div style="margin-top: 10px;">
+    <label style="font-size: 11px; color: #90A4AE; margin-bottom: 5px; display: block;">블렌드 모드:</label>
+    <select id="overlayBlendMode" style="width: 100%; padding: 4px 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: white; font-size: 11px;">
+      <option value="screen">Screen (기본)</option>
+      <option value="normal">Normal</option>
+      <option value="multiply">Multiply</option>
+      <option value="overlay">Overlay</option>
+      <option value="soft-light">Soft Light</option>
+      <option value="hard-light">Hard Light</option>
+      <option value="color-dodge">Color Dodge</option>
+      <option value="color-burn">Color Burn</option>
+    </select>
+  </div>
+
+  
+
+  <!-- 상태 표시 -->
+<div id="overlayFileStatus" style="margin-top: 8px; font-size: 11px; color: #90A4AE;">
+  현재: 기본 오버레이 (overlay01.mp4)
+</div>
+
+
       
       <!-- 프리셋 관리 (저장/로드/삭제) -->
       <div class="test-section">
@@ -2313,6 +1150,53 @@
         </div>
       </div>
       
+        <!-- 인트로 활성화 및 적용 버튼 -->
+  <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
+    <label style="display: flex; align-items: center; font-size: 12px;">
+      <input type="checkbox" id="introEnabled" checked style="margin-right: 8px;">
+
+      인트로 활성화
+    </label>
+    <button id="applyIntroBtn" class="preset-btn" style="padding: 4px 12px; font-size: 11px; background: #4CAF50;" disabled onclick="applyIntro()">✅ 적용</button>
+  </div>
+
+   <!-- 인트로 투명도 조절 (오버레이와 동일) -->
+  <div class="control-slider" style="margin-top: 12px;">
+    <div class="control-label">
+      <span class="effect-name">인트로 투명도</span>
+      <span class="channel-info">OPACITY</span>
+    </div>
+    <div class="slider-container">
+      <input type="range" class="control-range" id="intro-opacity-slider" 
+             min="0" max="100" step="5" value="80">
+    </div>
+    <div class="control-value" id="intro-opacity-value">80%</div>
+  </div>
+
+    <!-- 인트로 블렌드 모드 선택 (오버레이와 동일) -->
+  <div style="margin-top: 10px;">
+    <label style="font-size: 11px; color: #90A4AE; margin-bottom: 5px; display: block;">인트로 블렌드 모드:</label>
+    <select id="introBlendMode" style="width: 100%; padding: 4px 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: white; font-size: 11px;">
+      <option value="screen">Screen (기본)</option>
+      <option value="normal">Normal</option>
+      <option value="multiply">Multiply</option>
+      <option value="overlay">Overlay</option>
+      <option value="soft-light">Soft Light</option>
+      <option value="hard-light">Hard Light</option>
+      <option value="color-dodge">Color Dodge</option>
+      <option value="color-burn">Color Burn</option>
+    </select>
+  </div>
+
+    <!-- 상태 표시 -->
+  <div id="introFileStatus" style="margin-top: 8px; font-size: 11px; color: #90A4AE;">
+    현재: 인트로 없음
+  </div>
+
+    <div style="margin-top: 8px; font-size: 10px; color: #FFB74D; background: rgba(255, 183, 77, 0.1); padding: 5px; border-radius: 4px;">
+    💡 인트로는 <strong>한 번만</strong> 재생되며, 메인 영상과 함께 오버레이로 표시됩니다!
+  </div>
+
       <!-- 시스템 로그 -->
       <div class="test-section">
         <h4>📜 시스템 로그</h4>
@@ -2746,16 +1630,17 @@
       isActive: false
     };
 
-    // 현재 사용 중인 루프 영상들
+       // 현재 사용 중인 루프 영상들
     let currentLoopVideos = {
-      loop1: CONFIG.PATHS.DEFAULT_LOOP1,
-      loop2: CONFIG.PATHS.DEFAULT_LOOP2
+      loop1: 'Loof_01.mp4',
+      loop2: 'Loof_01-1.mp4'
     };
 
     // 로드된 배경 미디어 (이미지/영상) 목록
     let loadedBackgroundMedia = [
-      { name: '기본 루프 영상', type: 'video', loop1: CONFIG.PATHS.DEFAULT_LOOP1, loop2: CONFIG.PATHS.DEFAULT_LOOP2 }
+      { name: '기본 루프 영상', type: 'video', loop1: 'Loof_01.mp4', loop2: 'Loof_01-1.mp4' }
     ];
+
 
     // 배경 이미지 기본 목록
     const defaultBackgroundImages = [
@@ -2854,8 +1739,12 @@
 
     // 배경 파일 처리
     function handleBackgroundFiles(files) {
+      console.log('🖼️ handleBackgroundFiles 호출, 파일:', files);
+      
       const imageFiles = files.filter(file => file.type.startsWith('image/'));
       const videoFiles = files.filter(file => file.type.startsWith('video/'));
+      
+      console.log('이미지:', imageFiles.length, '비디오:', videoFiles.length);
       
       addLog('info', `배경 파일 업로드: 이미지 ${imageFiles.length}개, 비디오 ${videoFiles.length}개`);
       
@@ -2870,23 +1759,41 @@
         addLog('info', `이미지 추가: ${file.name}`);
       });
       
-      // 🔧 수정: 비디오 파일 처리 - 각 파일을 개별적으로 추가
+      // 비디오 파일 처리
       videoFiles.forEach(video => {
         const url = URL.createObjectURL(video);
+        console.log('📹 비디오 URL 생성:', url);
 
         loadedBackgroundMedia.push({
           name: video.name,
           type: 'video',
           loop1: url,
-          loop2: url  // 같은 영상을 loop1, loop2로 사용
+          loop2: url
         });
         addLog('info', `비디오 추가: ${video.name}`);
       });
       
       updateBackgroundSelector();
+      
+      // 마지막 추가된 비디오를 자동으로 적용
+      if (videoFiles.length > 0) {
+        const lastIndex = loadedBackgroundMedia.length - 1;
+        console.log('🎬 자동 적용, 인덱스:', lastIndex);
+        setTimeout(() => {
+          applyBackgroundMedia('loaded', lastIndex);
+        }, 500);
+      }
+      
+      // 이미지만 있으면 이미지 적용
+      if (imageFiles.length > 0 && videoFiles.length === 0) {
+        const lastIndex = loadedBackgroundMedia.length - 1;
+        setTimeout(() => {
+          applyBackgroundMedia('loaded', lastIndex);
+        }, 500);
+      }
     }
 
-    // 오버레이 파일 처리
+        // 오버레이 파일 처리
     function handleOverlayFiles(files) {
       const videoFiles = files.filter(file =>
         file.type.startsWith('video/') ||
@@ -3462,6 +2369,7 @@ function playIntroVideo() {
     // 컨트롤 센터 모드 토글
     function toggleControlCenter() {
       
+      
       const controlCenter = document.getElementById('controlCenter');
       const logo1 = document.getElementById('logo1');
       const logo2 = document.getElementById('logo2');
@@ -3521,8 +2429,11 @@ function playIntroVideo() {
       }
     }
 
-    // 전역으로 함수 노출
-    window.toggleControlCenter = toggleControlCenter;
+    // 전역으로 함수 노출 (즉시)
+    if (typeof window !== 'undefined') {
+      window.toggleControlCenter = toggleControlCenter;
+      console.log('✅ toggleControlCenter 전역 등록 완료');
+    }
     
     function setupStealthControls() {
       const panelSlider = document.getElementById('stealth-panel-slider');
@@ -3585,10 +2496,14 @@ function playIntroVideo() {
 
     // 루프 영상 교체 함수 - 안정성 개선
     function changeLoopVideos(loop1Path, loop2Path) {
-      const loop1Video = document.getElementById('loop1');
-      const loop2Video = document.getElementById('loop2');
+  console.log('🔄 changeLoopVideos 호출됨');
+  console.log('loop1Path:', loop1Path);
+  console.log('loop2Path:', loop2Path);
+  
+  const loop1Video = document.getElementById('loop1');
+  const loop2Video = document.getElementById('loop2');
 
-      addLog('info', `루프 영상 교체 시작: ${loop1Path.split('/').pop()}, ${loop2Path.split('/').pop()}`);
+  addLog('info', `루프 영상 교체 시작: ${loop1Path.split('/').pop()}, ${loop2Path.split('/').pop()}`);
 
       // 현재 비디오 완전 정지 및 숨기기
       loop1Video.pause();
@@ -3937,6 +2852,7 @@ function playIntroVideo() {
         
         const button = bgItem.querySelector('.apply-local-btn');
         button.addEventListener('click', async () => {
+          console.log('🔘 배경 적용 버튼 클릭됨, 인덱스:', index);
           await applyBackgroundMedia('loaded', index);
         });
       });
@@ -3944,7 +2860,7 @@ function playIntroVideo() {
 
     // 배경 미디어 적용 함수
     function applyBackgroundMedia(type, index) {
-      if (type === 'default') {
+  if (type === 'default') {
         const media = defaultBackgroundImages[index];
         if (media.type === 'image') {
           changeBackgroundImage(media.url);
@@ -5205,6 +4121,31 @@ function updateOverlayStatus(applied = false) {
     window.updateOverlayStatus = updateOverlayStatus;
     
 
+// 페이지 로드 후 버튼 이벤트 연결
+setTimeout(() => {
+  const applyOverlayBtn = document.getElementById('applyOverlayBtn');
+  if (applyOverlayBtn) {
+    applyOverlayBtn.addEventListener('click', () => {
+      console.log('🎬 오버레이 적용 버튼 클릭됨');
+      applyOverlay();
+    });
+    console.log('✅ 오버레이 버튼 이벤트 연결 완료');
+  } else {
+    console.error('❌ applyOverlayBtn 요소를 찾을 수 없음');
+  }
+  
+  const applyIntroBtn = document.getElementById('applyIntroBtn');
+  if (applyIntroBtn) {
+    applyIntroBtn.addEventListener('click', () => {
+      console.log('🎬 인트로 적용 버튼 클릭됨');
+      applyIntro();
+    });
+    console.log('✅ 인트로 버튼 이벤트 연결 완료');
+  } else {
+    console.error('❌ applyIntroBtn 요소를 찾을 수 없음');
+  }
+}, 1000);
+
 
     // 간단한 디버깅 함수들
 window.debugOverlay = function() {
@@ -5219,6 +4160,8 @@ window.hideOverlay = function() { document.getElementById('overlayVideo').style.
 document.addEventListener('DOMContentLoaded', () => {
   // ✅ 한 번만 호출되도록 수정
   if (!window._initialSetupComplete) {
+
+  
     // DOM 캐싱 시스템 초기화 (최우선)
     DOM.init();
 
