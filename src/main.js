@@ -144,6 +144,32 @@ async function initApp() {
     // === 이벤트 연결 ===
     setupEventHandlers();
 
+    // === 시작 버튼 설정 ===
+    const startButton = document.getElementById('startButton');
+    const controlPanel = document.querySelector('.control-panel');
+    const titleDisplay = document.getElementById('titleDisplay');
+    const controlCenter = document.getElementById('controlCenter');
+
+    if (startButton) {
+      startButton.addEventListener('click', () => {
+        // 시작 버튼 숨기기
+        startButton.style.display = 'none';
+
+        // UI 요소 표시
+        if (controlPanel) {
+          controlPanel.classList.add('show');
+        }
+        if (titleDisplay) {
+          titleDisplay.classList.add('show');
+        }
+        if (controlCenter) {
+          controlCenter.classList.add('show');
+        }
+
+        logger.info('🎬 비디오 플레이어 시작!');
+      });
+    }
+
     // 앱 시작
     await app.start();
 
