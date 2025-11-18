@@ -1,0 +1,262 @@
+/* ===== LAYOUT STYLES ===== */
+/* 레이아웃, 그리드, 위치 관련 스타일 */
+
+/* 좌우 분할 컨트롤 센터 패널 */
+.test-panel {
+  position: fixed;
+  left: 20px;
+  top: 20px;
+  width: 800px;
+  max-height: 90vh;
+  background: rgba(20, 25, 35, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  backdrop-filter: blur(20px);
+  color: white;
+  overflow-y: auto;
+  transform: translateX(-840px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  gap: 20px;
+}
+
+.test-panel.show {
+  transform: translateX(0);
+}
+
+.test-panel h3 {
+  margin: 0;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px 15px 0 0;
+  text-align: center;
+  font-size: 16px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+}
+
+/* 좌우 분할 섹션 */
+.control-section {
+  flex: 1;
+  padding: 60px 15px 15px 15px;
+  max-height: calc(90vh - 60px);
+  overflow-y: auto;
+}
+
+.left-section {
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  padding-right: 20px;
+}
+
+.right-section {
+  padding-left: 20px;
+}
+
+/* 컨트롤 패널 */
+.control-panel {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 8px 20px;
+  background: rgba(243, 208, 147, 0.3);
+  backdrop-filter: blur(20px);
+  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: all 0.5s ease;
+}
+
+.control-panel.show {
+  opacity: 1;
+}
+
+/* 제목 표시 */
+.title-display {
+  position: fixed;
+  bottom: 75px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.005);
+  backdrop-filter: blur(1px);
+  color: #fff;
+  padding: 20px 30px;
+  border-radius: 15px;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  text-align: center;
+  z-index: 16;
+  opacity: 0.5;
+  transition: all 0.5s ease;
+  border: 1px solid rgba(255, 255, 255, 0.01);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.01);
+  white-space: nowrap;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.title-display.show {
+  opacity: 1;
+}
+
+/* Melony.j 로고 */
+.logo-container {
+  position: absolute;
+  right: 40px;
+  bottom: 40px;
+  z-index: 1000;
+  transition: all 0.4s ease;
+}
+
+.melony-logo {
+  position: relative;
+  width: 40px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  -webkit-mask: url('MelonyJ_Logo.png') no-repeat center center;
+  -webkit-mask-size: 45px;
+  mask: url('MelonyJ_Logo.png') no-repeat center center;
+  mask-size: 45px;
+  background-size: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: visible;
+  border: none;
+}
+
+.melony-logo img {
+  display: none;
+}
+
+.logo-text {
+  display: none;
+  font-size: 6px;
+  font-weight: 300;
+  color: white;
+  text-align: center;
+  font-family: 'Georgia', serif;
+  letter-spacing: 0.2px;
+  z-index: 2;
+  position: relative;
+}
+
+.logo-text .dot {
+  color: #ffd89b;
+  font-weight: bold;
+}
+
+/* 행성 궤도 */
+.orbit {
+  position: absolute;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  animation: rotate 8s linear infinite;
+}
+
+.orbit-1 {
+  width: 56px;
+  height: 56px;
+  top: -8px;
+  left: -8px;
+}
+
+.orbit-2 {
+  width: 70px;
+  height: 70px;
+  top: -15px;
+  left: -15px;
+  animation-duration: 12s;
+  animation-direction: reverse;
+}
+
+/* 행성들 */
+.planet {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.planet-1 {
+  top: 0;
+  left: 50%;
+  margin-left: -2px;
+  margin-top: -2px;
+  background: #ffd89b;
+  color: #ffd89b;
+}
+
+.planet-2 {
+  top: 50%;
+  right: 0;
+  margin-top: -2px;
+  margin-right: -2px;
+  background: #ff9a9e;
+  color: #ff9a9e;
+}
+
+.planet-3 {
+  bottom: 0;
+  left: 50%;
+  margin-left: -2px;
+  margin-bottom: -2px;
+  background: #a8edea;
+  color: #a8edea;
+}
+
+.planet-4 {
+  top: 50%;
+  left: 0;
+  margin-top: -2px;
+  margin-left: -2px;
+  background: #fecfef;
+  color: #fecfef;
+}
+
+.planet-5 {
+  top: 12%;
+  right: 12%;
+  background: #fed6e3;
+  color: #fed6e3;
+}
+
+/* 플레이어 컨트롤 */
+.player-controls {
+  background: transparent;
+  border-radius: 0;
+  backdrop-filter: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.player-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+
+.effect-group {
+  display: flex;
+  gap: 8px;
+}

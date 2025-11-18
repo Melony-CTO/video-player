@@ -1,0 +1,498 @@
+/* ===== COMPONENT STYLES ===== */
+/* 버튼, 슬라이더, 패널 등 컴포넌트 스타일 */
+
+/* 섹션 */
+.test-section {
+  padding: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.test-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.test-section h4 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #4FC3F7;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #4FC3F7;
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 10px;
+  background: rgba(79, 195, 247, 0.1);
+  border-radius: 10px;
+  border: 1px solid rgba(79, 195, 247, 0.3);
+}
+
+/* 시작 버튼 */
+#startButton {
+  padding: 18px 36px;
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #ff6b81, #6bc1ff);
+  border: none;
+  border-radius: 40px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: pulse 2s infinite;
+  z-index: 100;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#startButton:hover {
+  transform: translate(-50%, -50%) scale(1.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+/* 컨트롤 버튼 */
+.control-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.control-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2));
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+}
+
+.play-btn {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  font-size: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.play-btn:hover {
+  background: linear-gradient(135deg, #f5576c, #f093fb);
+  transform: scale(1.05);
+  box-shadow: 0 6px 25px rgba(240, 147, 251, 0.4);
+}
+
+.shuffle-btn.active {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.8), rgba(255, 152, 0, 0.8));
+  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.5);
+}
+
+.control-btn.next-btn {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.8), rgba(255, 152, 0, 0.8)) !important;
+  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.5);
+}
+
+.control-btn.next-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.9), rgba(255, 193, 7, 0.9)) !important;
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(255, 193, 7, 0.6);
+}
+
+/* 효과음 버튼 */
+.effect-button {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
+  color: white;
+  border: none;
+  border-radius: 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.effect-button:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.25));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.effect-button.active {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-color: #667eea;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  transform: translateY(-1px);
+}
+
+/* 테스트 버튼 */
+.test-btn {
+  background: #4FC3F7;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.test-btn:hover {
+  background: #29B6F6;
+}
+
+/* 프리셋 버튼 */
+.preset-controls {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+
+.preset-btn {
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #4FC3F7, #29B6F6);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 11px;
+  transition: all 0.3s ease;
+  flex: 1;
+  min-width: 60px;
+}
+
+.preset-btn:hover {
+  background: linear-gradient(135deg, #29B6F6, #03A9F4);
+  transform: translateY(-1px);
+}
+
+.preset-btn.save {
+  background: linear-gradient(135deg, #4CAF50, #66BB6A);
+}
+
+.preset-btn.load {
+  background: linear-gradient(135deg, #FF9800, #FFB74D);
+}
+
+.preset-btn.delete {
+  background: linear-gradient(135deg, #F44336, #E57373);
+}
+
+/* 슬라이더 */
+.control-slider {
+  margin: 8px 0;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+.control-slider.active {
+  background: rgba(76, 175, 80, 0.2);
+  border: 1px solid rgba(76, 175, 80, 0.5);
+}
+
+.control-slider.master-volume {
+  background: rgba(255, 152, 0, 0.2);
+  border: 1px solid rgba(255, 152, 0, 0.3);
+}
+
+.control-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.effect-name {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.channel-info {
+  font-size: 10px;
+  color: #90A4AE;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.control-range {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  outline: none;
+}
+
+.control-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #4FC3F7;
+  cursor: pointer;
+}
+
+.control-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #4FC3F7;
+  cursor: pointer;
+  border: none;
+}
+
+.control-value {
+  font-size: 11px;
+  color: #4FC3F7;
+  text-align: center;
+  margin-top: 2px;
+}
+
+/* EQ 컨트롤 */
+.eq-control {
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.eq-label {
+  font-size: 12px;
+  width: 40px;
+}
+
+.eq-slider {
+  flex: 1;
+  margin: 0 10px;
+}
+
+.eq-value {
+  font-size: 11px;
+  width: 40px;
+  text-align: right;
+}
+
+/* 업로드 영역 */
+.upload-zone {
+  border: 2px dashed rgba(79, 195, 247, 0.5);
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  margin: 10px 0;
+  background: rgba(79, 195, 247, 0.05);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.upload-zone:hover {
+  border-color: rgba(79, 195, 247, 0.8);
+  background: rgba(79, 195, 247, 0.1);
+  transform: translateY(-2px);
+}
+
+.upload-zone.drag-over {
+  border-color: #4FC3F7;
+  background: rgba(79, 195, 247, 0.2);
+  box-shadow: 0 0 20px rgba(79, 195, 247, 0.3);
+}
+
+.upload-zone-text {
+  font-size: 12px;
+  color: #90A4AE;
+  margin: 5px 0;
+}
+
+.upload-zone-icon {
+  font-size: 24px;
+  color: #4FC3F7;
+  margin-bottom: 10px;
+}
+
+/* 배경/플레이리스트 선택 */
+.background-item {
+  margin: 5px 0;
+  display: flex;
+  align-items: center;
+}
+
+.background-item input[type="radio"] {
+  margin-right: 8px;
+}
+
+.background-item label {
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.playlist-item-selector {
+  margin: 5px 0;
+  display: flex;
+  align-items: center;
+}
+
+.playlist-item-selector input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.playlist-item-selector label {
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.shuffle-option {
+  margin: 10px 0;
+  padding: 8px;
+  background: rgba(76, 175, 80, 0.2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.shuffle-option input {
+  margin-right: 8px;
+}
+
+/* 플레이리스트 아이템 */
+.playlist-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  margin: 2px 0;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  font-size: 11px;
+  min-height: 20px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.playlist-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.playlist-item.current {
+  background: rgba(76, 175, 80, 0.4);
+  border: 2px solid rgba(76, 175, 80, 0.8);
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+  animation: currentTrackPulse 2s infinite;
+}
+
+.track-info {
+  font-size: 9px;
+  color: #90A4AE;
+  margin: 0 5px;
+}
+
+.track-status {
+  font-size: 10px;
+}
+
+.track-status.available {
+  color: #4CAF50;
+}
+
+/* 플레이리스트 디스플레이 */
+#playlistDisplay {
+  max-height: 180px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 5px;
+  scroll-behavior: smooth;
+}
+
+/* 로그 디스플레이 */
+.log-display {
+  max-height: 150px;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  line-height: 1.3;
+}
+
+.log-entry {
+  margin: 1px 0;
+  padding: 2px;
+}
+
+.log-entry.info {
+  color: #81C784;
+}
+
+.log-entry.error {
+  color: #E57373;
+}
+
+.log-entry.warning {
+  color: #FFB74D;
+}
+
+/* 볼륨 상태 */
+.volume-status {
+  font-size: 11px;
+  line-height: 1.4;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 8px;
+  border-radius: 8px;
+}
+
+/* 오디오 비주얼라이저 */
+.audio-visualizer {
+  display: flex;
+  align-items: end;
+  gap: 3px;
+  height: 30px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.audio-visualizer.playing {
+  opacity: 1;
+}
+
+.visualizer-bar {
+  width: 3px;
+  background: rgba(255, 255, 255, 1.0);
+  border-radius: 2px;
+  transition: height 0.05s ease;
+  min-height: 2px;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 1.0);
+}
