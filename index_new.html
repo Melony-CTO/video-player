@@ -26,6 +26,18 @@
 
       <div class="test-section">
         <h4>📋 플레이리스트</h4>
+        <div class="playlist-controls" style="margin-bottom: 10px; display: flex; gap: 10px;">
+          <button id="loadPlaylistBtn" class="control-btn" style="font-size: 11px; padding: 6px 12px;">
+            📁 플레이리스트 로드
+          </button>
+          <label for="audioFileInput" class="control-btn" style="font-size: 11px; padding: 6px 12px; cursor: pointer;">
+            🎵 파일 추가
+            <input type="file" id="audioFileInput" accept="audio/*" multiple style="display: none;" />
+          </label>
+        </div>
+        <div id="dropZone" style="border: 2px dashed rgba(255,255,255,0.3); border-radius: 8px; padding: 20px; text-align: center; color: rgba(255,255,255,0.5); font-size: 12px; margin-bottom: 10px;">
+          드래그 앤 드롭으로 음악 파일 추가
+        </div>
         <div id="playlistDisplay"></div>
       </div>
 
@@ -77,12 +89,29 @@
 
   <!-- 컨트롤 패널 -->
   <div class="control-panel" id="controlPanel">
+    <!-- 왼쪽 효과음 그룹 -->
+    <div class="effect-group">
+      <button class="effect-button" id="effectRain">Rain</button>
+      <button class="effect-button" id="effectBird">Bird</button>
+      <button class="effect-button" id="effectForest">Forest</button>
+      <button class="effect-button" id="effectCrickets">Crickets</button>
+    </div>
+
+    <!-- 중앙 플레이어 컨트롤 -->
     <div class="player-controls">
       <div class="player-buttons">
         <button class="control-btn shuffle-btn" id="shuffleBtn">⏮</button>
         <button class="control-btn play-btn" id="playBtn">▶</button>
-        <button class="control-btn next-btn">⏭</button>
+        <button class="control-btn next-btn" id="nextBtn">⏭</button>
       </div>
+    </div>
+
+    <!-- 오른쪽 효과음 그룹 -->
+    <div class="effect-group">
+      <button class="effect-button" id="effectStream">Stream</button>
+      <button class="effect-button" id="effectWind">Wind</button>
+      <button class="effect-button" id="effectCrackle">Crackle</button>
+      <button class="effect-button" id="effectSand">Sand</button>
     </div>
   </div>
 

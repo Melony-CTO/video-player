@@ -10,21 +10,23 @@ export class StealthMode {
   constructor() {
     this.isActive = false;
     this.settings = {
-      panelOpacity: 0.3,
+      panelOpacity: 0,
       buttonOpacity: 1.0,
-      blurAmount: 20,
+      blurAmount: 100,
       hoverEnabled: true
     };
     this.elements = {
       panel: null,
-      buttons: []
+      buttons: [],
+      effectButtons: []
     };
   }
 
   init() {
     // UI 요소 찾기
-    this.elements.panel = document.getElementById('controlCenter');
-    this.elements.buttons = Array.from(document.querySelectorAll('.control-panel, .title-display'));
+    this.elements.panel = document.getElementById('controlPanel');
+    this.elements.buttons = Array.from(document.querySelectorAll('.control-btn, .play-btn'));
+    this.elements.effectButtons = Array.from(document.querySelectorAll('.effect-button'));
 
     if (!this.elements.panel) {
       logger.warning('스텔스 모드: 패널 요소를 찾을 수 없음');
@@ -77,6 +79,16 @@ export class StealthMode {
     this.elements.buttons.forEach(button => {
       button.style.opacity = this.settings.buttonOpacity;
     });
+
+    // 효과음 버튼 - 활성 상태 색상 유지하면서 투명도 적용
+    this.elements.effectButtons.forEach(button => {
+      button.style.opacity = this.settings.buttonOpacity;
+
+      // active 클래스가 있는 버튼은 색상 유지
+      if (!button.classList.contains('active')) {
+        button.style.filter = `opacity(${this.settings.buttonOpacity})`;
+      }
+    });
   }
 
   reset() {
@@ -91,6 +103,12 @@ export class StealthMode {
     // 버튼 투명도 리셋
     this.elements.buttons.forEach(button => {
       button.style.opacity = '';
+    });
+
+    // 효과음 버튼 리셋
+    this.elements.effectButtons.forEach(button => {
+      button.style.opacity = '';
+      button.style.filter = '';
     });
   }
 
@@ -124,6 +142,14 @@ export class StealthMode {
     if (this.isActive) {
       this.elements.buttons.forEach(button => {
         button.style.opacity = this.settings.buttonOpacity;
+      });
+
+      // 효과음 버튼도 업데이트 (활성 상태 색상 유지)
+      this.elements.effectButtons.forEach(button => {
+        button.style.opacity = this.settings.buttonOpacity;
+        if (!button.classList.contains('active')) {
+          button.style.filter = `opacity(${this.settings.buttonOpacity})`;
+        }
       });
     }
 

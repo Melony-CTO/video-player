@@ -97,6 +97,9 @@ async function initApp() {
       logger.debug('✓ ShuffleEngine 초기화');
     }
 
+    // MusicPlayer와 ShuffleEngine 연결
+    musicPlayer.setShuffleEngine(shuffleEngine);
+
     // === UI 모듈 초기화 ===
     const visualizer = new Visualizer();
     const playlistUI = new PlaylistUI();
@@ -168,15 +171,29 @@ function setupEventHandlers() {
   // 다음/이전 트랙
   eventBus.on('music:next', () => {
     const musicPlayer = app.getModule('musicPlayer');
+    const playlistUI = app.getModule('playlistUI');
+
     if (musicPlayer) {
       musicPlayer.next();
+
+      // PlaylistUI 실시간 동기화
+      if (playlistUI) {
+        playlistUI.setCurrentTrack(musicPlayer.currentIndex);
+      }
     }
   });
 
   eventBus.on('music:previous', () => {
     const musicPlayer = app.getModule('musicPlayer');
+    const playlistUI = app.getModule('playlistUI');
+
     if (musicPlayer) {
       musicPlayer.previous();
+
+      // PlaylistUI 실시간 동기화
+      if (playlistUI) {
+        playlistUI.setCurrentTrack(musicPlayer.currentIndex);
+      }
     }
   });
 
@@ -210,6 +227,14 @@ function setupEventHandlers() {
     }
   });
 
+  // 반복 모드 순환
+  eventBus.on('repeat:cycle', () => {
+    const shuffleEngine = app.getModule('shuffleEngine');
+    if (shuffleEngine) {
+      shuffleEngine.cycleRepeatMode();
+    }
+  });
+
   // 스텔스 모드 토글
   eventBus.on('stealth:toggle', () => {
     const stealthMode = app.getModule('stealthMode');
@@ -221,9 +246,21 @@ function setupEventHandlers() {
   // UI 트랙 선택
   eventBus.on('ui:track:selected', ({ track, index }) => {
     const musicPlayer = app.getModule('musicPlayer');
+    const playlistUI = app.getModule('playlistUI');
+
     if (musicPlayer) {
+      // 인덱스 동기화
+      if (index !== undefined) {
+        musicPlayer.currentIndex = index;
+      }
+
       musicPlayer.loadTrack(track);
       musicPlayer.play();
+
+      // PlaylistUI 업데이트
+      if (playlistUI && index !== undefined) {
+        playlistUI.setCurrentTrack(index);
+      }
     }
   });
 
@@ -242,6 +279,136 @@ function setupEventHandlers() {
       effectPlayer.setMasterVolume(volume);
     }
   });
+
+  // 효과음 버튼 이벤트 리스너 설정
+  const effectButtons = {
+    'effectRain': 'rain',
+    'effectBird': 'bird',
+    'effectForest': 'forest',
+    'effectCrickets': 'crickets',
+    'effectStream': 'stream',
+    'effectWind': 'wind',
+    'effectCrackle': 'crackle',
+    'effectSand': 'sand'
+  };
+
+  Object.entries(effectButtons).forEach(([buttonId, effectName]) => {
+    const button = document.getElementById(buttonId);
+    if (button) {
+      button.addEventListener('click', () => {
+        const effectPlayer = app.getModule('effectPlayer');
+        if (effectPlayer) {
+          effectPlayer.toggle(effectName);
+          button.classList.toggle('active');
+          logger.debug(`효과음 토글: ${effectName}`);
+        }
+      });
+    }
+  });
+
+  // 플레이 버튼 이벤트
+  const playBtn = document.getElementById('playBtn');
+  if (playBtn) {
+    playBtn.addEventListener('click', () => {
+      eventBus.emit('music:toggle');
+    });
+  }
+
+  // 다음 버튼 이벤트
+  const nextBtn = document.getElementById('nextBtn');
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      eventBus.emit('music:next');
+    });
+  }
+
+  // 이전 버튼 이벤트
+  const shuffleBtn = document.getElementById('shuffleBtn');
+  if (shuffleBtn) {
+    shuffleBtn.addEventListener('click', () => {
+      eventBus.emit('music:previous');
+    });
+  }
+
+  // === 드래그 앤 드롭 & 파일 업로드 ===
+  const dropZone = document.getElementById('dropZone');
+  const audioFileInput = document.getElementById('audioFileInput');
+  const musicPlayer = app.getModule('musicPlayer');
+  const trackLoader = app.getModule('trackLoader');
+  const playlistUI = app.getModule('playlistUI');
+
+  // 드래그 앤 드롭 이벤트
+  if (dropZone) {
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = 'rgba(79, 195, 247, 0.8)';
+      dropZone.style.backgroundColor = 'rgba(79, 195, 247, 0.1)';
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.style.borderColor = 'rgba(255,255,255,0.3)';
+      dropZone.style.backgroundColor = 'transparent';
+    });
+
+    dropZone.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = 'rgba(255,255,255,0.3)';
+      dropZone.style.backgroundColor = 'transparent';
+
+      const files = Array.from(e.dataTransfer.files).filter(file =>
+        file.type.startsWith('audio/')
+      );
+
+      if (files.length > 0 && trackLoader) {
+        await handleAudioFiles(files);
+      }
+    });
+  }
+
+  // 파일 입력 이벤트
+  if (audioFileInput) {
+    audioFileInput.addEventListener('change', async (e) => {
+      const files = Array.from(e.target.files);
+
+      if (files.length > 0 && trackLoader) {
+        await handleAudioFiles(files);
+      }
+
+      // 입력 초기화 (같은 파일 다시 선택 가능하도록)
+      e.target.value = '';
+    });
+  }
+
+  // 오디오 파일 처리 함수
+  async function handleAudioFiles(files) {
+    logger.info(`${files.length}개 오디오 파일 로드 중...`);
+
+    const tracks = [];
+
+    for (const file of files) {
+      try {
+        const track = await trackLoader.loadAudioFile(file);
+        tracks.push(track);
+        logger.debug(`파일 로드 완료: ${file.name}`);
+      } catch (error) {
+        logger.error(`파일 로드 실패: ${file.name} - ${error.message}`);
+      }
+    }
+
+    if (tracks.length > 0) {
+      // 현재 플레이리스트에 추가
+      const currentPlaylist = musicPlayer.playlist || [];
+      const newPlaylist = [...currentPlaylist, ...tracks];
+
+      musicPlayer.setPlaylist(newPlaylist);
+
+      if (playlistUI) {
+        playlistUI.setPlaylist(newPlaylist);
+      }
+
+      logger.info(`✅ ${tracks.length}개 트랙 추가됨`);
+    }
+  }
 }
 
 // DOM이 로드되면 앱 초기화
