@@ -916,7 +916,24 @@
           <h4>🎵 플레이리스트 관리</h4>
         </div>
       </div>
-      
+
+      <!-- 음악 파일 직접 불러오기 (드래그&드롭) -->
+      <div class="test-section">
+        <h4>🎧 음악 파일 직접 불러오기</h4>
+        <div class="upload-zone" id="musicFilesUploadZone">
+          <div class="upload-zone-icon">🎵</div>
+          <div class="upload-zone-text">음악 파일을 드래그하세요</div>
+          <div class="upload-zone-text">MP3, WAV, OGG, M4A 파일 지원</div>
+          <div class="upload-zone-text">여러 파일 동시 선택 가능</div>
+        </div>
+        <button onclick="openMusicFiles()" class="preset-btn" style="width: 100%; margin-top: 10px;">
+          📁 파일 열기
+        </button>
+        <div id="loadedMusicFilesStatus" style="margin-top: 8px; font-size: 11px; color: #90A4AE;">
+          불러온 파일: 0개
+        </div>
+      </div>
+
       <!-- 현재 플레이리스트 표시 -->
       <div class="test-section">
         <h4>📋 현재 플레이리스트</h4>
@@ -1394,6 +1411,9 @@
     <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmAZNjRfnNn2TxA" type="audio/wav">
   </audio>
 
+  <!-- 플레이리스트 스크립트 -->
+  <script src="z-lofi_inst_playlist.js"></script>
+
   <!-- Howler.js 라이브러리 (MIT License) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js" integrity="sha512-xi/RZRIF/S0hJ+yJJYuZ5yk6/8pCiRlEXZzoguSMl+vk2eppLW2nTtmOIvTidoGVzCNaGBdlEOqlcDCJI9mT1w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
@@ -1788,6 +1808,12 @@
       if (introZone) {
         setupUploadZone(introZone, handleIntroFiles);
       }
+
+      // 음악 파일 업로드 존
+      const musicFilesZone = document.getElementById('musicFilesUploadZone');
+      if (musicFilesZone) {
+        setupUploadZone(musicFilesZone, handleMusicFiles);
+      }
     }
 
     // 업로드 존 설정 함수
@@ -1935,16 +1961,16 @@
 
     // 인트로 파일 처리
     function handleIntroFiles(files) {
-      const videoFiles = files.filter(file => 
-        file.type.startsWith('video/') || 
+      const videoFiles = files.filter(file =>
+        file.type.startsWith('video/') ||
         file.name.toLowerCase().endsWith('.mov') ||
         file.name.toLowerCase().endsWith('.mp4')
       );
-      
+
       if (videoFiles.length > 0) {
         const file = videoFiles[0];
         const url = URL.createObjectURL(file);
-        
+
         // 인트로 비디오 저장 (나중에 구현)
         window.introVideoUrl = url;
         addLog('info', `인트로 비디오 설정: ${file.name}`);
@@ -1952,7 +1978,91 @@
         addLog('error', '지원되지 않는 인트로 파일 형식입니다');
       }
     }
-    
+
+    // 음악 파일 처리
+    function handleMusicFiles(files) {
+      const audioFiles = files.filter(file =>
+        file.type.startsWith('audio/') ||
+        file.name.toLowerCase().endsWith('.mp3') ||
+        file.name.toLowerCase().endsWith('.wav') ||
+        file.name.toLowerCase().endsWith('.ogg') ||
+        file.name.toLowerCase().endsWith('.m4a')
+      );
+
+      if (audioFiles.length === 0) {
+        addLog('error', '지원되는 오디오 파일이 없습니다');
+        return;
+      }
+
+      addLog('info', `${audioFiles.length}개 음악 파일 처리 중...`);
+
+      // 파일을 트랙 객체로 변환
+      const newTracks = audioFiles.map(file => ({
+        title: file.name.replace(/\.[^/.]+$/, ''), // 확장자 제거
+        src: URL.createObjectURL(file),
+        artist: '로컬 파일',
+        playlist: '직접 불러온 음악'
+      }));
+
+      // 기존 musicTracks에 추가
+      musicTracks = [...musicTracks, ...newTracks];
+      broadcastPlaylist = [...broadcastPlaylist, ...newTracks];
+
+      // 셔플 모드면 셔플 플레이리스트 재생성
+      if (isShuffleMode) {
+        shuffledPlaylist = createShuffledPlaylist();
+      }
+
+      // 로드된 플레이리스트에 추가
+      const directLoadPlaylist = loadedPlaylists.find(p => p.id === 'direct-load');
+      if (directLoadPlaylist) {
+        directLoadPlaylist.tracks = [...directLoadPlaylist.tracks, ...newTracks];
+      } else {
+        loadedPlaylists.push({
+          id: 'direct-load',
+          name: '직접 불러온 음악',
+          tracks: newTracks
+        });
+      }
+
+      // 상태 표시 업데이트
+      const statusElement = document.getElementById('loadedMusicFilesStatus');
+      if (statusElement) {
+        const totalDirectFiles = loadedPlaylists.find(p => p.id === 'direct-load')?.tracks.length || 0;
+        statusElement.textContent = `불러온 파일: ${totalDirectFiles}개`;
+        statusElement.style.color = '#4CAF50';
+      }
+
+      // UI 업데이트
+      if (isControlCenterMode) {
+        updatePlaylistSelector();
+        updateControlCenterPlaylist();
+        addLog('info', `✅ ${audioFiles.length}개 음악 파일 추가 완료`);
+      }
+
+      // 첫 트랙이면 자동 로드
+      if (currentTrackIndex === 0 && !isMusicPlaying) {
+        loadTrack(0);
+      }
+    }
+
+    // 파일 열기 버튼 핸들러
+    function openMusicFiles() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.multiple = true;
+      input.accept = 'audio/*,.mp3,.wav,.ogg,.m4a';
+
+      input.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length > 0) {
+          handleMusicFiles(files);
+        }
+      });
+
+      input.click();
+    }
+
     // 인트로 적용 함수
     function applyIntro() {
       if (!window.pendingIntroFile) {
@@ -3475,33 +3585,33 @@ function playIntroVideo() {
     // 외부 플레이리스트 로드
     function loadExternalPlaylists() {
       try {
-        if (typeof pop2Playlist !== 'undefined' && Array.isArray(pop2Playlist)) {
-          musicTracks = [...pop2Playlist];
-          
+        if (typeof lofiInstPlaylist !== 'undefined' && Array.isArray(lofiInstPlaylist)) {
+          musicTracks = [...lofiInstPlaylist];
+
           loadedPlaylists[0] = {
             id: 'default',
-            name: '기본 K-Pop 플레이리스트',
-            tracks: [...pop2Playlist]
+            name: '기본 Lo-Fi Instrumental 플레이리스트',
+            tracks: [...lofiInstPlaylist]
           };
-          
-          broadcastPlaylist = [...pop2Playlist];
+
+          broadcastPlaylist = [...lofiInstPlaylist];
           shuffledPlaylist = createShuffledPlaylist();
-          
+
       setTimeout(() => {
         if (isControlCenterMode) {
           updatePlaylistSelector();
           updateControlCenterPlaylist();
-          addLog('info', `기본 플레이리스트 로드: ${pop2Playlist.length}곡`);
-          
+          addLog('info', `기본 플레이리스트 로드: ${lofiInstPlaylist.length}곡`);
+
           // 🆕 자동으로 적용
           setTimeout(() => {
             applySelectedPlaylists();
           }, 100);
         }
       }, 50);
-          
+
         } else {
-          console.warn('❌ a-pop-1-playlist.js 플레이리스트를 찾을 수 없습니다.');
+          console.warn('❌ z-lofi_inst_playlist.js 플레이리스트를 찾을 수 없습니다.');
           musicTracks = [];
           broadcastPlaylist = [];
           shuffledPlaylist = [];
