@@ -1070,65 +1070,125 @@
       </div>
 
       
-      <!-- 오버레이 설정 (드래그&드롭 업로드) -->
+      <!-- 오버레이 1 설정 -->
       <div class="test-section">
-        <h4>🎭 오버레이 설정</h4>
-        <div class="upload-zone" id="overlayUploadZone">
-          <div class="upload-zone-icon">🎭</div>
-          <div class="upload-zone-text">오버레이 비디오 파일을 드래그하세요</div>
-          <div class="upload-zone-text">PNG/MOV/MP4 파일 지원</div>
+        <h4>🎭 오버레이 1</h4>
+        <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+          <input type="checkbox" id="overlay1Enabled" />
+          오버레이 1 활성화
+        </label>
+
+        <div class="control-slider" style="margin-top: 12px;">
+          <div class="control-label">
+            <span class="effect-name">투명도</span>
+            <span class="channel-info">OPACITY</span>
+          </div>
+          <div class="slider-container">
+            <input type="range" class="control-range" id="overlay1-opacity-slider"
+                   min="0" max="100" step="5" value="30">
+          </div>
+          <div class="control-value" id="overlay1-opacity-value">30%</div>
         </div>
-        <div style="margin-top: 10px;">
-          <label style="display: flex; align-items: center; font-size: 12px;">
-            <input type="checkbox" id="overlayEnabled" checked style="margin-right: 8px;">
-            오버레이 활성화
-          </label>
-        </div>
+
+        <select id="overlay1BlendMode" style="width: 100%; padding: 4px 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: white; font-size: 11px; margin-top: 10px;">
+          <option value="screen">Screen</option>
+          <option value="normal">Normal</option>
+          <option value="multiply">Multiply</option>
+          <option value="overlay">Overlay</option>
+          <option value="darken">Darken</option>
+          <option value="lighten">Lighten</option>
+          <option value="color-dodge">Color Dodge</option>
+          <option value="color-burn">Color Burn</option>
+          <option value="hard-light">Hard Light</option>
+          <option value="soft-light">Soft Light</option>
+          <option value="difference">Difference</option>
+          <option value="exclusion">Exclusion</option>
+        </select>
+
+        <button id="overlay1Reset" class="control-btn" style="width: 100%; margin-top: 10px; font-size: 11px; padding: 6px 12px;">
+          🔄 초기화
+        </button>
       </div>
-      
-       <!-- 오버레이 활성화 및 적용 버튼 -->
-  <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
-    <label style="display: flex; align-items: center; font-size: 12px;">
-      <input type="checkbox" id="overlayEnabled" checked style="margin-right: 8px;">
-      오버레이 활성화
-    </label>
-    <button id="applyOverlayBtn" class="preset-btn" style="padding: 4px 12px; font-size: 11px; background: #4CAF50;" disabled onclick="applyOverlay()">✅ 적용</button>
-  </div>
-  
-  <!-- 오버레이 투명도 조절 -->
-  <div class="control-slider" style="margin-top: 12px;">
-    <div class="control-label">
-      <span class="effect-name">오버레이 투명도</span>
-      <span class="channel-info">OPACITY</span>
-    </div>
-    <div class="slider-container">
-      <input type="range" class="control-range" id="overlay-opacity-slider" 
-             min="0" max="100" step="5" value="20">
-    </div>
-    <div class="control-value" id="overlay-opacity-value">20%</div>
-  </div>
 
-    <!-- 믹스 블렌드 모드 선택 -->
-  <div style="margin-top: 10px;">
-    <label style="font-size: 11px; color: #90A4AE; margin-bottom: 5px; display: block;">블렌드 모드:</label>
-    <select id="overlayBlendMode" style="width: 100%; padding: 4px 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: white; font-size: 11px;">
-      <option value="screen">Screen (기본)</option>
-      <option value="normal">Normal</option>
-      <option value="multiply">Multiply</option>
-      <option value="overlay">Overlay</option>
-      <option value="soft-light">Soft Light</option>
-      <option value="hard-light">Hard Light</option>
-      <option value="color-dodge">Color Dodge</option>
-      <option value="color-burn">Color Burn</option>
-    </select>
-  </div>
+      <!-- 오버레이 2 설정 -->
+      <div class="test-section">
+        <h4>🎭 오버레이 2</h4>
+        <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+          <input type="checkbox" id="overlay2Enabled" />
+          오버레이 2 활성화
+        </label>
 
-  
+        <div class="control-slider" style="margin-top: 12px;">
+          <div class="control-label">
+            <span class="effect-name">투명도</span>
+            <span class="channel-info">OPACITY</span>
+          </div>
+          <div class="slider-container">
+            <input type="range" class="control-range" id="overlay2-opacity-slider"
+                   min="0" max="100" step="5" value="30">
+          </div>
+          <div class="control-value" id="overlay2-opacity-value">30%</div>
+        </div>
 
-  <!-- 상태 표시 -->
-<div id="overlayFileStatus" style="margin-top: 8px; font-size: 11px; color: #90A4AE;">
-  현재: 기본 오버레이 (overlay01.mp4)
-</div>
+        <select id="overlay2BlendMode" style="width: 100%; padding: 4px 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: white; font-size: 11px; margin-top: 10px;">
+          <option value="screen">Screen</option>
+          <option value="normal">Normal</option>
+          <option value="multiply">Multiply</option>
+          <option value="overlay">Overlay</option>
+          <option value="darken">Darken</option>
+          <option value="lighten">Lighten</option>
+          <option value="color-dodge">Color Dodge</option>
+          <option value="color-burn">Color Burn</option>
+          <option value="hard-light">Hard Light</option>
+          <option value="soft-light">Soft Light</option>
+          <option value="difference">Difference</option>
+          <option value="exclusion">Exclusion</option>
+        </select>
+
+        <button id="overlay2Reset" class="control-btn" style="width: 100%; margin-top: 10px; font-size: 11px; padding: 6px 12px;">
+          🔄 초기화
+        </button>
+      </div>
+
+      <!-- 오버레이 3 설정 -->
+      <div class="test-section">
+        <h4>🎭 오버레이 3</h4>
+        <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+          <input type="checkbox" id="overlay3Enabled" />
+          오버레이 3 활성화
+        </label>
+
+        <div class="control-slider" style="margin-top: 12px;">
+          <div class="control-label">
+            <span class="effect-name">투명도</span>
+            <span class="channel-info">OPACITY</span>
+          </div>
+          <div class="slider-container">
+            <input type="range" class="control-range" id="overlay3-opacity-slider"
+                   min="0" max="100" step="5" value="30">
+          </div>
+          <div class="control-value" id="overlay3-opacity-value">30%</div>
+        </div>
+
+        <select id="overlay3BlendMode" style="width: 100%; padding: 4px 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: white; font-size: 11px; margin-top: 10px;">
+          <option value="screen">Screen</option>
+          <option value="normal">Normal</option>
+          <option value="multiply">Multiply</option>
+          <option value="overlay">Overlay</option>
+          <option value="darken">Darken</option>
+          <option value="lighten">Lighten</option>
+          <option value="color-dodge">Color Dodge</option>
+          <option value="color-burn">Color Burn</option>
+          <option value="hard-light">Hard Light</option>
+          <option value="soft-light">Soft Light</option>
+          <option value="difference">Difference</option>
+          <option value="exclusion">Exclusion</option>
+        </select>
+
+        <button id="overlay3Reset" class="control-btn" style="width: 100%; margin-top: 10px; font-size: 11px; padding: 6px 12px;">
+          🔄 초기화
+        </button>
+      </div>
 
 
       
@@ -1291,10 +1351,17 @@
     <source src="Loof_01-1.mp4" type="video/mp4" />
   </video>
 
-  <video id="overlayVideo" muted loop>
-    <source src="overlay01.mp4" type="video/mp4" />
+  <!-- 오버레이 비디오 3개 (독립적) -->
+  <video id="overlay1" muted loop style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: 3; opacity: 0.3; display: none; mix-blend-mode: screen; pointer-events: none;">
   </video>
-<video id="introVideo" muted preload="auto" style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: 3; opacity: 0; transition: opacity 1s ease; mix-blend-mode: screen; pointer-events: none;">
+
+  <video id="overlay2" muted loop style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: 4; opacity: 0.3; display: none; mix-blend-mode: screen; pointer-events: none;">
+  </video>
+
+  <video id="overlay3" muted loop style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: 5; opacity: 0.3; display: none; mix-blend-mode: screen; pointer-events: none;">
+  </video>
+
+<video id="introVideo" muted preload="auto" style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: 6; opacity: 0; transition: opacity 1s ease; mix-blend-mode: screen; pointer-events: none;">
 
   <source src="./02_video/Intro/Intro_video-멜로니.mp4" type="video/mp4">
 </video>
@@ -1326,6 +1393,9 @@
   <audio id="clickSound" preload="auto">
     <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmAZNjRfnNn2TxA" type="audio/wav">
   </audio>
+
+  <!-- Howler.js 라이브러리 (MIT License) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js" integrity="sha512-xi/RZRIF/S0hJ+yJJYuZ5yk6/8pCiRlEXZzoguSMl+vk2eppLW2nTtmOIvTidoGVzCNaGBdlEOqlcDCJI9mT1w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <!-- 시작 버튼 -->
   <button id="startButton">🎵 음악 시작</button>
@@ -1390,21 +1460,40 @@
 
     // ===== DOM 요소 캐싱 시스템 =====
     const DOM = {
-      overlay: {},
+      overlays: {}, // 3개의 오버레이로 변경
       intro: {},
       loops: {},
       audio: {},
       ui: {},
 
       init() {
-        // Overlay 요소들
-        this.overlay.video = document.getElementById('overlayVideo');
-        this.overlay.enabled = document.getElementById('overlayEnabled');
-        this.overlay.opacitySlider = document.getElementById('overlay-opacity-slider');
-        this.overlay.opacityValue = document.getElementById('overlay-opacity-value');
-        this.overlay.blendMode = document.getElementById('overlayBlendMode');
-        this.overlay.fileStatus = document.getElementById('overlayFileStatus');
-        this.overlay.applyBtn = document.getElementById('applyOverlayBtn');
+        // 오버레이 요소들 (3개 독립적)
+        this.overlays = {
+          overlay1: {
+            video: document.getElementById('overlay1'),
+            enabled: document.getElementById('overlay1Enabled'),
+            opacitySlider: document.getElementById('overlay1-opacity-slider'),
+            opacityValue: document.getElementById('overlay1-opacity-value'),
+            blendMode: document.getElementById('overlay1BlendMode'),
+            resetBtn: document.getElementById('overlay1Reset')
+          },
+          overlay2: {
+            video: document.getElementById('overlay2'),
+            enabled: document.getElementById('overlay2Enabled'),
+            opacitySlider: document.getElementById('overlay2-opacity-slider'),
+            opacityValue: document.getElementById('overlay2-opacity-value'),
+            blendMode: document.getElementById('overlay2BlendMode'),
+            resetBtn: document.getElementById('overlay2Reset')
+          },
+          overlay3: {
+            video: document.getElementById('overlay3'),
+            enabled: document.getElementById('overlay3Enabled'),
+            opacitySlider: document.getElementById('overlay3-opacity-slider'),
+            opacityValue: document.getElementById('overlay3-opacity-value'),
+            blendMode: document.getElementById('overlay3BlendMode'),
+            resetBtn: document.getElementById('overlay3Reset')
+          }
+        };
 
         // Intro 요소들
         this.intro.video = document.getElementById('introVideo');
@@ -1419,6 +1508,10 @@
         this.loops.loop1 = document.getElementById('loop1');
         this.loops.loop2 = document.getElementById('loop2');
 
+        // 로고들
+        this.loops.logo1 = document.getElementById('logo1');
+        this.loops.logo2 = document.getElementById('logo2');
+
         // 오디오 요소들
         this.audio.musicPlayer = document.getElementById('musicPlayer');
 
@@ -1426,7 +1519,15 @@
         this.ui.controlCenter = document.getElementById('controlCenter');
         this.ui.playlistDisplay = document.getElementById('playlistDisplay');
         this.ui.logDisplay = document.getElementById('logDisplay');
+        this.ui.startButton = document.getElementById('startButton');
+      },
 
+      get(category, element) {
+        return this[category]?.[element];
+      },
+
+      getAll(category) {
+        return this[category];
       }
     };
 
@@ -3052,20 +3153,324 @@ function playIntroVideo() {
     // 간단한 볼륨 관리
     const audioManager = {
       baseVolume: 0.5,
-      
+
       setBaseVolume(volume) {
         this.baseVolume = Math.max(0.1, Math.min(0.8, volume));
-        if (musicPlayer) {
-          musicPlayer.volume = Math.max(0, Math.min(1, this.baseVolume));
+        if (window.howlerMusicPlayer && window.howlerMusicPlayer.currentHowl) {
+          window.howlerMusicPlayer.currentHowl.volume(this.baseVolume);
         }
       },
 
       onNewTrack() {
-        if (musicPlayer) {
-          musicPlayer.volume = Math.max(0, Math.min(1, this.baseVolume));
+        if (window.howlerMusicPlayer && window.howlerMusicPlayer.currentHowl) {
+          window.howlerMusicPlayer.currentHowl.volume(this.baseVolume);
         }
       }
     };
+
+    // ===== Howler.js 기반 음악 플레이어 =====
+    window.howlerMusicPlayer = {
+      currentHowl: null,
+      nextHowl: null,
+      currentTrack: null,
+      isPlaying: false,
+      volume: 0.5,
+      crossfadeDuration: 3000,
+      preloadThreshold: 0.8,
+      preloadCheckInterval: null,
+
+      init() {
+        if (typeof Howl === 'undefined') {
+          console.warn('⚠️ Howler.js가 아직 로드되지 않았습니다. CDN 로딩 중...');
+        } else {
+          console.log('✓ Howler.js 로드 완료');
+        }
+        return true;
+      },
+
+      loadTrack(track) {
+        if (!track || !track.src) {
+          console.error('유효하지 않은 트랙입니다');
+          return;
+        }
+
+        // 기존 Howl 정리
+        if (this.currentHowl) {
+          this.currentHowl.unload();
+        }
+
+        // 프리로드 체크 중지
+        this.stopPreloadCheck();
+
+        this.currentTrack = track;
+
+        // Howler.js가 로드되지 않았으면 HTML5 Audio 사용
+        if (typeof Howl === 'undefined') {
+          console.warn('Howler.js not loaded, falling back to HTML5 Audio');
+          return false;
+        }
+
+        // 새 Howl 생성
+        this.currentHowl = new Howl({
+          src: [track.src],
+          html5: true,
+          volume: this.volume,
+          preload: true,
+          onload: () => {
+            console.log(`트랙 로드 완료: ${track.title || track.src}`);
+            if (isControlCenterMode) {
+              addLog('info', `트랙 로드: ${track.title}`);
+            }
+          },
+          onplay: () => {
+            this.isPlaying = true;
+            isMusicPlaying = true;
+            playBtn.textContent = '⏸';
+            startRealVisualizer();
+
+            // 프리로드 체크 시작
+            this.startPreloadCheck();
+          },
+          onpause: () => {
+            this.isPlaying = false;
+            isMusicPlaying = false;
+            playBtn.textContent = '▶';
+            stopVisualizer();
+          },
+          onend: () => {
+            console.log('트랙 종료');
+
+            // 크로스페이드로 다음 곡 재생
+            this.playNextWithCrossfade();
+          },
+          onloaderror: (id, error) => {
+            console.error(`트랙 로드 오류: ${error}`);
+            if (isControlCenterMode) {
+              addLog('error', `트랙 로드 실패: ${track.title}`);
+            }
+            // 로드 실패 시 다음 곡으로
+            setTimeout(() => this.next(), 1000);
+          },
+          onplayerror: (id, error) => {
+            console.error(`재생 오류: ${error}`);
+            // 재생 시도 재시도
+            setTimeout(() => {
+              if (this.currentHowl) {
+                this.currentHowl.once('unlock', () => {
+                  this.currentHowl.play();
+                });
+              }
+            }, 500);
+          }
+        });
+
+        console.log(`트랙 로드: ${track.title || track.src}`);
+        return true;
+      },
+
+      play() {
+        if (!this.currentHowl) {
+          // 플레이리스트에서 첫 트랙 로드
+          const playlist = getCurrentPlaylist();
+          if (playlist.length > 0) {
+            this.loadTrack(playlist[currentTrackIndex]);
+          } else {
+            console.warn('재생할 트랙이 없습니다');
+            return;
+          }
+        }
+
+        if (this.currentHowl && !this.isPlaying) {
+          this.currentHowl.play();
+          console.log('▶ 재생 시작');
+        }
+      },
+
+      pause() {
+        if (this.currentHowl && this.isPlaying) {
+          this.currentHowl.pause();
+          console.log('⏸ 일시정지');
+        }
+      },
+
+      stop() {
+        if (this.currentHowl) {
+          this.currentHowl.stop();
+          this.stopPreloadCheck();
+          console.log('⏹ 정지');
+        }
+      },
+
+      toggle() {
+        if (this.isPlaying) {
+          this.pause();
+        } else {
+          this.play();
+        }
+      },
+
+      next() {
+        const playlist = getCurrentPlaylist();
+        if (playlist.length === 0) {
+          console.warn('플레이리스트가 비어있습니다');
+          return;
+        }
+
+        let newIndex = currentTrackIndex + 1;
+        if (newIndex >= playlist.length) {
+          newIndex = 0;
+          if (isShuffleMode) {
+            shuffledPlaylist = createShuffledPlaylist();
+          }
+        }
+
+        currentTrackIndex = newIndex;
+        const nextTrack = playlist[newIndex];
+
+        this.loadTrack(nextTrack);
+        this.play();
+
+        console.log('⏭ 다음 트랙');
+      },
+
+      playNextWithCrossfade() {
+        // 다음 트랙이 프리로드되어 있으면 크로스페이드
+        if (this.nextHowl && this.currentHowl) {
+          console.log('크로스페이드 시작');
+
+          // 현재 트랙 페이드아웃
+          this.currentHowl.fade(this.volume, 0, this.crossfadeDuration);
+
+          // 다음 트랙 페이드인
+          this.nextHowl.volume(0);
+          this.nextHowl.play();
+          this.nextHowl.fade(0, this.volume, this.crossfadeDuration);
+
+          // 페이드 완료 후 현재 트랙 정리
+          setTimeout(() => {
+            if (this.currentHowl) {
+              this.currentHowl.unload();
+            }
+            this.currentHowl = this.nextHowl;
+            this.nextHowl = null;
+
+            // 인덱스 업데이트
+            const playlist = getCurrentPlaylist();
+            currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+            if (currentTrackIndex === 0 && isShuffleMode) {
+              shuffledPlaylist = createShuffledPlaylist();
+            }
+          }, this.crossfadeDuration);
+
+        } else {
+          // 프리로드 안 되어 있으면 일반 전환
+          this.next();
+        }
+      },
+
+      preloadNextTrack() {
+        const playlist = getCurrentPlaylist();
+        if (playlist.length === 0) return;
+        if (this.nextHowl) return; // 이미 프리로드됨
+
+        let nextIndex = (currentTrackIndex + 1) % playlist.length;
+        const nextTrack = playlist[nextIndex];
+
+        if (!nextTrack) return;
+
+        // Howler.js가 로드되지 않았으면 스킵
+        if (typeof Howl === 'undefined') return;
+
+        // 다음 트랙 프리로드
+        this.nextHowl = new Howl({
+          src: [nextTrack.src],
+          html5: true,
+          volume: this.volume,
+          preload: true,
+          onload: () => {
+            console.log(`다음 트랙 프리로드 완료: ${nextTrack.title || nextTrack.src}`);
+          }
+        });
+      },
+
+      startPreloadCheck() {
+        this.stopPreloadCheck();
+
+        this.preloadCheckInterval = setInterval(() => {
+          if (!this.currentHowl || !this.isPlaying) return;
+
+          const duration = this.currentHowl.duration();
+          const currentTime = this.currentHowl.seek();
+
+          // 80% 재생 시점에 프리로드
+          if (currentTime / duration >= this.preloadThreshold) {
+            this.preloadNextTrack();
+            this.stopPreloadCheck(); // 한 번만 프리로드
+          }
+        }, 1000); // 1초마다 체크
+      },
+
+      stopPreloadCheck() {
+        if (this.preloadCheckInterval) {
+          clearInterval(this.preloadCheckInterval);
+          this.preloadCheckInterval = null;
+        }
+      },
+
+      seek(seconds) {
+        if (this.currentHowl) {
+          this.currentHowl.seek(seconds);
+          console.log(`시크: ${seconds}초`);
+        }
+      },
+
+      setVolume(volume) {
+        this.volume = Math.max(0, Math.min(1, volume));
+
+        if (this.currentHowl) {
+          this.currentHowl.volume(this.volume);
+        }
+      },
+
+      getCurrentTime() {
+        if (this.currentHowl) {
+          return this.currentHowl.seek() || 0;
+        }
+        return 0;
+      },
+
+      getDuration() {
+        if (this.currentHowl) {
+          return this.currentHowl.duration() || 0;
+        }
+        return 0;
+      },
+
+      playing() {
+        return this.isPlaying;
+      },
+
+      destroy() {
+        this.stop();
+        this.stopPreloadCheck();
+
+        if (this.currentHowl) {
+          this.currentHowl.unload();
+          this.currentHowl = null;
+        }
+
+        if (this.nextHowl) {
+          this.nextHowl.unload();
+          this.nextHowl = null;
+        }
+
+        this.currentTrack = null;
+        console.log('음악 플레이어 정리 완료');
+      }
+    };
+
+    // Howler.js 초기화
+    window.howlerMusicPlayer.init();
 
     // 외부 플레이리스트 로드
     function loadExternalPlaylists() {
@@ -3370,16 +3775,29 @@ function playIntroVideo() {
         }
       }
 
-      if (isMusicPlaying) {
-        musicPlayer.pause();
-        playBtn.textContent = '▶';
-        isMusicPlaying = false;
-        stopVisualizer();
-        if (isControlCenterMode) {
-          addLog('info', '🎵 음악 정지');
+      // Howler.js 사용 (사용 가능하면)
+      if (typeof Howl !== 'undefined' && window.howlerMusicPlayer) {
+        if (isMusicPlaying) {
+          window.howlerMusicPlayer.pause();
+          if (isControlCenterMode) {
+            addLog('info', '🎵 음악 정지');
+          }
+        } else {
+          playMusicSafely();
         }
       } else {
-        playMusicSafely();
+        // Fallback to HTML5 Audio
+        if (isMusicPlaying) {
+          musicPlayer.pause();
+          playBtn.textContent = '▶';
+          isMusicPlaying = false;
+          stopVisualizer();
+          if (isControlCenterMode) {
+            addLog('info', '🎵 음악 정지');
+          }
+        } else {
+          playMusicSafely();
+        }
       }
     }
 
@@ -3438,108 +3856,159 @@ function playIntroVideo() {
     function loadTrack(index) {
       const playlist = getCurrentPlaylist();
       if (index < 0 || index >= playlist.length) return;
-      
+
       const track = playlist[index];
-      
-      if (musicPlayer.src === track.src && currentTrackIndex === index) {
-        return;
-      }
-      
-      const wasPlaying = !musicPlayer.paused;
-      if (wasPlaying) {
-        musicPlayer.pause();
-      }
-      
-      setTimeout(() => {
-        musicPlayer.src = track.src;
-        musicPlayer.volume = Math.max(0, Math.min(1, audioManager.baseVolume));
+
+      // Howler.js 사용 (사용 가능하면)
+      if (typeof Howl !== 'undefined' && window.howlerMusicPlayer) {
+        // 현재 트랙과 동일하면 스킵
+        if (window.howlerMusicPlayer.currentTrack &&
+            window.howlerMusicPlayer.currentTrack.src === track.src &&
+            currentTrackIndex === index) {
+          return;
+        }
+
         currentTrackIndex = index;
-        
+        window.howlerMusicPlayer.loadTrack(track);
+
         if (audioManager) {
           audioManager.onNewTrack();
         }
-        
+
         if (isControlCenterMode) {
-          addLog('info', `트랙 로드: ${track.title}`);
           updateControlCenterPlaylist();
         }
-      }, 100);
+      } else {
+        // Fallback to HTML5 Audio
+        if (musicPlayer.src === track.src && currentTrackIndex === index) {
+          return;
+        }
+
+        const wasPlaying = !musicPlayer.paused;
+        if (wasPlaying) {
+          musicPlayer.pause();
+        }
+
+        setTimeout(() => {
+          musicPlayer.src = track.src;
+          musicPlayer.volume = Math.max(0, Math.min(1, audioManager.baseVolume));
+          currentTrackIndex = index;
+
+          if (audioManager) {
+            audioManager.onNewTrack();
+          }
+
+          if (isControlCenterMode) {
+            addLog('info', `트랙 로드: ${track.title}`);
+            updateControlCenterPlaylist();
+          }
+        }, 100);
+      }
     }
 
     function nextTrack() {
-      const playlist = getCurrentPlaylist();
-      let newIndex = currentTrackIndex + 1;
-      if (newIndex >= playlist.length) {
-        newIndex = 0;
-        if (isShuffleMode) {
-          shuffledPlaylist = createShuffledPlaylist();
-        }
-      }
-      
-      const wasPlaying = isMusicPlaying;
-      if (isMusicPlaying && musicPlayer) {
-        fadeOutAudio(musicPlayer, 500).then(() => {
-          musicPlayer.pause();
-          isMusicPlaying = false;
-          
-          loadTrack(newIndex);
-          
-          if (wasPlaying) {
-            setTimeout(() => {
-              playMusicSafely();
-            }, 1500);
-          }
-        });
+      // Howler.js 사용 (사용 가능하면)
+      if (typeof Howl !== 'undefined' && window.howlerMusicPlayer) {
+        window.howlerMusicPlayer.next();
       } else {
-        loadTrack(newIndex);
+        // Fallback to HTML5 Audio
+        const playlist = getCurrentPlaylist();
+        let newIndex = currentTrackIndex + 1;
+        if (newIndex >= playlist.length) {
+          newIndex = 0;
+          if (isShuffleMode) {
+            shuffledPlaylist = createShuffledPlaylist();
+          }
+        }
+
+        const wasPlaying = isMusicPlaying;
+        if (isMusicPlaying && musicPlayer) {
+          fadeOutAudio(musicPlayer, 500).then(() => {
+            musicPlayer.pause();
+            isMusicPlaying = false;
+
+            loadTrack(newIndex);
+
+            if (wasPlaying) {
+              setTimeout(() => {
+                playMusicSafely();
+              }, 1500);
+            }
+          });
+        } else {
+          loadTrack(newIndex);
+        }
       }
     }
 
     async function playMusicSafely() {
       if (isMusicPlaying) return;
-      
-      try {
-        if (!musicPlayer.src) {
-          loadTrack(currentTrackIndex);
-          await new Promise(resolve => {
-            const checkLoaded = () => {
-              if (musicPlayer.readyState >= 3) {
-                resolve();
-              } else {
-                setTimeout(checkLoaded, 50);
-              }
-            };
-            checkLoaded();
-          });
+
+      // Howler.js 사용 (사용 가능하면)
+      if (typeof Howl !== 'undefined' && window.howlerMusicPlayer) {
+        try {
+          if (!window.howlerMusicPlayer.currentHowl) {
+            loadTrack(currentTrackIndex);
+          }
+
+          window.howlerMusicPlayer.play();
+
+          if (isControlCenterMode) {
+            const currentTrack = getCurrentTrackInfo();
+            addLog('info', `🎵 재생: ${currentTrack?.title || '알 수 없음'}`);
+            updateControlCenterPlaylist();
+          }
+        } catch (error) {
+          console.error('❌ Howler.js 재생 실패:', error);
+          if (isControlCenterMode) {
+            addLog('error', `재생 실패: ${error.message}`);
+          }
         }
-        
-        musicPlayer.volume = 0;
-        await musicPlayer.play();
-        
-        playBtn.textContent = '⏸';
-        isMusicPlaying = true;
-        
-        await fadeInAudio(musicPlayer, 500);
-        
-        setTimeout(() => {
-          startRealVisualizer();
-        }, 100);
-        
-        if (isControlCenterMode) {
-          const currentTrack = getCurrentTrackInfo();
-          addLog('info', `🎵 재생: ${currentTrack?.title || '알 수 없음'}`);
-          updateControlCenterPlaylist();
-        }
-        
-      } catch (error) {
-        console.error('❌ 안전한 재생 실패:', error);
-        playBtn.textContent = '⏸';
-        isMusicPlaying = true;
-        audioVisualizer.classList.add('playing');
-        startFallbackVisualizer();
-        
-        if (isControlCenterMode) {
-          addLog('error', `재생 실패: ${error.message}`);
+      } else {
+        // Fallback to HTML5 Audio
+        try {
+          if (!musicPlayer.src) {
+            loadTrack(currentTrackIndex);
+            await new Promise(resolve => {
+              const checkLoaded = () => {
+                if (musicPlayer.readyState >= 3) {
+                  resolve();
+                } else {
+                  setTimeout(checkLoaded, 50);
+                }
+              };
+              checkLoaded();
+            });
+          }
+
+          musicPlayer.volume = 0;
+          await musicPlayer.play();
+
+          playBtn.textContent = '⏸';
+          isMusicPlaying = true;
+
+          await fadeInAudio(musicPlayer, 500);
+
+          setTimeout(() => {
+            startRealVisualizer();
+          }, 100);
+
+          if (isControlCenterMode) {
+            const currentTrack = getCurrentTrackInfo();
+            addLog('info', `🎵 재생: ${currentTrack?.title || '알 수 없음'}`);
+            updateControlCenterPlaylist();
+          }
+
+        } catch (error) {
+          console.error('❌ 안전한 재생 실패:', error);
+          playBtn.textContent = '⏸';
+          isMusicPlaying = true;
+          audioVisualizer.classList.add('playing');
+          startFallbackVisualizer();
+
+          if (isControlCenterMode) {
+            addLog('error', `재생 실패: ${error.message}`);
+          }
         }
       }
     }
