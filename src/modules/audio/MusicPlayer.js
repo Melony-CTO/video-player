@@ -26,16 +26,44 @@ export class MusicPlayer {
   }
 
   init() {
-    // Howler.js가 로드되었는지 확인 (경고만 표시)
+    // Howler.js가 로드되었는지 확인
     if (typeof Howl === 'undefined') {
-      logger.warning('⚠️ Howler.js가 아직 로드되지 않았습니다. CDN 로딩 중...');
-      console.warn('Howler.js is not loaded yet. Music playback may be delayed.');
+      logger.error('❌ Howler.js가 로드되지 않았습니다!');
+      logger.error('index.html에 Howler.js 스크립트 태그가 있는지 확인하세요:');
+      logger.error('<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>');
+
+      // Howler 로드 대기 (최대 5초)
+      return this.waitForHowler();
     } else {
       logger.info('✓ Howler.js 로드 완료');
+      logger.info('음악 플레이어 초기화 완료 (Howler.js 기반)');
+      return true;
     }
+  }
 
-    logger.info('음악 플레이어 초기화 완료 (Howler.js 기반)');
-    return true;
+  /**
+   * Howler.js 로드 대기
+   */
+  waitForHowler() {
+    return new Promise((resolve) => {
+      let attempts = 0;
+      const maxAttempts = 50; // 5초 (100ms * 50)
+
+      const checkHowler = setInterval(() => {
+        attempts++;
+
+        if (typeof Howl !== 'undefined') {
+          clearInterval(checkHowler);
+          logger.info('✓ Howler.js 로드 완료 (대기 후)');
+          logger.info('음악 플레이어 초기화 완료 (Howler.js 기반)');
+          resolve(true);
+        } else if (attempts >= maxAttempts) {
+          clearInterval(checkHowler);
+          logger.error('❌ Howler.js 로드 실패 (타임아웃)');
+          resolve(false);
+        }
+      }, 100);
+    });
   }
 
   /**
@@ -44,8 +72,22 @@ export class MusicPlayer {
   loadTrack(track) {
     if (!track || !track.url) {
       logger.error('유효하지 않은 트랙입니다');
+      logger.error(`트랙 객체: ${JSON.stringify(track)}`);
       return;
     }
+
+    // Howler.js 확인
+    if (typeof Howl === 'undefined') {
+      logger.error('❌ Howler.js가 로드되지 않았습니다. 트랙을 로드할 수 없습니다.');
+      eventBus.emit('music:error', {
+        track,
+        error: 'Howler.js not loaded'
+      });
+      return;
+    }
+
+    logger.debug(`트랙 로드 시작: ${track.title || track.url}`);
+    logger.debug(`트랙 URL: ${track.url}`);
 
     // 기존 Howl 정리
     if (this.currentHowl) {
@@ -58,7 +100,8 @@ export class MusicPlayer {
     this.currentTrack = track;
 
     // 새 Howl 생성
-    this.currentHowl = new Howl({
+    try {
+      this.currentHowl = new Howl({
       src: [track.url],
       html5: true,          // 스트리밍 최적화
       volume: this.volume,
@@ -89,19 +132,41 @@ export class MusicPlayer {
         this.playNextWithCrossfade();
       },
       onloaderror: (id, error) => {
-        logger.error(`트랙 로드 오류: ${error}`);
-        eventBus.emit('music:error', { track, error });
+        logger.error(`트랙 로드 오류 [ID: ${id}]`);
+        logger.error(`에러 상세: ${JSON.stringify(error)}`);
+        logger.error(`트랙 URL: ${track.url}`);
+        logger.error(`트랙 정보: ${JSON.stringify(track)}`);
+
+        // Howl 객체의 상태 확인
+        if (this.currentHowl) {
+          logger.error(`Howl 상태: ${this.currentHowl.state()}`);
+        }
+
+        eventBus.emit('music:error', {
+          track,
+          error,
+          errorId: id,
+          url: track.url
+        });
 
         // 로드 실패 시 다음 곡으로
         setTimeout(() => this.next(), 1000);
       },
       onplayerror: (id, error) => {
-        logger.error(`재생 오류: ${error}`);
+        logger.error(`재생 오류 [ID: ${id}]`);
+        logger.error(`에러 상세: ${JSON.stringify(error)}`);
+        logger.error(`트랙 URL: ${track.url}`);
+
+        // Howl 객체의 상태 확인
+        if (this.currentHowl) {
+          logger.error(`Howl 상태: ${this.currentHowl.state()}`);
+        }
 
         // 재생 시도 재시도
         setTimeout(() => {
           if (this.currentHowl) {
             this.currentHowl.once('unlock', () => {
+              logger.info('오디오 컨텍스트 잠금 해제됨, 재생 재시도');
               this.currentHowl.play();
             });
           }
@@ -109,7 +174,19 @@ export class MusicPlayer {
       }
     });
 
-    logger.info(`트랙 로드: ${track.title || track.url}`);
+      logger.info(`트랙 로드: ${track.title || track.url}`);
+    } catch (error) {
+      logger.error('❌ Howl 객체 생성 중 예외 발생');
+      logger.error(`예외 메시지: ${error.message}`);
+      logger.error(`예외 스택: ${error.stack}`);
+      logger.error(`트랙 URL: ${track.url}`);
+
+      eventBus.emit('music:error', {
+        track,
+        error: error.message,
+        stack: error.stack
+      });
+    }
   }
 
   /**
