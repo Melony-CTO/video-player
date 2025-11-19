@@ -67,6 +67,219 @@
       100% { transform: scale(1); }
     }
 
+    /* ===== 이퀄라이저 토글 버튼 ===== */
+    #eqToggleButton {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      background: rgba(79, 195, 247, 0.9);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 1002;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(79, 195, 247, 0.4);
+    }
+    
+    #eqToggleButton:hover {
+      background: rgba(79, 195, 247, 1);
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(79, 195, 247, 0.6);
+    }
+    
+   /* ===== 이퀄라이저 패널 ===== */
+    .equalizer-panel {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 380px;
+      max-height: 85vh;
+      background: rgba(243, 208, 147, 0.3);
+      backdrop-filter: blur(20px);
+      border-radius: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      z-index: 1001;
+      transform: translateX(450px);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      overflow-y: auto;
+      color: white;
+    }
+    
+    .equalizer-panel.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    
+    .eq-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .eq-header h3 {
+      margin: 0;
+      font-size: 16px;
+      color: white;
+      font-weight: 600;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+    
+    .close-eq {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+    
+    .close-eq:hover {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.25));
+      transform: rotate(90deg) scale(1.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* 프리셋 버튼들 */
+    .eq-presets {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+    
+    .preset-btn {
+      padding: 8px 12px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 18px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      white-space: nowrap;
+    }
+    
+    .preset-btn:hover {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.25));
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .preset-btn.active {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-color: #667eea;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      transform: translateY(-1px);
+    }
+    
+    /* 이퀄라이저 슬라이더들 */
+    .eq-sliders {
+      margin-bottom: 20px;
+    }
+    
+    .eq-band {
+      margin-bottom: 15px;
+    }
+    
+    .eq-band label {
+      display: block;
+      color: #90A4AE;
+      font-size: 11px;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    
+    .eq-band input[type="range"] {
+      width: 100%;
+      margin: 8px 0;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      outline: none;
+      -webkit-appearance: none;
+    }
+    
+    .eq-band input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+      transition: all 0.3s ease;
+    }
+    
+    .eq-band input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      box-shadow: 0 3px 12px rgba(102, 126, 234, 0.6);
+    }
+    
+    .eq-band input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+      transition: all 0.3s ease;
+    }
+    
+    .eq-band input[type="range"]::-moz-range-thumb:hover {
+      transform: scale(1.2);
+      box-shadow: 0 3px 12px rgba(102, 126, 234, 0.6);
+    }
+    
+    .eq-band .eq-value {
+      display: block;
+      text-align: right;
+      color: #4FC3F7;
+      font-size: 11px;
+      font-weight: bold;
+    }
+    
+    .reset-eq-btn {
+      width: 100%;
+      padding: 10px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 18px;
+      color: white;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+    
+    .reset-eq-btn:hover {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.25));
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    }
+    
     /* ===== 좌우 분할 컨트롤 센터 패널 스타일 ===== */
     .test-panel {
       position: fixed;
@@ -633,6 +846,31 @@
 
     .title-display.show {
       opacity: 1;
+      transform: translateY(0);
+    }
+
+    .title-display.hide-visualizer {
+      background: transparent !important;
+      backdrop-filter: none !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
+
+    .title-display.hide-visualizer .audio-visualizer {
+      display: none !important;
+    }
+    
+    .title-display.hide-visualizer {
+      background: transparent !important;
+      backdrop-filter: none !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
+    
+    .title-display.hide-visualizer .audio-visualizer {
+      display: none !important;
     }
 
     /* 실시간 오디오 비주얼라이저 */
@@ -659,6 +897,7 @@
     }
 
     /* 컨트롤 버튼들 */
+    /* 컨트롤 버튼들 */
     .control-btn {
       width: 32px;
       height: 32px;
@@ -679,6 +918,12 @@
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2));
       transform: scale(1.1);
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+    }
+    
+    .visualizer-toggle-btn.active {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-color: #667eea;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     }
 
     .play-btn {
@@ -909,6 +1154,20 @@
     <!-- ===== 왼쪽 섹션: 방송 컨트롤 🎵 ===== -->
     <div class="control-section left-section">
       <div class="section-title">🎵 방송 컨트롤</div>
+
+            <!-- 로컬 음악 파일 추가 -->
+      <div class="test-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <h4 style="margin: 0;">🎵 로컬 음악 파일 추가</h4>
+          <button onclick="clearLocalMusicFiles()" style="padding: 4px 10px; background: #F44336; color: white; border: none; border-radius: 12px; cursor: pointer; font-size: 10px;">🗑️ 초기화</button>
+        </div>
+        <div class="upload-zone" id="musicFilesUploadZone">
+          <div class="upload-zone-icon">🎵</div>
+          <div class="upload-zone-text">음악 파일을 드래그하세요</div>
+          <div class="upload-zone-text" style="font-size: 10px;">MP3, WAV, M4A 지원 (여러 개 가능)</div>
+        </div>
+        <div id="uploadedMusicList" style="margin-top: 8px; font-size: 11px; color: #90A4AE; max-height: 150px; overflow-y: auto;"></div>
+      </div>
       
       <!-- 플레이리스트 선택/관리 -->
       <div class="test-section">
@@ -1037,7 +1296,7 @@
     
     
     
-        <!-- ===== 오른쪽 섹션: 미디어 파일 관리 📁 =7892==== -->
+        <!-- ===== 오른쪽 섹션: 미디어 파일 관리 📁 ===== -->
     <div class="control-section right-section">
       <div class="section-title">📁 미디어 파일 관리</div>
       
@@ -1270,6 +1529,7 @@
         <button class="control-btn shuffle-btn" id="shuffleBtn" onclick="toggleShuffle()" title="셔플 온/오프">⏮</button>
         <button class="control-btn play-btn" id="playBtn" onclick="toggleMusic()">▶</button>
         <button class="control-btn next-btn" onclick="nextTrack()">⏭</button>
+        <button class="control-btn visualizer-toggle-btn active" id="visualizerToggleBtn" onclick="toggleVisualizer()" title="비주얼라이저 온/오프">📊</button>
       </div>
     </div>
 
@@ -1280,6 +1540,69 @@
       <button class="effect-button" onclick="toggleEffect('crackle')">Crackle</button>
       <button class="effect-button" onclick="toggleEffect('sand')">Sand</button>
     </div>
+  </div>
+
+  <!-- 이퀄라이저 토글 버튼 (우측 상단) -->
+  <button id="eqToggleButton" title="이퀄라이저 열기/닫기">🎛️</button>
+
+  <!-- 이퀄라이저 패널 -->
+  <div id="equalizerPanel" class="equalizer-panel">
+    <div class="eq-header">
+      <h3 style="margin: 0; font-size: 16px; color: #4FC3F7;">🎛️이퀄라이저</h3>
+      <button class="close-eq" id="closeEqBtn">✕</button>
+    </div>
+    
+    <!-- 프리셋 버튼들 -->
+    <div class="eq-presets">
+      <button class="preset-btn active" data-preset="flat">Flat</button>
+      <button class="preset-btn" data-preset="rock">Rock</button>
+      <button class="preset-btn" data-preset="pop">Pop</button>
+      <button class="preset-btn" data-preset="jazz">Jazz</button>
+      <button class="preset-btn" data-preset="classical">Classic</button>
+      <button class="preset-btn" data-preset="hiphop">Hip-Hop</button>
+      <button class="preset-btn" data-preset="electronic">Electronic</button>
+      <button class="preset-btn" data-preset="acoustic">Acoustic</button>
+      <button class="preset-btn" data-preset="bass">Bass+</button>
+      <button class="preset-btn" data-preset="treble">Treble+</button>
+      <button class="preset-btn" data-preset="vocal">Vocal</button>
+      <button class="preset-btn" data-preset="lofi">Lo-Fi</button>
+    </div>
+    
+    <!-- 이퀄라이저 슬라이더들 -->
+    <div class="eq-sliders">
+      <div class="eq-band">
+        <label>60Hz</label>
+        <input type="range" id="eq60" min="-10" max="10" step="0.5" value="0">
+        <span class="eq-value">0.0dB</span>
+      </div>
+      <div class="eq-band">
+        <label>170Hz</label>
+        <input type="range" id="eq170" min="-10" max="10" step="0.5" value="0">
+        <span class="eq-value">0.0dB</span>
+      </div>
+      <div class="eq-band">
+        <label>350Hz</label>
+        <input type="range" id="eq350" min="-10" max="10" step="0.5" value="0">
+        <span class="eq-value">0.0dB</span>
+      </div>
+      <div class="eq-band">
+        <label>1kHz</label>
+        <input type="range" id="eq1000" min="-10" max="10" step="0.5" value="0">
+        <span class="eq-value">0.0dB</span>
+      </div>
+      <div class="eq-band">
+        <label>3kHz</label>
+        <input type="range" id="eq3000" min="-10" max="10" step="0.5" value="0">
+        <span class="eq-value">0.0dB</span>
+      </div>
+      <div class="eq-band">
+        <label>6kHz</label>
+        <input type="range" id="eq6000" min="-10" max="10" step="0.5" value="0">
+        <span class="eq-value">0.0dB</span>
+      </div>
+    </div>
+    
+    <button class="reset-eq-btn" id="resetEqBtn">🔄 리셋</button>
   </div>
 
   <!-- 비디오 요소들 -->
@@ -1687,6 +2010,12 @@
       if (introZone) {
         setupUploadZone(introZone, handleIntroFiles);
       }
+      
+      // 음악 파일 업로드 존
+      const musicFilesZone = document.getElementById('musicFilesUploadZone');
+      if (musicFilesZone) {
+        setupUploadZone(musicFilesZone, handleMusicFiles);
+      }
     }
 
     // 업로드 존 설정 함수
@@ -1732,6 +2061,8 @@
           return 'video/*,.png,.mov,.mp4';
         case 'introUploadZone':
           return 'video/*,.mp4,.mov';
+        case 'musicFilesUploadZone':
+          return 'audio/*,.mp3,.wav,.m4a';
         default:
           return '*/*';
       }
@@ -1739,12 +2070,12 @@
 
     // 배경 파일 처리
     function handleBackgroundFiles(files) {
-      console.log('🖼️ handleBackgroundFiles 호출, 파일:', files);
+    
       
       const imageFiles = files.filter(file => file.type.startsWith('image/'));
       const videoFiles = files.filter(file => file.type.startsWith('video/'));
       
-      console.log('이미지:', imageFiles.length, '비디오:', videoFiles.length);
+
       
       addLog('info', `배경 파일 업로드: 이미지 ${imageFiles.length}개, 비디오 ${videoFiles.length}개`);
       
@@ -1762,7 +2093,7 @@
       // 비디오 파일 처리
       videoFiles.forEach(video => {
         const url = URL.createObjectURL(video);
-        console.log('📹 비디오 URL 생성:', url);
+     
 
         loadedBackgroundMedia.push({
           name: video.name,
@@ -1889,6 +2220,123 @@
       
       // 임시 파일 정보 제거
       window.pendingIntroFile = null;
+    }
+
+    // 업로드된 음악 파일 목록
+    if (!window.uploadedMusicFiles) {
+      window.uploadedMusicFiles = [];
+    }
+    
+    // 음악 파일 처리 함수
+    function handleMusicFiles(files) {
+      const audioFiles = Array.from(files).filter(file => {
+        const ext = file.name.split('.').pop().toLowerCase();
+        return ext === 'mp3' || ext === 'wav' || ext === 'm4a' || file.type.startsWith('audio/');
+      });
+      
+      if (audioFiles.length === 0) {
+        addLog('warning', '음악 파일만 업로드 가능합니다 (MP3, WAV, M4A)');
+        return;
+      }
+      
+      audioFiles.forEach(file => {
+        // 중복 체크: 같은 파일명이 이미 있는지 확인
+        const isDuplicate = window.uploadedMusicFiles.some(f => f.name === file.name);
+        if (isDuplicate) {
+          addLog('warning', `이미 추가됨: ${file.name}`);
+          return; // 중복이면 건너뛰기
+        }
+        
+        const url = URL.createObjectURL(file);
+        
+        // 파일명에서 확장자 제거한 제목 생성
+        const title = file.name.replace(/\.(mp3|wav|m4a)$/i, '');
+        
+        // musicTracks에 추가
+        const track = {
+          title: title,
+          src: url,
+          playlist: '로컬 업로드'
+        };
+        
+        if (!musicTracks) {
+          musicTracks = [];
+        }
+        
+        musicTracks.push(track);
+        
+        // 업로드된 파일 목록에 추가
+        window.uploadedMusicFiles.push({
+          name: file.name,
+          title: title,
+          url: url
+        });
+        
+        addLog('success', `음악 추가: ${file.name}`);
+      });
+      
+      // 방송용 플레이리스트 업데이트
+      broadcastPlaylist = [...musicTracks];
+      shuffledPlaylist = createShuffledPlaylist();
+      
+      // UI 업데이트
+      updateUploadedMusicList();
+      updateControlCenterPlaylist();
+      
+      addLog('info', `총 ${audioFiles.length}개 음악 파일 추가됨`);
+    }
+    
+    // 업로드된 음악 목록 표시
+    function updateUploadedMusicList() {
+      const list = document.getElementById('uploadedMusicList');
+      if (!list) return;
+      
+      if (window.uploadedMusicFiles.length === 0) {
+        list.innerHTML = '<div style="text-align: center; color: #607D8B; padding: 10px;">업로드된 파일 없음</div>';
+        return;
+      }
+      
+      list.innerHTML = window.uploadedMusicFiles.map((file, idx) => {
+        return `<div style="padding: 5px; background: rgba(76, 175, 80, 0.1); border-radius: 5px; margin: 3px 0; display: flex; justify-content: space-between; align-items: center;">
+          <span style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            🎵 ${file.title}
+          </span>
+          <span style="font-size: 9px; color: #607D8B; margin-left: 8px;">${file.name.split('.').pop().toUpperCase()}</span>
+        </div>`;
+      }).join('');
+    }
+
+     // 로컬 음악 파일 초기화 함수
+    function clearLocalMusicFiles() {
+      if (window.uploadedMusicFiles.length === 0) {
+        addLog('info', '초기화할 로컬 음악 파일이 없습니다');
+        return;
+      }
+      
+      const count = window.uploadedMusicFiles.length;
+      
+      // URL 해제
+      window.uploadedMusicFiles.forEach(file => {
+        URL.revokeObjectURL(file.url);
+      });
+      
+      // musicTracks에서 로컬 업로드 파일들 제거
+      if (musicTracks) {
+        musicTracks = musicTracks.filter(track => track.playlist !== '로컬 업로드');
+      }
+      
+      // 업로드 목록 초기화
+      window.uploadedMusicFiles = [];
+      
+      // 방송용 플레이리스트 업데이트
+      broadcastPlaylist = [...musicTracks];
+      shuffledPlaylist = createShuffledPlaylist();
+      
+      // UI 업데이트
+      updateUploadedMusicList();
+      updateControlCenterPlaylist();
+      
+      addLog('success', `로컬 음악 파일 ${count}개 초기화 완료`);
     }
 
 // 인트로 재생 함수 (인트로와 메인 루프가 동시에 재생)
@@ -2432,7 +2880,7 @@ function playIntroVideo() {
     // 전역으로 함수 노출 (즉시)
     if (typeof window !== 'undefined') {
       window.toggleControlCenter = toggleControlCenter;
-      console.log('✅ toggleControlCenter 전역 등록 완료');
+     
     }
     
     function setupStealthControls() {
@@ -2496,10 +2944,7 @@ function playIntroVideo() {
 
     // 루프 영상 교체 함수 - 안정성 개선
     function changeLoopVideos(loop1Path, loop2Path) {
-  console.log('🔄 changeLoopVideos 호출됨');
-  console.log('loop1Path:', loop1Path);
-  console.log('loop2Path:', loop2Path);
-  
+
   const loop1Video = document.getElementById('loop1');
   const loop2Video = document.getElementById('loop2');
 
@@ -2884,10 +3329,10 @@ function playIntroVideo() {
       
       playlistSelector.innerHTML = `
         <h4>🎵 플레이리스트 관리</h4>
-        <div style="margin-bottom: 10px;">
-          <button onclick="loadPlaylistFiles()" style="padding: 5px 10px; background: #4FC3F7; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 5px;">📁 플레이리스트 불러오기</button>
-          <button onclick="applySelectedPlaylists()" style="padding: 5px 10px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 5px;">✅ 적용</button>
-          <button onclick="resetPlaylists()" style="padding: 5px 10px; background: #FF5722; color: white; border: none; border-radius: 5px; cursor: pointer;">🔄 초기화</button>
+        <div style="margin-bottom: 10px; display: flex; gap: 5px;">
+          <button onclick="loadPlaylistFiles()" style="flex: 1; padding: 5px 8px; background: #4FC3F7; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 10px;">📁 불러오기</button>
+          <button onclick="applySelectedPlaylists()" style="flex: 1; padding: 5px 8px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 10px;">✅ 적용</button>
+          <button onclick="resetPlaylists()" style="flex: 1; padding: 5px 8px; background: #FF5722; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 10px;">🔄 초기화</button>
         </div>
         <div style="font-size: 11px; color: #90A4AE; margin-bottom: 10px;">
           방송용 플레이리스트: ${broadcastPlaylist.length}곡
@@ -3641,6 +4086,9 @@ function playIntroVideo() {
               }
               updateControlCenterPlaylist();
             }, 1500);
+            } else {
+            // 같은 트랙 클릭 시 재생/정지 토글
+            toggleMusic();
           }
         });
       });
@@ -4103,6 +4551,34 @@ function updateOverlayStatus(applied = false) {
       }
     }
     
+    
+    
+    // ===== 비주얼라이저 토글 =====
+    let isVisualizerVisible = true;
+
+    function toggleVisualizer() {
+      const titleDisplay = document.getElementById('titleDisplay');
+      const toggleBtn = document.getElementById('visualizerToggleBtn');
+      
+      isVisualizerVisible = !isVisualizerVisible;
+      
+      if (isVisualizerVisible) {
+        titleDisplay.classList.remove('hide-visualizer');
+        toggleBtn.classList.add('active');
+        if (isControlCenterMode) {
+          addLog('info', '📊 비주얼라이저 ON');
+        }
+      } else {
+        titleDisplay.classList.add('hide-visualizer');
+        toggleBtn.classList.remove('active');
+        if (isControlCenterMode) {
+          addLog('info', '📊 비주얼라이저 OFF');
+        }
+      }
+      
+      console.log('📊 비주얼라이저:', isVisualizerVisible ? 'ON' : 'OFF');
+    }
+    
     // 전역 함수 노출
     window.setBaseVolume = (volume) => audioManager.setBaseVolume(volume);
     window.applyStealthMode = applyStealthMode;
@@ -4112,6 +4588,7 @@ function updateOverlayStatus(applied = false) {
     window.applyBackgroundMedia = applyBackgroundMedia;
     window.applySelectedPlaylists = applySelectedPlaylists;
     window.resetPlaylists = resetPlaylists;
+    window.clearLocalMusicFiles = clearLocalMusicFiles;
     window.savePreset = savePreset;
     window.loadPreset = loadPreset;
     window.deletePreset = deletePreset;
@@ -4119,6 +4596,7 @@ function updateOverlayStatus(applied = false) {
     window.applyOverlay = applyOverlay;
     window.applyIntro = applyIntro;
     window.updateOverlayStatus = updateOverlayStatus;
+    window.toggleVisualizer = toggleVisualizer;
     
 
 // 페이지 로드 후 버튼 이벤트 연결
@@ -4146,15 +4624,207 @@ setTimeout(() => {
   }
 }, 1000);
 
-
-    // 간단한 디버깅 함수들
-window.debugOverlay = function() {
-  const v = document.getElementById('overlayVideo');
-  console.log('Overlay:', v?.src, 'ready:', v?.readyState, 'paused:', v?.paused);
-  if (v?.src) v.play().catch(e => console.error(e));
-};
-window.testOverlay = function() { const v = document.getElementById('overlayVideo'); v.style.opacity='0.5'; v.play(); };
-window.hideOverlay = function() { document.getElementById('overlayVideo').style.opacity='0'; };
+// ===== 이퀄라이저 시스템 =====
+  const EQ = {
+    isVisible: false,
+    filters: [],
+    gains: [0, 0, 0, 0, 0, 0],
+    frequencies: [60, 170, 350, 1000, 3000, 6000],
+    currentPreset: 'flat',
+    
+   presets: {
+    flat: [0, 0, 0, 0, 0, 0],
+    rock: [4, 3, -1, -2, 3, 5],
+    pop: [1, 3, 2, 0, -1, -2],
+    jazz: [3, 2, 0, 1, 3, 4],
+    classical: [4, 3, -1, -2, 2, 3],
+    hiphop: [5, 3, 1, -1, -2, 3],
+    electronic: [4, 3, 0, -1, 2, 4],
+    acoustic: [3, 1, 0, 1, 2, 1],
+    bass: [6, 4, 2, 0, -2, -3],
+    treble: [-3, -2, 0, 2, 4, 6],
+    vocal: [0, 1, 3, 3, 2, 0],
+    lofi: [2, 0, -1, 0, 1, -2]
+  },
+    
+    init() {
+      console.log('🎛️ 이퀄라이저 초기화');
+      this.setupEventListeners();
+    },
+    
+    setupEventListeners() {
+      // 토글 버튼
+      const toggleBtn = document.getElementById('eqToggleButton');
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => this.toggle());
+      }
+      
+      // 닫기 버튼
+      const closeBtn = document.getElementById('closeEqBtn');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => this.hide());
+      }
+      
+      // 프리셋 버튼들
+      const presetBtns = document.querySelectorAll('.preset-btn');
+      presetBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const preset = e.target.getAttribute('data-preset');
+          if (preset) this.applyPreset(preset);
+        });
+      });
+      
+      // 슬라이더들
+      this.frequencies.forEach(freq => {
+        const slider = document.getElementById('eq' + freq);
+        if (slider) {
+          slider.addEventListener('input', () => this.updateEqualizer());
+        }
+      });
+      
+      // 리셋 버튼
+      const resetBtn = document.getElementById('resetEqBtn');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => this.reset());
+      }
+    },
+    
+    toggle() {
+      this.isVisible ? this.hide() : this.show();
+    },
+    
+    show() {
+      const panel = document.getElementById('equalizerPanel');
+      const toggleBtn = document.getElementById('eqToggleButton');
+      if (panel && toggleBtn) {
+        panel.classList.add('show');
+        toggleBtn.style.opacity = '0';
+        this.isVisible = true;
+        this.setupFilters();
+        if (isControlCenterMode) {
+          addLog('info', '🎛️ 이퀄라이저 열림');
+        }
+      }
+    },
+    
+    hide() {
+      const panel = document.getElementById('equalizerPanel');
+      const toggleBtn = document.getElementById('eqToggleButton');
+      if (panel && toggleBtn) {
+        panel.classList.remove('show');
+        toggleBtn.style.opacity = '1';
+        this.isVisible = false;
+        if (isControlCenterMode) {
+          addLog('info', '🎛️ 이퀄라이저 닫힘');
+        }
+      }
+    },
+    
+    setupFilters() {
+      if (!audioContext) return;
+      
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+      
+      // 기존 필터 초기화
+      this.filters = [];
+      
+      // 6개 밴드 필터 생성
+      for (let i = 0; i < 6; i++) {
+        const filter = audioContext.createBiquadFilter();
+        filter.type = i === 0 ? 'lowshelf' : i === 5 ? 'highshelf' : 'peaking';
+        filter.frequency.value = this.frequencies[i];
+        filter.Q.value = 1;
+        filter.gain.value = this.gains[i];
+        this.filters.push(filter);
+      }
+      
+      // 필터 체인 연결
+      if (this.filters.length > 0 && source) {
+        try {
+          // 기존 연결 해제
+          source.disconnect();
+          
+          // 필터 체인 구성
+          let input = source;
+          for (let filter of this.filters) {
+            input.connect(filter);
+            input = filter;
+          }
+          
+          // 마지막 필터를 analyser와 destination에 연결
+          if (analyser) {
+            input.connect(analyser);
+            analyser.connect(audioContext.destination);
+          } else {
+            input.connect(audioContext.destination);
+          }
+          
+          console.log('🎛️ 이퀄라이저 필터 연결 완료');
+        } catch (error) {
+          console.error('🎛️ 이퀄라이저 연결 오류:', error);
+        }
+      }
+    },
+    
+    updateEqualizer() {
+      for (let i = 0; i < 6; i++) {
+        const slider = document.getElementById('eq' + this.frequencies[i]);
+        if (slider && this.filters[i]) {
+          const value = parseFloat(slider.value);
+          this.gains[i] = value;
+          this.filters[i].gain.value = value;
+          
+          const valueDisplay = slider.parentElement.querySelector('.eq-value');
+          if (valueDisplay) {
+            valueDisplay.textContent = (value >= 0 ? '+' : '') + value.toFixed(1) + 'dB';
+          }
+        }
+      }
+    },
+    
+    applyPreset(presetName) {
+      if (!this.presets[presetName]) return;
+      
+      const preset = this.presets[presetName];
+      this.currentPreset = presetName;
+      
+      for (let i = 0; i < 6; i++) {
+        const slider = document.getElementById('eq' + this.frequencies[i]);
+        if (slider) {
+          slider.value = preset[i];
+          this.gains[i] = preset[i];
+          
+          if (this.filters[i]) {
+            this.filters[i].gain.value = preset[i];
+          }
+          
+          const valueDisplay = slider.parentElement.querySelector('.eq-value');
+          if (valueDisplay) {
+            valueDisplay.textContent = (preset[i] >= 0 ? '+' : '') + preset[i].toFixed(1) + 'dB';
+          }
+        }
+      }
+      
+      // 프리셋 버튼 활성화
+      const presetBtns = document.querySelectorAll('.preset-btn');
+      presetBtns.forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('data-preset') === presetName) {
+          btn.classList.add('active');
+        }
+      });
+      
+      if (isControlCenterMode) {
+        addLog('info', `🎛️ 프리셋 적용: ${presetName}`);
+      }
+    },
+    
+    reset() {
+      this.applyPreset('flat');
+    }
+  };
 
   // DOM 로드 완료 후 초기화
 document.addEventListener('DOMContentLoaded', () => {
@@ -4172,8 +4842,11 @@ document.addEventListener('DOMContentLoaded', () => {
     setupStealthControls();
     setupMasterVolumeControl();
 
-    setupMediaControls('overlay');
+   setupMediaControls('overlay');
     setupMediaControls('intro');
+    
+    // 이퀄라이저 초기화
+    EQ.init();
 
     window._initialSetupComplete = true;
   }
