@@ -1,0 +1,30 @@
+{
+  "name": "예시 플레이리스트",
+  "description": "테스트용 플레이리스트 - 로컬 음악 파일 경로",
+  "tracks": [
+    {
+      "url": "assets/music/track1.mp3",
+      "title": "첫 번째 곡",
+      "artist": "아티스트 1",
+      "album": "앨범 A",
+      "duration": 180,
+      "cover": "assets/covers/cover1.jpg"
+    },
+    {
+      "url": "assets/music/track2.mp3",
+      "title": "두 번째 곡",
+      "artist": "아티스트 2",
+      "album": "앨범 B",
+      "duration": 210,
+      "cover": "assets/covers/cover2.jpg"
+    },
+    {
+      "url": "assets/music/track3.mp3",
+      "title": "세 번째 곡",
+      "artist": "아티스트 1",
+      "album": "앨범 A",
+      "duration": 195,
+      "cover": "assets/covers/cover1.jpg"
+    }
+  ]
+}
