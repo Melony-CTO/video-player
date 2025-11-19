@@ -707,6 +707,11 @@
       box-shadow: 0 4px 15px rgba(255, 193, 7, 0.5);
     }
 
+    .visualizer-btn.active {
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.8), rgba(102, 187, 106, 0.8));
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.5);
+    }
+
     .control-btn.next-btn {
       background: linear-gradient(135deg, rgba(255, 193, 7, 0.8), rgba(255, 152, 0, 0.8)) !important;
       box-shadow: 0 4px 15px rgba(255, 193, 7, 0.5);
@@ -1347,6 +1352,7 @@
         <button class="control-btn shuffle-btn" id="shuffleBtn" onclick="toggleShuffle()" title="셔플 온/오프">⏮</button>
         <button class="control-btn play-btn" id="playBtn" onclick="toggleMusic()">▶</button>
         <button class="control-btn next-btn" onclick="nextTrack()">⏭</button>
+        <button class="control-btn visualizer-btn active" id="visualizerBtn" onclick="toggleVisualizer()" title="비주얼라이저 ON/OFF">📊</button>
       </div>
     </div>
 
@@ -3246,6 +3252,7 @@ function playIntroVideo() {
     let isShuffleMode = true;
     let shuffledPlaylist = [];
     let logoLoopStarted = false;
+    let isVisualizerVisible = true; // 비주얼라이저 표시 상태
 
     // 플레이리스트
     let musicTracks = [];
@@ -3944,6 +3951,42 @@ function playIntroVideo() {
           shuffleCheckbox.checked = isShuffleMode;
         }
         updateControlCenterPlaylist();
+      }
+    }
+
+    function toggleVisualizer() {
+      isVisualizerVisible = !isVisualizerVisible;
+
+      const visualizerBtn = document.getElementById('visualizerBtn');
+      const titleDisplay = document.getElementById('titleDisplay');
+      const audioVisualizer = document.getElementById('audioVisualizer');
+
+      if (isVisualizerVisible) {
+        // 비주얼라이저 ON
+        visualizerBtn.classList.add('active');
+        if (titleDisplay) {
+          titleDisplay.style.opacity = '0.5';
+          titleDisplay.style.visibility = 'visible';
+        }
+        if (audioVisualizer && isMusicPlaying) {
+          audioVisualizer.classList.add('playing');
+        }
+        if (isControlCenterMode) {
+          addLog('info', '📊 비주얼라이저 ON');
+        }
+      } else {
+        // 비주얼라이저 OFF
+        visualizerBtn.classList.remove('active');
+        if (titleDisplay) {
+          titleDisplay.style.opacity = '0';
+          titleDisplay.style.visibility = 'hidden';
+        }
+        if (audioVisualizer) {
+          audioVisualizer.classList.remove('playing');
+        }
+        if (isControlCenterMode) {
+          addLog('info', '📊 비주얼라이저 OFF');
+        }
       }
     }
 
