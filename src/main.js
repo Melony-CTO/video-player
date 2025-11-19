@@ -37,10 +37,12 @@ import { KeyboardShortcuts } from './modules/features/KeyboardShortcuts.js';
  */
 async function initApp() {
   try {
+    console.log('🚀 initApp() 함수 시작!');
     logger.debug('비디오 플레이어 초기화 시작...');
 
     // Core 앱 초기화
     await app.init();
+    console.log('✓ app.init() 완료');
 
     // === Audio 모듈 초기화 ===
     const musicPlayer = new MusicPlayer();
@@ -150,24 +152,41 @@ async function initApp() {
     const titleDisplay = document.getElementById('titleDisplay');
     const controlCenter = document.getElementById('controlCenter');
 
+    console.log('🔍 UI 요소 확인:', {
+      startButton: !!startButton,
+      controlPanel: !!controlPanel,
+      titleDisplay: !!titleDisplay,
+      controlCenter: !!controlCenter
+    });
+
     if (startButton) {
+      logger.debug('✓ 시작 버튼 찾음, 이벤트 리스너 추가');
+
       startButton.addEventListener('click', () => {
+        console.log('🖱️ 시작 버튼 클릭됨!');
+
         // 시작 버튼 숨기기
         startButton.style.display = 'none';
 
         // UI 요소 표시
         if (controlPanel) {
           controlPanel.classList.add('show');
+          console.log('✓ 컨트롤 패널 표시');
         }
         if (titleDisplay) {
           titleDisplay.classList.add('show');
+          console.log('✓ 타이틀 디스플레이 표시');
         }
         if (controlCenter) {
           controlCenter.classList.add('show');
+          console.log('✓ 컨트롤 센터 표시');
         }
 
         logger.info('🎬 비디오 플레이어 시작!');
       });
+    } else {
+      logger.error('❌ 시작 버튼을 찾을 수 없습니다!');
+      console.error('startButton element not found!');
     }
 
     // 앱 시작
@@ -553,10 +572,22 @@ function setupEventHandlers() {
   }
 }
 
+// 전역 에러 핸들러
+window.addEventListener('error', (event) => {
+  console.error('🚨 전역 에러:', event.error);
+  console.error('파일:', event.filename, '라인:', event.lineno);
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('🚨 처리되지 않은 Promise 거부:', event.reason);
+});
+
 // DOM이 로드되면 앱 초기화
 if (document.readyState === 'loading') {
+  console.log('⏳ DOM 로딩 중... DOMContentLoaded 대기');
   document.addEventListener('DOMContentLoaded', initApp);
 } else {
+  console.log('✓ DOM 이미 로드됨, initApp() 즉시 실행');
   initApp();
 }
 
@@ -578,7 +609,20 @@ if (typeof window !== 'undefined') {
     },
     getModule: (name) => app.getModule(name),
     emit: (event, data) => eventBus.emit(event, data),
-    on: (event, callback) => eventBus.on(event, callback)
+    on: (event, callback) => eventBus.on(event, callback),
+    checkElements: () => {
+      const elements = {
+        startButton: !!document.getElementById('startButton'),
+        controlPanel: !!document.querySelector('.control-panel'),
+        titleDisplay: !!document.getElementById('titleDisplay'),
+        controlCenter: !!document.getElementById('controlCenter'),
+        playBtn: !!document.getElementById('playBtn'),
+        nextBtn: !!document.getElementById('nextBtn'),
+        shuffleBtn: !!document.getElementById('shuffleBtn')
+      };
+      console.log('🔍 UI 요소 체크:', elements);
+      return elements;
+    }
   };
 
   logger.info('전역 객체 window.videoPlayer 사용 가능');

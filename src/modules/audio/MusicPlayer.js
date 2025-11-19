@@ -26,13 +26,15 @@ export class MusicPlayer {
   }
 
   init() {
-    // Howler.js가 로드되었는지 확인
+    // Howler.js가 로드되었는지 확인 (경고만 표시)
     if (typeof Howl === 'undefined') {
-      logger.error('Howler.js가 로드되지 않았습니다');
-      return false;
+      logger.warning('⚠️ Howler.js가 아직 로드되지 않았습니다. CDN 로딩 중...');
+      console.warn('Howler.js is not loaded yet. Music playback may be delayed.');
+    } else {
+      logger.info('✓ Howler.js 로드 완료');
     }
 
-    logger.info('음악 플레이어 초기화 완료 (Howler.js)');
+    logger.info('음악 플레이어 초기화 완료 (Howler.js 기반)');
     return true;
   }
 
