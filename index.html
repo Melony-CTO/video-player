@@ -67,29 +67,7 @@
       100% { transform: scale(1); }
     }
 
-    /* ===== 이퀄라이저 토글 버튼 ===== */
-    #eqToggleButton {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      width: 50px;
-      height: 50px;
-      background: rgba(79, 195, 247, 0.9);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      color: white;
-      font-size: 24px;
-      cursor: pointer;
-      z-index: 1002;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(79, 195, 247, 0.4);
-    }
-    
-    #eqToggleButton:hover {
-      background: rgba(79, 195, 247, 1);
-      transform: scale(1.1);
-      box-shadow: 0 6px 20px rgba(79, 195, 247, 0.6);
-    }
+  
     
    /* ===== 이퀄라이저 패널 ===== */
     .equalizer-panel {
@@ -274,11 +252,7 @@
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     }
     
-    .reset-eq-btn:hover {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.25));
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-    }
+    
     
     /* ===== 좌우 분할 컨트롤 센터 패널 스타일 ===== */
     .test-panel {
@@ -822,11 +796,11 @@
       bottom: 75px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.005);
-      backdrop-filter: blur(1px);
+      background: transparent;
+      backdrop-filter: none;
       color: #fff;
-      padding: 20px 30px;
-      border-radius: 15px;
+      padding: 0;
+      border-radius: 0;
       font-size: 15px;
       font-weight: 500;
       font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -834,9 +808,8 @@
       z-index: 16;
       opacity: 0.5;
       transition: all 0.5s ease;
-      border: 1px solid rgba(255, 255, 255, 0.01);
-      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.01);
-      white-space: nowrap;
+      border: none;
+      box-shadow: none;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
       display: flex;
       flex-direction: column;
@@ -875,12 +848,18 @@
 
     /* 실시간 오디오 비주얼라이저 */
     .audio-visualizer {
+      position: fixed;
+      bottom: 20px;
+      left: -8%;
+      transform: translateX(-50%);
       display: flex;
       align-items: end;
+      justify-content: center;
       gap: 3px;
       height: 30px;
       opacity: 0;
       transition: opacity 0.5s ease;
+      z-index: 17;
     }
 
     .audio-visualizer.playing {
@@ -920,10 +899,48 @@
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
     }
     
+   .eq-toggle-btn {
+      background: linear-gradient(135deg, rgba(79, 195, 247, 0.8), rgba(41, 128, 185, 0.8));
+      border-color: rgba(79, 195, 247, 0.5);
+      box-shadow: 0 4px 15px rgba(79, 195, 247, 0.4);
+    }
+    
+    .eq-toggle-btn:hover {
+      background: linear-gradient(135deg, rgba(79, 195, 247, 1), rgba(41, 128, 185, 1));
+      box-shadow: 0 6px 20px rgba(79, 195, 247, 0.6);
+    }
+    
+    .eq-toggle-btn.active {
+      background: linear-gradient(135deg, rgba(243, 208, 147, 0.5), rgba(218, 165, 32, 0.5));
+      border-color: rgba(243, 208, 147, 0.5);
+      box-shadow: 0 4px 15px rgba(243, 208, 147, 0.3);
+    }
+    
+    .eq-toggle-btn.active:hover {
+      background: linear-gradient(135deg, rgba(243, 208, 147, 0.7), rgba(218, 165, 32, 0.7));
+      box-shadow: 0 6px 20px rgba(243, 208, 147, 0.4);
+    }
+    
+    .visualizer-toggle-btn {
+      background: linear-gradient(135deg, rgba(243, 208, 147, 0.5), rgba(218, 165, 32, 0.5));
+      border-color: rgba(243, 208, 147, 0.5);
+      box-shadow: 0 4px 15px rgba(243, 208, 147, 0.3);
+    }
+    
+    .visualizer-toggle-btn:hover {
+      background: linear-gradient(135deg, rgba(243, 208, 147, 0.7), rgba(218, 165, 32, 0.7));
+      box-shadow: 0 6px 20px rgba(243, 208, 147, 0.4);
+    }
+    
     .visualizer-toggle-btn.active {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      border-color: #667eea;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      background: linear-gradient(135deg, rgba(79, 195, 247, 0.8), rgba(41, 128, 185, 0.8));
+      border-color: rgba(79, 195, 247, 0.5);
+      box-shadow: 0 4px 15px rgba(79, 195, 247, 0.4);
+    }
+    
+    .visualizer-toggle-btn.active:hover {
+      background: linear-gradient(135deg, rgba(79, 195, 247, 1), rgba(41, 128, 185, 1));
+      box-shadow: 0 6px 20px rgba(79, 195, 247, 0.6);
     }
 
     .play-btn {
@@ -945,6 +962,25 @@
       align-items: center;
       gap: 12px;
       justify-content: center;
+    }
+
+    /* 셀렉트 박스 드롭다운 옵션 스타일 */
+    select option {
+      background-color: #2C3E50;
+      color: white;
+      padding: 8px;
+    }
+    
+    select option:hover {
+      background-color: #34495E;
+    }
+    
+    #overlayBlendMode option,
+    #introBlendMode option {
+      background-color: #2C3E50;
+      color: white;
+      font-size: 12px;
+      padding: 6px 8px;
     }
 
     .shuffle-btn.active {
@@ -1329,65 +1365,75 @@
       </div>
 
       
-      <!-- 오버레이 설정 (드래그&드롭 업로드) -->
+      <!-- 오버레이 설정 (5개 슬롯 - 컴팩트) -->
       <div class="test-section">
         <h4>🎭 오버레이 설정</h4>
-        <div class="upload-zone" id="overlayUploadZone">
-          <div class="upload-zone-icon">🎭</div>
-          <div class="upload-zone-text">오버레이 비디오 파일을 드래그하세요</div>
-          <div class="upload-zone-text">PNG/MOV/MP4 파일 지원</div>
+        
+        <!-- 오버레이 1 -->
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+          <span style="font-size: 12px; font-weight: 600; min-width: 12px;">1</span>
+          <div class="upload-zone" id="overlay1UploadZone" style="width: 120px; min-height: 45px; padding: 3px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <span style="font-size: 18px;">🎭</span>
+            <span style="font-size: 8px; color: #90A4AE;">드래그</span>
+          </div>
+          <span style="font-size: 10px; color: #90A4AE; min-width: 40px;">투명도</span>
+          <input type="range" class="control-range" id="overlay1-opacity" min="0" max="100" step="5" value="70" style="flex: 1; min-width: 100px;">
+          <span id="overlay1-opacity-value" style="font-size: 11px; color: #4FC3F7; min-width: 35px; text-align: center;">70%</span>
+          <input type="checkbox" id="overlay1Enabled" checked style="width: 20px; height: 20px; cursor: pointer;">
         </div>
-        <div style="margin-top: 10px;">
-          <label style="display: flex; align-items: center; font-size: 12px;">
-            <input type="checkbox" id="overlayEnabled" checked style="margin-right: 8px;">
-            오버레이 활성화
-          </label>
+        
+        <!-- 오버레이 2 -->
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+          <span style="font-size: 12px; font-weight: 600; min-width: 12px;">2</span>
+          <div class="upload-zone" id="overlay2UploadZone" style="width: 120px; min-height: 45px; padding: 3px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <span style="font-size: 18px;">🎭</span>
+            <span style="font-size: 8px; color: #90A4AE;">드래그</span>
+          </div>
+          <span style="font-size: 10px; color: #90A4AE; min-width: 40px;">투명도</span>
+          <input type="range" class="control-range" id="overlay2-opacity" min="0" max="100" step="5" value="70" style="flex: 1; min-width: 100px;">
+          <span id="overlay2-opacity-value" style="font-size: 11px; color: #4FC3F7; min-width: 35px; text-align: center;">70%</span>
+          <input type="checkbox" id="overlay2Enabled" style="width: 20px; height: 20px; cursor: pointer;">
+        </div>
+        
+        <!-- 오버레이 3 -->
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+          <span style="font-size: 12px; font-weight: 600; min-width: 12px;">3</span>
+          <div class="upload-zone" id="overlay3UploadZone" style="width: 120px; min-height: 45px; padding: 3px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <span style="font-size: 18px;">🎭</span>
+            <span style="font-size: 8px; color: #90A4AE;">드래그</span>
+          </div>
+          <span style="font-size: 10px; color: #90A4AE; min-width: 40px;">투명도</span>
+          <input type="range" class="control-range" id="overlay3-opacity" min="0" max="100" step="5" value="70" style="flex: 1; min-width: 100px;">
+          <span id="overlay3-opacity-value" style="font-size: 11px; color: #4FC3F7; min-width: 35px; text-align: center;">70%</span>
+          <input type="checkbox" id="overlay3Enabled" style="width: 20px; height: 20px; cursor: pointer;">
+        </div>
+        
+        <!-- 오버레이 4 -->
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+          <span style="font-size: 12px; font-weight: 600; min-width: 12px;">4</span>
+          <div class="upload-zone" id="overlay4UploadZone" style="width: 120px; min-height: 45px; padding: 3px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <span style="font-size: 18px;">🎭</span>
+            <span style="font-size: 8px; color: #90A4AE;">드래그</span>
+          </div>
+          <span style="font-size: 10px; color: #90A4AE; min-width: 40px;">투명도</span>
+          <input type="range" class="control-range" id="overlay4-opacity" min="0" max="100" step="5" value="70" style="flex: 1; min-width: 100px;">
+          <span id="overlay4-opacity-value" style="font-size: 11px; color: #4FC3F7; min-width: 35px; text-align: center;">70%</span>
+          <input type="checkbox" id="overlay4Enabled" style="width: 20px; height: 20px; cursor: pointer;">
+        </div>
+        
+        <!-- 오버레이 5 -->
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+          <span style="font-size: 12px; font-weight: 600; min-width: 12px;">5</span>
+          <div class="upload-zone" id="overlay5UploadZone" style="width: 120px; min-height: 45px; padding: 3px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <span style="font-size: 18px;">🎭</span>
+            <span style="font-size: 8px; color: #90A4AE;">드래그</span>
+          </div>
+          <span style="font-size: 10px; color: #90A4AE; min-width: 40px;">투명도</span>
+          <input type="range" class="control-range" id="overlay5-opacity" min="0" max="100" step="5" value="70" style="flex: 1; min-width: 100px;">
+          <span id="overlay5-opacity-value" style="font-size: 11px; color: #4FC3F7; min-width: 35px; text-align: center;">70%</span>
+          <input type="checkbox" id="overlay5Enabled" style="width: 20px; height: 20px; cursor: pointer;">
         </div>
       </div>
-      
-       <!-- 오버레이 활성화 및 적용 버튼 -->
-  <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
-    <label style="display: flex; align-items: center; font-size: 12px;">
-      <input type="checkbox" id="overlayEnabled" checked style="margin-right: 8px;">
-      오버레이 활성화
-    </label>
-    <button id="applyOverlayBtn" class="preset-btn" style="padding: 4px 12px; font-size: 11px; background: #4CAF50;" disabled onclick="applyOverlay()">✅ 적용</button>
-  </div>
-  
-  <!-- 오버레이 투명도 조절 -->
-  <div class="control-slider" style="margin-top: 12px;">
-    <div class="control-label">
-      <span class="effect-name">오버레이 투명도</span>
-      <span class="channel-info">OPACITY</span>
-    </div>
-    <div class="slider-container">
-      <input type="range" class="control-range" id="overlay-opacity-slider" 
-             min="0" max="100" step="5" value="20">
-    </div>
-    <div class="control-value" id="overlay-opacity-value">20%</div>
-  </div>
-
-    <!-- 믹스 블렌드 모드 선택 -->
-  <div style="margin-top: 10px;">
-    <label style="font-size: 11px; color: #90A4AE; margin-bottom: 5px; display: block;">블렌드 모드:</label>
-    <select id="overlayBlendMode" style="width: 100%; padding: 4px 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: white; font-size: 11px;">
-      <option value="screen">Screen (기본)</option>
-      <option value="normal">Normal</option>
-      <option value="multiply">Multiply</option>
-      <option value="overlay">Overlay</option>
-      <option value="soft-light">Soft Light</option>
-      <option value="hard-light">Hard Light</option>
-      <option value="color-dodge">Color Dodge</option>
-      <option value="color-burn">Color Burn</option>
-    </select>
-  </div>
-
-  
-
-  <!-- 상태 표시 -->
-<div id="overlayFileStatus" style="margin-top: 8px; font-size: 11px; color: #90A4AE;">
-  현재: 기본 오버레이 (overlay01.mp4)
-</div>
 
 
       
@@ -1468,8 +1514,48 @@
 
   <!-- 제목 표시 -->
   <div class="title-display" id="titleDisplay">
-    <!-- 실시간 오디오 비주얼라이저 (40개 바) -->
+    <!-- 실시간 오디오 비주얼라이저 (80개 바) -->
     <div class="audio-visualizer" id="audioVisualizer">
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
       <div class="visualizer-bar"></div>
       <div class="visualizer-bar"></div>
       <div class="visualizer-bar"></div>
@@ -1526,10 +1612,11 @@
     <!-- 중앙 플레이어 컨트롤 -->
     <div class="player-controls">
       <div class="player-buttons">
-        <button class="control-btn shuffle-btn" id="shuffleBtn" onclick="toggleShuffle()" title="셔플 온/오프">⏮</button>
+      <button class="control-btn eq-toggle-btn" id="eqToggleBtn" onclick="EQ.toggle()" title="이퀄라이저 온/오프">🎛️</button>
+        <button class="control-btn shuffle-btn" id="shuffleBtn" onclick="toggleShuffle()" title="이전곡">⏮</button>
         <button class="control-btn play-btn" id="playBtn" onclick="toggleMusic()">▶</button>
         <button class="control-btn next-btn" onclick="nextTrack()">⏭</button>
-        <button class="control-btn visualizer-toggle-btn active" id="visualizerToggleBtn" onclick="toggleVisualizer()" title="비주얼라이저 온/오프">📊</button>
+        <button class="control-btn visualizer-toggle-btn active" id="visualizerToggleBtn" onclick="toggleVisualizer()" title="비주얼라이저 온/오프">🎧</button>
       </div>
     </div>
 
@@ -1542,8 +1629,7 @@
     </div>
   </div>
 
-  <!-- 이퀄라이저 토글 버튼 (우측 상단) -->
-  <button id="eqToggleButton" title="이퀄라이저 열기/닫기">🎛️</button>
+
 
   <!-- 이퀄라이저 패널 -->
   <div id="equalizerPanel" class="equalizer-panel">
@@ -3329,15 +3415,61 @@ function playIntroVideo() {
       
       playlistSelector.innerHTML = `
         <h4>🎵 플레이리스트 관리</h4>
-        <div style="margin-bottom: 10px; display: flex; gap: 5px;">
+        <div style="margin-bottom: 8px; display: flex; gap: 5px; align-items: center;">
           <button onclick="loadPlaylistFiles()" style="flex: 1; padding: 5px 8px; background: #4FC3F7; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 10px;">📁 불러오기</button>
           <button onclick="applySelectedPlaylists()" style="flex: 1; padding: 5px 8px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 10px;">✅ 적용</button>
           <button onclick="resetPlaylists()" style="flex: 1; padding: 5px 8px; background: #FF5722; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 10px;">🔄 초기화</button>
+          <div style="display: flex; align-items: center; gap: 3px; padding: 5px 8px; background: rgba(255,255,255,0.1); border-radius: 5px;">
+            <input type="checkbox" id="playlistShuffleTop" ${isShuffleMode ? 'checked' : ''} style="width: 16px; height: 16px; cursor: pointer;">
+            <button id="shuffleRefreshBtn" style="background: transparent; border: none; cursor: pointer; font-size: 14px; padding: 0; margin: 0; line-height: 1;" title="플레이리스트 다시 섞기">🔀</button>
+          </div>
         </div>
-        <div style="font-size: 11px; color: #90A4AE; margin-bottom: 10px;">
+        <div style="font-size: 11px; color: #90A4AE; margin-bottom: 8px;">
           방송용 플레이리스트: ${broadcastPlaylist.length}곡
         </div>
       `;
+      
+      // 상단 셔플 체크박스 이벤트 연결
+      setTimeout(() => {
+        const topShuffleCheckbox = document.getElementById('playlistShuffleTop');
+        if (topShuffleCheckbox) {
+          topShuffleCheckbox.addEventListener('change', (e) => {
+            isShuffleMode = e.target.checked;
+            updateShuffleStatus();
+            if (isShuffleMode && broadcastPlaylist.length > 0) {
+              shuffleArray(broadcastPlaylist);
+              addLog('info', '🔀 셔플 모드 ON - 플레이리스트 섞음');
+            } else {
+              addLog('info', '🔀 셔플 모드 OFF');
+            }
+            updatePlaylistDisplay();
+          });
+        }
+        
+        // 셔플 새로고침 버튼 이벤트 연결
+        const shuffleRefreshBtn = document.getElementById('shuffleRefreshBtn');
+        if (shuffleRefreshBtn) {
+          shuffleRefreshBtn.addEventListener('click', () => {
+            if (broadcastPlaylist.length > 0) {
+              // broadcastPlaylist를 Fisher-Yates 알고리즘으로 섞기
+              for (let i = broadcastPlaylist.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [broadcastPlaylist[i], broadcastPlaylist[j]] = [broadcastPlaylist[j], broadcastPlaylist[i]];
+              }
+              
+              // shuffledPlaylist도 업데이트
+              if (isShuffleMode) {
+                shuffledPlaylist = createShuffledPlaylist();
+              }
+              
+              updatePlaylistDisplay();
+              addLog('info', '🔀 플레이리스트 다시 섞음');
+            } else {
+              addLog('warning', '⚠️ 플레이리스트가 비어있습니다');
+            }
+          });
+        }
+      }, 100);
       
       const validPlaylists = loadedPlaylists.filter(playlist => {
         return playlist.tracks && playlist.tracks.length > 0;
@@ -3358,27 +3490,7 @@ function playIntroVideo() {
           checkbox.addEventListener('change', (e) => {
           });
         });
-      } else {
-        const noPlaylistMsg = document.createElement('div');
-        noPlaylistMsg.style.cssText = 'font-size: 11px; color: #90A4AE; text-align: center; padding: 10px;';
-        noPlaylistMsg.textContent = '플레이리스트를 불러와주세요';
-        playlistSelector.appendChild(noPlaylistMsg);
       }
-      
-      // 셔플 옵션
-      const shuffleOption = document.createElement('div');
-      shuffleOption.className = 'shuffle-option';
-      shuffleOption.innerHTML = `
-        <input type="checkbox" id="playlistShuffle" ${isShuffleMode ? 'checked' : ''}>
-        <label for="playlistShuffle">🔀 셔플 재생</label>
-      `;
-      
-      const shuffleCheckbox = shuffleOption.querySelector('input');
-      shuffleCheckbox.addEventListener('change', (e) => {
-        isShuffleMode = e.target.checked;
-        toggleShuffle();
-        addLog('info', `셔플 모드: ${isShuffleMode ? 'ON' : 'OFF'}`);
-      });
       
       playlistSelector.appendChild(shuffleOption);
     }
@@ -4625,14 +4737,14 @@ setTimeout(() => {
 }, 1000);
 
 // ===== 이퀄라이저 시스템 =====
-  const EQ = {
-    isVisible: false,
-    filters: [],
-    gains: [0, 0, 0, 0, 0, 0],
-    frequencies: [60, 170, 350, 1000, 3000, 6000],
-    currentPreset: 'flat',
-    
-   presets: {
+const EQ = {
+  isVisible: false,
+  filters: [],
+  gains: [0, 0, 0, 0, 0, 0],
+  frequencies: [60, 170, 350, 1000, 3000, 6000],
+  currentPreset: 'flat',
+  
+  presets: {
     flat: [0, 0, 0, 0, 0, 0],
     rock: [4, 3, -1, -2, 3, 5],
     pop: [1, 3, 2, 0, -1, -2],
@@ -4646,187 +4758,174 @@ setTimeout(() => {
     vocal: [0, 1, 3, 3, 2, 0],
     lofi: [2, 0, -1, 0, 1, -2]
   },
-    
-    init() {
-      console.log('🎛️ 이퀄라이저 초기화');
-      this.setupEventListeners();
-    },
-    
-    setupEventListeners() {
-      // 토글 버튼
-      const toggleBtn = document.getElementById('eqToggleButton');
-      if (toggleBtn) {
-        toggleBtn.addEventListener('click', () => this.toggle());
-      }
-      
-      // 닫기 버튼
-      const closeBtn = document.getElementById('closeEqBtn');
-      if (closeBtn) {
-        closeBtn.addEventListener('click', () => this.hide());
-      }
-      
-      // 프리셋 버튼들
-      const presetBtns = document.querySelectorAll('.preset-btn');
-      presetBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const preset = e.target.getAttribute('data-preset');
-          if (preset) this.applyPreset(preset);
-        });
-      });
-      
-      // 슬라이더들
-      this.frequencies.forEach(freq => {
-        const slider = document.getElementById('eq' + freq);
-        if (slider) {
-          slider.addEventListener('input', () => this.updateEqualizer());
-        }
-      });
-      
-      // 리셋 버튼
-      const resetBtn = document.getElementById('resetEqBtn');
-      if (resetBtn) {
-        resetBtn.addEventListener('click', () => this.reset());
-      }
-    },
-    
-    toggle() {
-      this.isVisible ? this.hide() : this.show();
-    },
-    
-    show() {
-      const panel = document.getElementById('equalizerPanel');
-      const toggleBtn = document.getElementById('eqToggleButton');
-      if (panel && toggleBtn) {
-        panel.classList.add('show');
-        toggleBtn.style.opacity = '0';
-        this.isVisible = true;
-        this.setupFilters();
-        if (isControlCenterMode) {
-          addLog('info', '🎛️ 이퀄라이저 열림');
-        }
-      }
-    },
-    
-    hide() {
-      const panel = document.getElementById('equalizerPanel');
-      const toggleBtn = document.getElementById('eqToggleButton');
-      if (panel && toggleBtn) {
-        panel.classList.remove('show');
-        toggleBtn.style.opacity = '1';
-        this.isVisible = false;
-        if (isControlCenterMode) {
-          addLog('info', '🎛️ 이퀄라이저 닫힘');
-        }
-      }
-    },
-    
-    setupFilters() {
-      if (!audioContext) return;
-      
-      if (audioContext.state === 'suspended') {
-        audioContext.resume();
-      }
-      
-      // 기존 필터 초기화
-      this.filters = [];
-      
-      // 6개 밴드 필터 생성
-      for (let i = 0; i < 6; i++) {
-        const filter = audioContext.createBiquadFilter();
-        filter.type = i === 0 ? 'lowshelf' : i === 5 ? 'highshelf' : 'peaking';
-        filter.frequency.value = this.frequencies[i];
-        filter.Q.value = 1;
-        filter.gain.value = this.gains[i];
-        this.filters.push(filter);
-      }
-      
-      // 필터 체인 연결
-      if (this.filters.length > 0 && source) {
-        try {
-          // 기존 연결 해제
-          source.disconnect();
-          
-          // 필터 체인 구성
-          let input = source;
-          for (let filter of this.filters) {
-            input.connect(filter);
-            input = filter;
-          }
-          
-          // 마지막 필터를 analyser와 destination에 연결
-          if (analyser) {
-            input.connect(analyser);
-            analyser.connect(audioContext.destination);
-          } else {
-            input.connect(audioContext.destination);
-          }
-          
-          console.log('🎛️ 이퀄라이저 필터 연결 완료');
-        } catch (error) {
-          console.error('🎛️ 이퀄라이저 연결 오류:', error);
-        }
-      }
-    },
-    
-    updateEqualizer() {
-      for (let i = 0; i < 6; i++) {
-        const slider = document.getElementById('eq' + this.frequencies[i]);
-        if (slider && this.filters[i]) {
-          const value = parseFloat(slider.value);
-          this.gains[i] = value;
-          this.filters[i].gain.value = value;
-          
-          const valueDisplay = slider.parentElement.querySelector('.eq-value');
-          if (valueDisplay) {
-            valueDisplay.textContent = (value >= 0 ? '+' : '') + value.toFixed(1) + 'dB';
-          }
-        }
-      }
-    },
-    
-    applyPreset(presetName) {
-      if (!this.presets[presetName]) return;
-      
-      const preset = this.presets[presetName];
-      this.currentPreset = presetName;
-      
-      for (let i = 0; i < 6; i++) {
-        const slider = document.getElementById('eq' + this.frequencies[i]);
-        if (slider) {
-          slider.value = preset[i];
-          this.gains[i] = preset[i];
-          
-          if (this.filters[i]) {
-            this.filters[i].gain.value = preset[i];
-          }
-          
-          const valueDisplay = slider.parentElement.querySelector('.eq-value');
-          if (valueDisplay) {
-            valueDisplay.textContent = (preset[i] >= 0 ? '+' : '') + preset[i].toFixed(1) + 'dB';
-          }
-        }
-      }
-      
-      // 프리셋 버튼 활성화
-      const presetBtns = document.querySelectorAll('.preset-btn');
-      presetBtns.forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.getAttribute('data-preset') === presetName) {
-          btn.classList.add('active');
-        }
-      });
-      
-      if (isControlCenterMode) {
-        addLog('info', `🎛️ 프리셋 적용: ${presetName}`);
-      }
-    },
-    
-    reset() {
-      this.applyPreset('flat');
+  
+  init() {
+    console.log('🎛️ 이퀄라이저 초기화');
+    this.setupEventListeners();
+  },
+  
+  setupEventListeners() {
+    const closeBtn = document.getElementById('closeEqBtn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => this.hide());
     }
-  };
+    
+    const presetBtns = document.querySelectorAll('.preset-btn');
+    presetBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const preset = e.target.getAttribute('data-preset');
+        if (preset) this.applyPreset(preset);
+      });
+    });
+    
+    this.frequencies.forEach(freq => {
+      const slider = document.getElementById('eq' + freq);
+      if (slider) {
+        slider.addEventListener('input', () => this.updateEqualizer());
+      }
+    });
+    
+    const resetBtn = document.getElementById('resetEqBtn');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => this.reset());
+    }
+  },
+  
+  toggle() {
+    this.isVisible ? this.hide() : this.show();
+  },
+  
+  show() {
+    const panel = document.getElementById('equalizerPanel');
+    const toggleBtn = document.getElementById('eqToggleBtn');
+    if (panel) {
+      panel.classList.add('show');
+      if (toggleBtn) {
+        toggleBtn.classList.add('active');
+      }
+      this.isVisible = true;
+      this.setupFilters();
+      if (window.isControlCenterMode) {
+        addLog('info', '🎛️ 이퀄라이저 열림');
+      }
+    }
+  },
+  
+  hide() {
+    const panel = document.getElementById('equalizerPanel');
+    const toggleBtn = document.getElementById('eqToggleBtn');
+    if (panel) {
+      panel.classList.remove('show');
+      if (toggleBtn) {
+        toggleBtn.classList.remove('active');
+      }
+      this.isVisible = false;
+      if (window.isControlCenterMode) {
+        addLog('info', '🎛️ 이퀄라이저 닫힘');
+      }
+    }
+  },
+  
+  setupFilters() {
+    if (!audioContext) return;
+    
+    if (audioContext.state === 'suspended') {
+      audioContext.resume();
+    }
+    
+    this.filters = [];
+    
+    for (let i = 0; i < 6; i++) {
+      const filter = audioContext.createBiquadFilter();
+      filter.type = i === 0 ? 'lowshelf' : i === 5 ? 'highshelf' : 'peaking';
+      filter.frequency.value = this.frequencies[i];
+      filter.Q.value = 1;
+      filter.gain.value = this.gains[i];
+      this.filters.push(filter);
+    }
+    
+    if (this.filters.length > 0 && source) {
+      try {
+        source.disconnect();
+        
+        let input = source;
+        for (let filter of this.filters) {
+          input.connect(filter);
+          input = filter;
+        }
+        
+        if (analyser) {
+          input.connect(analyser);
+          analyser.connect(audioContext.destination);
+        } else {
+          input.connect(audioContext.destination);
+        }
+        
+        console.log('🎛️ 이퀄라이저 필터 연결 완료');
+      } catch (error) {
+        console.error('🎛️ 이퀄라이저 연결 오류:', error);
+      }
+    }
+  },
+  
+  updateEqualizer() {
+    for (let i = 0; i < 6; i++) {
+      const slider = document.getElementById('eq' + this.frequencies[i]);
+      if (slider && this.filters[i]) {
+        const value = parseFloat(slider.value);
+        this.gains[i] = value;
+        this.filters[i].gain.value = value;
+        
+        const valueDisplay = slider.parentElement.querySelector('.eq-value');
+        if (valueDisplay) {
+          valueDisplay.textContent = (value >= 0 ? '+' : '') + value.toFixed(1) + 'dB';
+        }
+      }
+    }
+  },
+  
+  applyPreset(presetName) {
+    if (!this.presets[presetName]) return;
+    
+    const preset = this.presets[presetName];
+    this.currentPreset = presetName;
+    
+    for (let i = 0; i < 6; i++) {
+      const slider = document.getElementById('eq' + this.frequencies[i]);
+      if (slider) {
+        slider.value = preset[i];
+        this.gains[i] = preset[i];
+        
+        if (this.filters[i]) {
+          this.filters[i].gain.value = preset[i];
+        }
+        
+        const valueDisplay = slider.parentElement.querySelector('.eq-value');
+        if (valueDisplay) {
+          valueDisplay.textContent = (preset[i] >= 0 ? '+' : '') + preset[i].toFixed(1) + 'dB';
+        }
+      }
+    }
+    
+    const presetBtns = document.querySelectorAll('.preset-btn');
+    presetBtns.forEach(btn => {
+      btn.classList.remove('active');
+      if (btn.getAttribute('data-preset') === presetName) {
+        btn.classList.add('active');
+      }
+    });
+    
+    if (window.isControlCenterMode) {
+      addLog('info', `🎛️ 프리셋 적용: ${presetName}`);
+    }
+  },
+  
+  reset() {
+    this.applyPreset('flat');
+  }
+};
 
-  // DOM 로드 완료 후 초기화
+// DOM 로드 완료 후 초기화
 document.addEventListener('DOMContentLoaded', () => {
   // ✅ 한 번만 호출되도록 수정
   if (!window._initialSetupComplete) {
@@ -4844,9 +4943,174 @@ document.addEventListener('DOMContentLoaded', () => {
 
    setupMediaControls('overlay');
     setupMediaControls('intro');
+
+    // ===== 오버레이 5개 시스템 =====
+const overlaySystem = {
+  overlays: [
+    { id: 1, video: null, enabled: false, opacity: 70, url: null },
+    { id: 2, video: null, enabled: false, opacity: 70, url: null },
+    { id: 3, video: null, enabled: false, opacity: 70, url: null },
+    { id: 4, video: null, enabled: false, opacity: 70, url: null },
+    { id: 5, video: null, enabled: false, opacity: 70, url: null }
+  ],
+  
+  getOverlay(id) {
+    return this.overlays.find(o => o.id === id);
+  },
+  
+  setOpacity(id, opacity) {
+    const overlay = this.getOverlay(id);
+    if (overlay && overlay.video) {
+      overlay.opacity = opacity;
+      if (overlay.enabled) {
+        overlay.video.style.opacity = opacity / 100;
+      }
+    }
+  },
+  
+  toggleOverlay(id, enabled) {
+    const overlay = this.getOverlay(id);
+    if (overlay && overlay.video) {
+      overlay.enabled = enabled;
+      if (enabled) {
+        overlay.video.style.opacity = overlay.opacity / 100;
+        if (overlay.video.paused && overlay.url) {
+          overlay.video.play().catch(e => console.error('재생 실패:', e));
+        }
+      } else {
+        overlay.video.style.opacity = 0;
+      }
+      console.log(`오버레이 ${id}: ${enabled ? 'ON' : 'OFF'}`);
+    }
+  },
+  
+  loadVideo(id, file) {
+    const overlay = this.getOverlay(id);
+    if (!overlay) return;
+    
+    // 비디오 엘리먼트 생성 (없으면)
+    if (!overlay.video) {
+      const video = document.createElement('video');
+      video.id = `overlay${id}Video`;
+      video.muted = true;
+      video.loop = true;
+      video.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        z-index: ${100 + id};
+        pointer-events: none;
+        mix-blend-mode: screen;
+        opacity: 0;
+        transition: opacity 1s ease;
+      `;
+      document.body.appendChild(video);
+      overlay.video = video;
+    }
+    
+    // 파일 로드
+    const url = URL.createObjectURL(file);
+    overlay.url = url;
+    overlay.video.src = url;
+    
+    // 자동 체크 및 재생
+    const checkbox = document.getElementById(`overlay${id}Enabled`);
+    if (checkbox) {
+      checkbox.checked = true;
+      overlay.enabled = true;
+    }
+    
+    overlay.video.play().then(() => {
+      overlay.video.style.opacity = overlay.opacity / 100;
+      console.log(`오버레이 ${id} 로드 완료:`, file.name);
+      
+      // 업로드 존 텍스트 변경
+      const uploadZone = document.getElementById(`overlay${id}UploadZone`);
+      if (uploadZone) {
+        uploadZone.querySelector('.upload-zone-text').textContent = file.name.substring(0, 15);
+      }
+    }).catch(e => console.error('재생 실패:', e));
+  }
+};
+
+function setupOverlaySystem() {
+  console.log('🎭 오버레이 5개 시스템 초기화');
+  
+  // 각 오버레이 슬롯 설정
+  for (let i = 1; i <= 5; i++) {
+    // 드래그앤드롭 설정
+    const uploadZone = document.getElementById(`overlay${i}UploadZone`);
+    if (uploadZone) {
+      uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.style.background = 'rgba(79, 195, 247, 0.3)';
+      });
+      
+      uploadZone.addEventListener('dragleave', () => {
+        uploadZone.style.background = '';
+      });
+      
+      uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.style.background = '';
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          const file = files[0];
+          if (file.type.startsWith('video/') || file.type === 'image/png') {
+            overlaySystem.loadVideo(i, file);
+          } else {
+            alert('비디오 또는 PNG 파일만 지원됩니다.');
+          }
+        }
+      });
+      
+      // 클릭으로도 파일 선택 가능
+      uploadZone.addEventListener('click', () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'video/*,image/png';
+        input.onchange = (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            overlaySystem.loadVideo(i, file);
+          }
+        };
+        input.click();
+      });
+    }
+    
+    // 투명도 슬라이더 설정
+    const opacitySlider = document.getElementById(`overlay${i}-opacity`);
+    const opacityValue = document.getElementById(`overlay${i}-opacity-value`);
+    if (opacitySlider && opacityValue) {
+      opacitySlider.addEventListener('input', (e) => {
+        const value = parseInt(e.target.value);
+        opacityValue.textContent = `${value}%`;
+        overlaySystem.setOpacity(i, value);
+      });
+    }
+    
+    // 체크박스 설정
+    const checkbox = document.getElementById(`overlay${i}Enabled`);
+    if (checkbox) {
+      checkbox.addEventListener('change', (e) => {
+        overlaySystem.toggleOverlay(i, e.target.checked);
+      });
+    }
+  }
+  
+  console.log('✅ 오버레이 5개 시스템 준비 완료');
+}
     
     // 이퀄라이저 초기화
     EQ.init();
+
+        // 오버레이 5개 시스템 초기화
+    setupOverlaySystem();
 
     window._initialSetupComplete = true;
   }
