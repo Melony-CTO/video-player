@@ -1,10 +1,11 @@
-
-
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-      <title>랜덤 플레이어 - 좌우 분할 컨트롤 센터</title>
+  <title>랜덤 플레이어 - 좌우 분할 컨트롤 센터</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
@@ -37,6 +38,19 @@
 
     #loop1, #loop2 {
       z-index: 1;
+    }
+
+    /* 배경 이미지 레이어 (비디오 아래) */
+    #backgroundImage {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: 0;
+      opacity: 0;
+      transition: opacity 1.5s ease;
     }
 
     #logo1, #logo2 {
@@ -76,8 +90,8 @@
       right: 20px;
       width: 380px;
       max-height: 85vh;
-      background: rgba(243, 208, 147, 0.3);
-      backdrop-filter: blur(20px);
+      background: rgba(200, 180, 230, 0.2);
+      backdrop-filter: blur(2px);
       border-radius: 25px;
       border: 1px solid rgba(255, 255, 255, 0.3);
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
@@ -143,7 +157,7 @@
     
     .preset-btn {
       padding: 8px 12px;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
+      background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.9));
       color: white;
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 18px;
@@ -261,10 +275,10 @@
       top: 20px;
       width: 800px; /* 380px에서 800px로 확장 */
       max-height: 90vh;
-      background: rgba(20, 25, 35, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(200, 180, 230, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
       border-radius: 15px;
-      backdrop-filter: blur(20px);
+      backdrop-filter: blur(2px);
       color: white;
       overflow-y: auto;
       transform: translateX(-840px); /* 확장된 너비에 맞춰 조정 */
@@ -727,7 +741,7 @@
       background: rgba(255, 255, 255, 0.5);
     }
 
-    #startButton {
+    #startButton, #broadcastButton {
       padding: 18px 36px;
       font-size: 20px;
       font-weight: 600;
@@ -742,13 +756,58 @@
       z-index: 100;
       position: fixed;
       top: 50%;
-      left: 50%;
       transform: translate(-50%, -50%);
     }
 
-    #startButton:hover {
+    #startButton {
+      left: calc(50% - 130px);
+    }
+
+    #broadcastButton {
+      left: calc(50% + 130px);
+      background: linear-gradient(135deg, #f093fb, #f5576c);
+    }
+
+    #startButton:hover, #broadcastButton:hover {
       transform: translate(-50%, -50%) scale(1.05);
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    /* 카운트다운 오버레이 */
+    #countdownOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    #countdownNumber {
+      font-size: 200px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 0 0 40px rgba(255, 107, 129, 0.8);
+      animation: countdownPulse 1s ease-in-out;
+    }
+
+    @keyframes countdownPulse {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
 
     @keyframes pulse {
@@ -777,8 +836,8 @@
       align-items: center;
       gap: 20px;
       padding: 8px 20px;
-      background: rgba(243, 208, 147, 0.3);
-      backdrop-filter: blur(20px);
+      background: rgba(200, 180, 230, 0.2);
+      backdrop-filter: blur(2px);
       border-radius: 25px;
       border: 1px solid rgba(255, 255, 255, 0.3);
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
@@ -790,36 +849,80 @@
       opacity: 1;
     }
 
-    /* 제목 표시 */
+    /* 제목 표시 - 화면 중앙 상단 */
     .title-display {
       position: fixed;
-      bottom: 75px;
-      left: 50%;
+      top: 30px;    /* 👈 위치: 상단에서 50px */
+      left: 50%;    /* 👈 위치: 가로 중앙 */
       transform: translateX(-50%);
       background: transparent;
       backdrop-filter: none;
       color: #fff;
       padding: 0;
       border-radius: 0;
-      font-size: 15px;
+      font-size: 80px;   /* 👈 크기: 110px */
       font-weight: 500;
-      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-family: 'Gamja Flower', cursive;   /* 👈 폰트 */
       text-align: center;
       z-index: 16;
-      opacity: 0.5;
-      transition: all 0.5s ease;
+      opacity: 0;
+      transition: opacity 2s ease;
       border: none;
       box-shadow: none;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      text-shadow: none;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 15px;
+      letter-spacing: 2px;   /* 👈 자간 */
+      white-space: nowrap;
     }
 
     .title-display.show {
       opacity: 1;
-      transform: translateY(0);
+    }
+
+    /* 베이스 텍스트 레이어 (외곽선 + 그림자) */
+    .title-base-text {
+      position: relative;
+      color: #fff;
+      z-index: 1;
+      -webkit-text-stroke: 3px #004d40;   /* 👈 외곽선 두께와 색상 */
+      text-shadow: 
+        0 0 15px rgba(38, 198, 218, 0.6),    /* 👈 글로우 효과 */
+        0 0 30px rgba(0, 96, 100, 0.8);
+    }
+
+    /* 빛 지나가는 효과 레이어 */
+    .title-shine-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      color: rgba(255, 255, 255, 0.1);
+      background: linear-gradient(
+        110deg, 
+        transparent 35%, 
+        rgba(224, 247, 250, 0.8) 50%, 
+        transparent 65%
+      );
+      background-size: 200% auto;
+      background-repeat: no-repeat;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shineMove 5s linear infinite;
+    }
+
+    @keyframes shineMove {
+      0% {
+        background-position: 200% 0;
+      }
+      100% {
+        background-position: -100% 0;
+      }
     }
 
     .title-display.hide-visualizer {
@@ -849,14 +952,14 @@
     /* 실시간 오디오 비주얼라이저 */
     .audio-visualizer {
       position: fixed;
-      bottom: 20px;
-      left: -8%;
+      bottom: 90px;               /* 👈 하단에서 90px (상하 위치) */
+      left: 50%;                  /* 가로 중앙 */
       transform: translateX(-50%);
       display: flex;
       align-items: end;
       justify-content: center;
-      gap: 3px;
-      height: 30px;
+      gap: 5.8px;               /* 👈 바 사이 간격 */
+      height: 120px;             /* 👈 비주얼라이저 전체 높이 (바가 움직이는 최대 높이) */
       opacity: 0;
       transition: opacity 0.5s ease;
       z-index: 17;
@@ -867,10 +970,10 @@
     }
 
     .visualizer-bar {
-      width: 3px;
+      width: 5.4px;              /* 👈 각 바의 너비 */
       background: rgba(255, 255, 255, 1.0);
       border-radius: 2px;
-      transition: height 0.05s ease;
+      transition: height 0.06s ease;
       min-height: 2px;
       box-shadow: 0 0 8px rgba(255, 255, 255, 1.0);
     }
@@ -911,25 +1014,25 @@
     }
     
     .eq-toggle-btn.active {
-      background: linear-gradient(135deg, rgba(243, 208, 147, 0.5), rgba(218, 165, 32, 0.5));
-      border-color: rgba(243, 208, 147, 0.5);
-      box-shadow: 0 4px 15px rgba(243, 208, 147, 0.3);
+      background: linear-gradient(135deg, rgba(200, 180, 230, 0.5), rgba(180, 150, 210, 0.5));
+      border-color: rgba(200, 180, 230, 0.5);
+      box-shadow: 0 4px 15px rgba(200, 180, 230, 0.3);
     }
     
     .eq-toggle-btn.active:hover {
-      background: linear-gradient(135deg, rgba(243, 208, 147, 0.7), rgba(218, 165, 32, 0.7));
-      box-shadow: 0 6px 20px rgba(243, 208, 147, 0.4);
+      background: linear-gradient(135deg, rgba(200, 180, 230, 0.7), rgba(180, 150, 210, 0.7));
+      box-shadow: 0 6px 20px rgba(200, 180, 230, 0.4);
     }
     
     .visualizer-toggle-btn {
-      background: linear-gradient(135deg, rgba(243, 208, 147, 0.5), rgba(218, 165, 32, 0.5));
-      border-color: rgba(243, 208, 147, 0.5);
-      box-shadow: 0 4px 15px rgba(243, 208, 147, 0.3);
+      background: linear-gradient(135deg, rgba(200, 180, 230, 0.5), rgba(180, 150, 210, 0.5));
+      border-color: rgba(200, 180, 230, 0.5);
+      box-shadow: 0 4px 15px rgba(200, 180, 230, 0.3);
     }
     
     .visualizer-toggle-btn:hover {
-      background: linear-gradient(135deg, rgba(243, 208, 147, 0.7), rgba(218, 165, 32, 0.7));
-      box-shadow: 0 6px 20px rgba(243, 208, 147, 0.4);
+      background: linear-gradient(135deg, rgba(200, 180, 230, 0.7), rgba(180, 150, 210, 0.7));
+      box-shadow: 0 6px 20px rgba(200, 180, 230, 0.4);
     }
     
     .visualizer-toggle-btn.active {
@@ -1292,9 +1395,9 @@
           </div>
           <div class="slider-container">
             <input type="range" class="control-range" id="stealth-panel-slider" 
-                   min="0" max="100" step="5" value="30">
+                   min="0" max="100" step="5" value="20">
           </div>
-          <div class="control-value" id="stealth-panel-value">30%</div>
+          <div class="control-value" id="stealth-panel-value">20%</div>
         </div>
         
         <div class="control-slider" style="margin-bottom: 8px;">
@@ -1316,9 +1419,9 @@
           </div>
           <div class="slider-container">
             <input type="range" class="control-range" id="stealth-blur-slider" 
-                   min="0" max="40" step="2" value="20">
+                   min="0" max="40" step="2" value="2">
           </div>
-          <div class="control-value" id="stealth-blur-value">20px</div>
+          <div class="control-value" id="stealth-blur-value">2px</div>
         </div>
         
         <div style="margin-top: 10px; padding: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
@@ -1514,8 +1617,16 @@
 
   <!-- 제목 표시 -->
   <div class="title-display" id="titleDisplay">
-    <!-- 실시간 오디오 비주얼라이저 (80개 바) -->
-    <div class="audio-visualizer" id="audioVisualizer">
+    <!-- 제목 텍스트 컨테이너 -->
+    <div class="title-container" style="position: relative;">
+      <div class="title-shine-layer" id="titleShineLayer1"></div>
+      <div class="title-shine-layer" id="titleShineLayer2"></div>
+      <div class="title-base-text" id="titleBaseText">제목 로딩 중...</div>
+    </div>
+  </div>
+
+  <!-- 비주얼라이저 (별도 위치) -->
+  <div class="audio-visualizer" id="audioVisualizer">
       <div class="visualizer-bar"></div>
       <div class="visualizer-bar"></div>
       <div class="visualizer-bar"></div>
@@ -1691,6 +1802,9 @@
     <button class="reset-eq-btn" id="resetEqBtn">🔄 리셋</button>
   </div>
 
+  <!-- 배경 이미지 (비디오 아래 레이어) -->
+  <img id="backgroundImage" alt="Background" />
+
   <!-- 비디오 요소들 -->
   <video id="loop1" muted>
     <source src="Loof_01.mp4" type="video/mp4" />
@@ -1736,8 +1850,14 @@
     <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmAZNjRfnNn2TxA" type="audio/wav">
   </audio>
 
-  <!-- 시작 버튼 -->
+  <!-- 시작 버튼들 -->
   <button id="startButton">🎵 음악 시작</button>
+  <button id="broadcastButton">📡 방송 시작</button>
+
+  <!-- 카운트다운 오버레이 -->
+  <div id="countdownOverlay">
+    <div id="countdownNumber">5</div>
+  </div>
 
   <!-- ===== Melony.j 로고 HTML ===== -->
   <div class="logo-container">
@@ -1757,6 +1877,216 @@
 
   <!-- 외부 플레이리스트 파일들 -->
   <script>
+    // ===== TitleFormatter 클래스 =====
+    /**
+     * TitleFormatter - 파일명/제목 정제 모듈
+     * 음악 파일명을 보기 좋은 제목으로 변환
+     */
+    class TitleFormatter {
+      constructor(options = {}) {
+        this.debug = options.debug || false;
+      }
+
+      /**
+       * 파일명 또는 제목을 정제하여 표시용 제목 반환
+       * @param {string} input - 원본 파일명 또는 제목
+       * @param {Object} options - 옵션 (category 등)
+       * @returns {string} 정제된 제목
+       */
+      format(input, options = {}) {
+        if (!input || typeof input !== 'string') {
+          return 'Unknown Title';
+        }
+
+        const category = options.category || '';
+        let result = input;
+
+        // 1단계: 확장자 제거 (파일명인 경우)
+        result = this._removeExtension(result);
+
+        // 2단계: 대괄호 [] 우선 처리
+        const bracketContent = this._extractBracketContent(result);
+        if (bracketContent) {
+          result = bracketContent;
+          if (this.debug) {
+            console.log(`📝 [대괄호 추출] ${input} → ${result}`);
+          }
+          return result.trim();
+        }
+
+        // 3단계: 마스터링 표시 'M' 제거
+        result = this._removeMasteringMarker(result);
+
+        // 4단계: 카테고리별 추가 정제
+        if (category === 'pop') {
+          result = this._cleanPopTitle(result);
+        } else if (category === 'lofi-inst') {
+          result = this._cleanLofiTitle(result);
+        } else {
+          result = this._cleanGenericTitle(result);
+        }
+
+        // 5단계: 최종 정리
+        result = this._finalCleanup(result);
+
+        if (this.debug) {
+          console.log(`📝 [제목 변환] ${input} → ${result}`);
+        }
+
+        return result.trim() || 'Unknown Title';
+      }
+
+      /**
+       * 확장자 제거
+       * @private
+       */
+      _removeExtension(str) {
+        return str.replace(/\.[^/.]+$/, '');
+      }
+
+      /**
+       * 대괄호 [] 안의 내용 추출
+       * @private
+       */
+      _extractBracketContent(str) {
+        const match = str.match(/\[(.*?)\]/);
+        if (match && match[1]) {
+          return match[1].trim();
+        }
+        return null;
+      }
+
+      /**
+       * 마스터링 표시 'M' 제거
+       * 패턴: _M, -M, 공백M, 단독M (파일명 끝에 있을 때)
+       * @private
+       */
+      _removeMasteringMarker(str) {
+        // 끝에 있는 M 패턴들 제거
+        return str
+          .replace(/[_\-\s]M$/gi, '')  // _M, -M, 공백M
+          .replace(/\sM\s*$/gi, '')    // 공백M (여러 공백 포함)
+          .replace(/^M$/gi, '');        // 단독 M
+      }
+
+      /**
+       * POP 카테고리 제목 정제
+       * @private
+       */
+      _cleanPopTitle(str) {
+        return str
+          .replace(/\([^)]*\)/g, '')    // (feat. 등) 괄호 제거
+          .replace(/\s+/g, ' ');         // 연속 공백 제거
+      }
+
+      /**
+       * LOFI-INST 카테고리 제목 정제
+       * @private
+       */
+      _cleanLofiTitle(str) {
+        return str
+          .replace(/\s+/g, ' ');         // 연속 공백 제거
+      }
+
+      /**
+       * 일반 카테고리 제목 정제
+       * @private
+       */
+      _cleanGenericTitle(str) {
+        return str
+          .replace(/\([^)]*\)/g, '')    // 괄호 제거
+          .replace(/\s+/g, ' ');         // 연속 공백 제거
+      }
+
+      /**
+       * 최종 정리
+       * @private
+       */
+      _finalCleanup(str) {
+        return str
+          .replace(/\s+/g, ' ')          // 연속 공백 하나로
+          .replace(/^[\s\-_]+/, '')      // 시작 부분 공백/특수문자 제거
+          .replace(/[\s\-_]+$/, '')      // 끝 부분 공백/특수문자 제거
+          .trim();
+      }
+
+      /**
+       * 파일명에서 직접 제목 추출
+       * @param {string} filePath - 파일 경로 또는 파일명
+       * @param {Object} options - 옵션
+       * @returns {string} 정제된 제목
+       */
+      formatFromPath(filePath, options = {}) {
+        if (!filePath) return 'Unknown Title';
+        
+        const fileName = filePath.split('/').pop().split('\\').pop();
+        return this.format(fileName, options);
+      }
+
+      /**
+       * 디버그 모드 토글
+       * @param {boolean} enabled - true면 디버그 로그 출력
+       */
+      setDebug(enabled) {
+        this.debug = !!enabled;
+        console.log(`📝 TitleFormatter 디버그 모드: ${this.debug ? 'ON' : 'OFF'}`);
+      }
+    }
+
+    // TitleFormatter 인스턴스 생성
+    const titleFormatter = new TitleFormatter({ debug: false });
+
+    // ===== 배경 이미지 로드 시스템 =====
+    /**
+     * 비디오 파일과 같은 폴더에 같은 이름의 이미지 파일이 있는지 체크하고 로드
+     * @param {string} videoPath - 비디오 파일 경로
+     */
+    function tryLoadBackgroundImage(videoPath) {
+      if (!videoPath) return;
+      
+      const backgroundImg = document.getElementById('backgroundImage');
+      if (!backgroundImg) return;
+      
+      // 확장자를 제거하고 이미지 확장자로 시도
+      const pathWithoutExt = videoPath.replace(/\.[^/.]+$/, '');
+      const imageExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
+      
+      let loadAttempted = false;
+      
+      // 각 이미지 확장자를 순차적으로 시도
+      const tryNextExtension = (index) => {
+        if (index >= imageExtensions.length) {
+          // 모든 확장자 시도했지만 실패 - 배경 이미지 숨김
+          if (!loadAttempted) {
+            console.log('🖼️ 배경 이미지 없음 - 디폴트 사용');
+            backgroundImg.style.opacity = '0';
+          }
+          return;
+        }
+        
+        const imagePath = pathWithoutExt + imageExtensions[index];
+        const testImg = new Image();
+        
+        testImg.onload = () => {
+          // 이미지 로드 성공
+          backgroundImg.src = imagePath;
+          backgroundImg.style.opacity = '1';
+          loadAttempted = true;
+          console.log(`🖼️ 배경 이미지 로드 성공: ${imagePath}`);
+        };
+        
+        testImg.onerror = () => {
+          // 이 확장자 실패 - 다음 확장자 시도
+          tryNextExtension(index + 1);
+        };
+        
+        testImg.src = imagePath;
+      };
+      
+      // 첫 번째 확장자부터 시도 시작
+      tryNextExtension(0);
+    }
+
     // ===== 환경 설정 =====
     const DEBUG = false; // 프로덕션에서는 false
 
@@ -1765,7 +2095,7 @@
       OPACITY: {
         DEFAULT_OVERLAY: 0.2,
         DEFAULT_INTRO: 0.3,
-        DEFAULT_PANEL: 0.3
+        DEFAULT_PANEL: 0.2
       },
 
       TIMING: {
@@ -2034,7 +2364,7 @@
     let stealthSettings = {
       panelOpacity: CONFIG.OPACITY.DEFAULT_PANEL,
       buttonOpacity: 1.0,
-      blurAmount: 20,
+      blurAmount: 2,
       hoverEnabled: true,
       isActive: false
     };
@@ -2726,7 +3056,7 @@ function playIntroVideo() {
       };
       
       // 패널 스타일 적용 (블러 효과 포함)
-      panel.style.background = `rgba(243, 208, 147, ${panelOpacity})`;
+      panel.style.background = `rgba(200, 180, 230, ${panelOpacity})`;
       panel.style.border = `1px solid rgba(255, 255, 255, ${panelOpacity * 0.5})`;
       panel.style.backdropFilter = `blur(${blurAmount}px)`;
       
@@ -2749,8 +3079,8 @@ function playIntroVideo() {
           btn.style.filter = `opacity(${buttonOpacity})`;
         }
         
-        // 효과음 버튼들의 배경도 조절
-        if (btn.classList.contains('effect-button')) {
+        // 효과음 버튼들의 배경도 조절 (단, active 상태인 버튼은 유지)
+        if (btn.classList.contains('effect-button') && !btn.classList.contains('active')) {
           btn.style.background = `linear-gradient(135deg, rgba(255, 255, 255, ${0.25 * buttonOpacity}), rgba(255, 255, 255, ${0.15 * buttonOpacity}))`;
           btn.style.border = `1px solid rgba(255, 255, 255, ${0.2 * buttonOpacity})`;
         }
@@ -2769,7 +3099,7 @@ function playIntroVideo() {
         panel.onmouseleave = null;
         
         panel.addEventListener('mouseenter', () => {
-          panel.style.background = 'rgba(243, 208, 147, 0.8)';
+          panel.style.background = 'rgba(200, 180, 230, 0.8)';
           panel.style.border = '1px solid rgba(255, 255, 255, 0.6)';
           panel.style.backdropFilter = 'blur(20px)';
           panel.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.4)';
@@ -2782,7 +3112,7 @@ function playIntroVideo() {
               btn.style.filter = 'opacity(1)';
             }
             
-            if (btn.classList.contains('effect-button')) {
+            if (btn.classList.contains('effect-button') && !btn.classList.contains('active')) {
               btn.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15))';
               btn.style.border = '1px solid rgba(255, 255, 255, 0.2)';
             }
@@ -2836,9 +3166,9 @@ function playIntroVideo() {
           break;
           
         case 'reset': // 🔄 원래대로
-          if (panelSlider) panelSlider.value = 30;
+          if (panelSlider) panelSlider.value = 20;
           if (buttonSlider) buttonSlider.value = 100;
-          if (blurSlider) blurSlider.value = 20;
+          if (blurSlider) blurSlider.value = 2;
           if (hoverCheckbox) hoverCheckbox.checked = false;
           resetStealthMode();
           break;
@@ -2856,9 +3186,9 @@ function playIntroVideo() {
       const allButtons = panel.querySelectorAll('.effect-button, .control-btn, .play-btn, button');
       
       // 원래 스타일로 복원
-      panel.style.background = 'rgba(243, 208, 147, 0.3)';
+      panel.style.background = 'rgba(200, 180, 230, 0.2)';
       panel.style.border = '1px solid rgba(255, 255, 255, 0.3)';
-      panel.style.backdropFilter = 'blur(20px)';
+      panel.style.backdropFilter = 'blur(2px)';
       panel.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.3)';
       
       // 버튼들 원래대로
@@ -3055,6 +3385,9 @@ function playIntroVideo() {
       const source2 = loop2Video.querySelector('source');
       source1.src = loop1Path;
       source2.src = loop2Path;
+
+      // 배경 이미지 체크 및 로드
+      tryLoadBackgroundImage(loop1Path);
 
       // 비디오 다시 로드
       loop1Video.load();
@@ -3805,7 +4138,7 @@ function playIntroVideo() {
           }
         }
         
-        const height = Math.max(2, Math.min(30, (value / 255) * 28 + 2));
+        const height = Math.max(2, Math.min(40, (value / 255) * 38 + 2));
         bar.style.height = height + 'px';
         bar.style.opacity = '1.0';
       });
@@ -3992,6 +4325,39 @@ function playIntroVideo() {
       } : null;
     }
 
+    // 제목 표시 업데이트 함수
+    function updateTitleDisplay(trackTitle) {
+      if (!trackTitle) return;
+      
+      const titleDisplay = document.getElementById('titleDisplay');
+      const titleBaseText = document.getElementById('titleBaseText');
+      const titleShineLayer1 = document.getElementById('titleShineLayer1');
+      const titleShineLayer2 = document.getElementById('titleShineLayer2');
+      
+      // 1단계: 기존 제목 페이드아웃
+      if (titleDisplay) {
+        titleDisplay.classList.remove('show');
+      }
+      
+      // 2단계: 페이드아웃 완료 후 제목 변경 및 페이드인
+      setTimeout(() => {
+        // TitleFormatter로 제목 정제
+        const formattedTitle = titleFormatter.format(trackTitle);
+        
+        // 제목 요소들 업데이트
+        if (titleBaseText) titleBaseText.textContent = formattedTitle;
+        if (titleShineLayer1) titleShineLayer1.textContent = formattedTitle;
+        if (titleShineLayer2) titleShineLayer2.textContent = formattedTitle;
+        
+        // 제목 페이드인
+        if (titleDisplay) {
+          titleDisplay.classList.add('show');
+        }
+        
+        console.log(`📝 제목 표시: ${trackTitle} → ${formattedTitle}`);
+      }, 2000); // CSS transition 시간과 동일 (2초)
+    }
+
     function loadTrack(index) {
       const playlist = getCurrentPlaylist();
       if (index < 0 || index >= playlist.length) return;
@@ -4011,6 +4377,9 @@ function playIntroVideo() {
         musicPlayer.src = track.src;
         musicPlayer.volume = Math.max(0, Math.min(1, audioManager.baseVolume));
         currentTrackIndex = index;
+        
+        // 제목 업데이트
+        updateTitleDisplay(track.title);
         
         if (audioManager) {
           audioManager.onNewTrack();
@@ -4372,6 +4741,9 @@ function playIntroVideo() {
         musicPlayer.src = nextTrack.src;
         musicPlayer.volume = Math.max(0, Math.min(1, audioManager.baseVolume));
         
+        // 제목 업데이트
+        updateTitleDisplay(nextTrack.title);
+        
         if (isControlCenterMode) {
           updateControlCenterPlaylist();
         }
@@ -4382,9 +4754,123 @@ function playIntroVideo() {
       }
     });
 
-    // 방송 시작
+    // 방송 시작 카운트다운
+    const broadcastButton = document.getElementById("broadcastButton");
+    const countdownOverlay = document.getElementById("countdownOverlay");
+    const countdownNumber = document.getElementById("countdownNumber");
+
+    broadcastButton.addEventListener("click", () => {
+      // 버튼들 숨기기
+      startButton.style.display = "none";
+      broadcastButton.style.display = "none";
+      
+      // 카운트다운 시작
+      countdownOverlay.style.display = "flex";
+      let count = 5;
+      
+      const countdownInterval = setInterval(() => {
+        countdownNumber.style.animation = 'none';
+        setTimeout(() => {
+          countdownNumber.style.animation = 'countdownPulse 1s ease-in-out';
+        }, 10);
+        
+        countdownNumber.textContent = count;
+        
+        if (count === 0) {
+          countdownNumber.textContent = "방송 시작!";
+          countdownNumber.style.fontSize = "120px";
+          
+          setTimeout(() => {
+            countdownOverlay.style.display = "none";
+            
+            // 🎵 음악 시작 버튼과 동일한 기능 실행
+            isBroadcasting = true;
+
+            // 배경 타입 확인 후 조건부 재생
+            const backgroundType = document.querySelector('input[name="backgroundType"]:checked')?.value || 'video';
+            
+            if (backgroundType === 'video') {
+              // 비디오 모드일 때만 루프 영상 재생
+              playLoop(loop1, loop2);
+            } 
+            if (overlayVideo) {
+              overlayVideo.currentTime = 0;
+              fadeIn(overlayVideo);
+              overlayVideo.play().catch(error => console.error("Overlay video play failed:", error));
+            }
+            else {
+              // 이미지 모드일 때는 루프 영상 숨김
+              fadeOut(loop1);
+              fadeOut(loop2);
+              loop1.pause();
+              loop2.pause();
+            }
+            
+            controlPanel.classList.add('show');
+            titleDisplay.classList.add('show');
+
+            // 인트로 재생 로직 추가
+            const introEnabledCheckbox = document.getElementById('introEnabled');
+            if (window.introVideoUrl && (!introEnabledCheckbox || introEnabledCheckbox.checked)) {
+              setTimeout(() => {
+                playIntroVideo();
+              }, 1000);
+            }
+            
+            if (musicTracks && musicTracks.length > 0) {
+              if (!shuffledPlaylist || shuffledPlaylist.length === 0) {
+                shuffledPlaylist = createShuffledPlaylist();
+              }
+              shuffleBtn.classList.add('active');
+              loadTrack(0);
+              
+              setTimeout(() => {
+                toggleMusic();
+              }, 1000);
+              
+              if (isControlCenterMode) {
+                addLog('info', '🎬 방송 시작');
+              }
+            } else {
+              setTimeout(() => {
+                loadExternalPlaylists();
+                
+                if (musicTracks && musicTracks.length > 0) {
+                  shuffledPlaylist = createShuffledPlaylist();
+                  shuffleBtn.classList.add('active');
+                  loadTrack(0);
+                  setTimeout(toggleMusic, 500);
+                  
+                  if (isControlCenterMode) {
+                    addLog('info', '플레이리스트 재로드 성공');
+                  }
+                } else if (broadcastPlaylist && broadcastPlaylist.length > 0) {
+                  musicTracks = [...broadcastPlaylist];
+                  shuffledPlaylist = createShuffledPlaylist();
+                  shuffleBtn.classList.add('active');
+                  loadTrack(0);
+                  setTimeout(toggleMusic, 500);
+                  
+                  if (isControlCenterMode) {
+                    addLog('info', '방송용 플레이리스트 사용');
+                  }
+                }
+              }, 2000);
+            }
+            
+          }, 1500);
+          
+          clearInterval(countdownInterval);
+        }
+        
+        count--;
+      }, 1000);
+    });
+
+    // 음악 시작 (기존 기능 유지)
     startButton.addEventListener("click", () => {
       startButton.style.display = "none";
+      broadcastButton.style.display = "none";
       isBroadcasting = true;
 
       // 🆕 배경 타입 확인 후 조건부 재생
@@ -4669,19 +5155,19 @@ function updateOverlayStatus(applied = false) {
     let isVisualizerVisible = true;
 
     function toggleVisualizer() {
-      const titleDisplay = document.getElementById('titleDisplay');
+      const audioVisualizer = document.getElementById('audioVisualizer');
       const toggleBtn = document.getElementById('visualizerToggleBtn');
       
       isVisualizerVisible = !isVisualizerVisible;
       
       if (isVisualizerVisible) {
-        titleDisplay.classList.remove('hide-visualizer');
+        audioVisualizer.classList.add('playing');
         toggleBtn.classList.add('active');
         if (isControlCenterMode) {
           addLog('info', '📊 비주얼라이저 ON');
         }
       } else {
-        titleDisplay.classList.add('hide-visualizer');
+        audioVisualizer.classList.remove('playing');
         toggleBtn.classList.remove('active');
         if (isControlCenterMode) {
           addLog('info', '📊 비주얼라이저 OFF');
@@ -4947,7 +5433,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===== 오버레이 5개 시스템 =====
 const overlaySystem = {
   overlays: [
-    { id: 1, video: null, enabled: false, opacity: 70, url: null },
+    { id: 1, video: null, enabled: true, opacity: 70, url: null },
     { id: 2, video: null, enabled: false, opacity: 70, url: null },
     { id: 3, video: null, enabled: false, opacity: 70, url: null },
     { id: 4, video: null, enabled: false, opacity: 70, url: null },
@@ -5109,8 +5595,40 @@ function setupOverlaySystem() {
     // 이퀄라이저 초기화
     EQ.init();
 
-        // 오버레이 5개 시스템 초기화
+    // 오버레이 5개 시스템 초기화
     setupOverlaySystem();
+
+    // 초기 배경 이미지 체크
+    const loop1Video = document.getElementById('loop1');
+    if (loop1Video && loop1Video.querySelector('source')) {
+      const initialVideoPath = loop1Video.querySelector('source').src;
+      tryLoadBackgroundImage(initialVideoPath);
+    }
+
+    // 메인 화면 클릭 시 모든 패널 닫기
+    document.addEventListener('click', (e) => {
+      const controlCenter = document.getElementById('controlCenter');
+      const equalizerPanel = document.getElementById('equalizerPanel');
+      const controlPanel = document.getElementById('controlPanel');
+      
+      // 클릭한 요소가 패널 내부나 토글 버튼이 아닌 경우에만 닫기
+      const isClickInsideControlCenter = controlCenter && controlCenter.contains(e.target);
+      const isClickInsideEqualizer = equalizerPanel && equalizerPanel.contains(e.target);
+      const isClickInsideControlPanel = controlPanel && controlPanel.contains(e.target);
+      const isToggleButton = e.target.closest('.melony-logo, #eqToggleBtn, .effect-button, .control-btn, button');
+      
+      if (!isClickInsideControlCenter && !isClickInsideEqualizer && !isClickInsideControlPanel && !isToggleButton) {
+        // 컨트롤센터 닫기
+        if (controlCenter && controlCenter.classList.contains('show')) {
+          toggleControlCenter();
+        }
+        
+        // 이퀄라이저 닫기
+        if (EQ && EQ.isVisible) {
+          EQ.hide();
+        }
+      }
+    });
 
     window._initialSetupComplete = true;
   }
