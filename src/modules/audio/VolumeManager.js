@@ -5,6 +5,7 @@
 
 import { logger } from '../../core/logger.js';
 import { eventBus } from '../../core/events.js';
+import { clamp01 } from '../../utils/domUtils.js';
 
 export class VolumeManager {
   constructor() {
@@ -49,7 +50,7 @@ export class VolumeManager {
   }
 
   setMasterVolume(volume) {
-    const normalizedVolume = Math.max(0, Math.min(1, volume));
+    const normalizedVolume = clamp01(volume);
     this.masterVolume = normalizedVolume;
 
     logger.info(`마스터 볼륨: ${Math.round(normalizedVolume * 100)}%`);
@@ -64,7 +65,7 @@ export class VolumeManager {
   }
 
   setMusicVolume(volume) {
-    const normalizedVolume = Math.max(0, Math.min(1, volume));
+    const normalizedVolume = clamp01(volume);
     this.musicVolume = normalizedVolume;
 
     const effectiveVolume = this.musicVolume * this.masterVolume;
@@ -74,7 +75,7 @@ export class VolumeManager {
   }
 
   setEffectsVolume(volume) {
-    const normalizedVolume = Math.max(0, Math.min(1, volume));
+    const normalizedVolume = clamp01(volume);
     this.effectsVolume = normalizedVolume;
 
     const effectiveVolume = this.effectsVolume * this.masterVolume;
@@ -138,14 +139,12 @@ export class VolumeManager {
 
   // 볼륨 증가 (10% 단위)
   increaseVolume() {
-    const newVolume = Math.min(1.0, this.masterVolume + 0.1);
-    this.setMasterVolume(newVolume);
+    this.setMasterVolume(clamp01(this.masterVolume + 0.1));
   }
 
   // 볼륨 감소 (10% 단위)
   decreaseVolume() {
-    const newVolume = Math.max(0, this.masterVolume - 0.1);
-    this.setMasterVolume(newVolume);
+    this.setMasterVolume(clamp01(this.masterVolume - 0.1));
   }
 
   // 모든 볼륨 정보 가져오기

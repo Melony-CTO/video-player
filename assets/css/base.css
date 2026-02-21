@@ -1,6 +1,20 @@
 /* ===== BASE STYLES ===== */
 /* 기본 리셋 및 변수 정의 */
 
+/* ===== CSS 커스텀 변수 ===== */
+:root {
+  /* z-index 레이어 시스템 */
+  --z-loop:        1;
+  --z-overlay:     2;
+  --z-intro:       3;
+  --z-logo:        4;
+  --z-panel-title: 10;
+  --z-controls:    15;
+  --z-title:       16;
+  --z-start-btn:   100;
+  --z-panel:       1000;
+}
+
 body {
   margin: 0;
   background-color: #000;
@@ -27,18 +41,18 @@ video {
 }
 
 #overlayVideo {
-  z-index: 2;
+  z-index: var(--z-overlay);
   pointer-events: none;
   mix-blend-mode: screen;
   opacity: 0.2;
 }
 
 #loop1, #loop2 {
-  z-index: 1;
+  z-index: var(--z-loop);
 }
 
 #logo1, #logo2 {
-  z-index: 4;
+  z-index: var(--z-logo);
   pointer-events: none;
   width: 100vw;
   height: 100vh;

@@ -5,6 +5,7 @@
 
 import { logger } from '../../core/logger.js';
 import { eventBus } from '../../core/events.js';
+import { clamp01 } from '../../utils/domUtils.js';
 
 export class MusicPlayer {
   constructor() {
@@ -344,7 +345,7 @@ export class MusicPlayer {
    * 볼륨 설정
    */
   setVolume(volume) {
-    this.volume = Math.max(0, Math.min(1, volume));
+    this.volume = clamp01(volume);
 
     if (this.currentHowl) {
       this.currentHowl.volume(this.volume);

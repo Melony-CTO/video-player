@@ -5,6 +5,7 @@
 
 import { logger } from '../../core/logger.js';
 import { eventBus } from '../../core/events.js';
+import { clamp01 } from '../../utils/domUtils.js';
 
 export class OverlayManager {
   constructor() {
@@ -107,7 +108,7 @@ export class OverlayManager {
     const overlay = this.getOverlay(overlayId);
     if (!overlay) return;
 
-    overlay.opacity = Math.max(0, Math.min(1, opacity));
+    overlay.opacity = clamp01(opacity);
 
     if (overlay.video && overlay.enabled) {
       overlay.video.style.opacity = overlay.opacity;

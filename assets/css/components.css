@@ -46,7 +46,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   animation: pulse 2s infinite;
-  z-index: 100;
+  z-index: var(--z-start-btn);
   position: fixed;
   top: 50%;
   left: 50%;

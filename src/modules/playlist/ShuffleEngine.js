@@ -5,6 +5,7 @@
 
 import { logger } from '../../core/logger.js';
 import { eventBus } from '../../core/events.js';
+import { shuffleArray } from '../../utils/domUtils.js';
 
 export class ShuffleEngine {
   constructor() {
@@ -66,16 +67,9 @@ export class ShuffleEngine {
     logger.info(`플레이리스트 설정: ${playlist.length}개 트랙`);
   }
 
-  // Fisher-Yates 셔플 알고리즘
+  // Fisher-Yates 셔플 알고리즘 (domUtils.shuffleArray 활용)
   shuffle(array) {
-    const shuffled = [...array];
-
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-
-    this.currentOrder = shuffled;
+    this.currentOrder = shuffleArray([...array]);
     this.shuffleHistory = [];
 
     logger.info('플레이리스트 셔플 완료');
